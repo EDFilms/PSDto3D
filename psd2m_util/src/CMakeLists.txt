@@ -1,0 +1,27 @@
+SET(CMAKE_AUTOMOC ON)
+SET(CMAKE_INCLUDE_CURRENT_DIR ON)	
+
+set(UTILS_SOURCE_FILES
+	"util/math_2D.cpp")
+
+set(UTILS_HEADER_FILES
+	"util/math_2D.h"	
+	"util/utils.h"
+	"util/vectorialPath.h"
+	)
+
+ADD_LIBRARY(${TARGET_NAME_UTIL} STATIC
+	${UTILS_SOURCE_FILES}
+	${UTILS_HEADER_FILES})
+
+SOURCE_GROUP("Header Files\\utils" FILES  ${UTILS_HEADER_FILES})
+SOURCE_GROUP("Source Files\\utils" FILES  ${UTILS_SOURCE_FILES})
+
+set_target_properties(${TARGET_NAME_UTIL} PROPERTIES
+		ARCHIVE_OUTPUT_DIRECTORY  "../../build/lib"
+		ARCHIVE_OUTPUT_NAME ${LIBRARY_NAME_UTIL}
+		COMPILE_PDB_OUTPUT_DIRECTORY "../../build/lib"
+		COMPILE_PDB_NAME ${LIBRARY_NAME_UTIL}
+        PREFIX ""
+		SUFFIX ".lib"
+		)

@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\texture_exporter\lodepng.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\texture_exporter\textureExporter.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\maya_mesh\mayaMeshConvertor.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\maya_mesh\meshGeneratorController.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\maya_mesh\editorComponentGenerator.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\pluginController.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\mainWindowCmd.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\parameters.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\qtProgress.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\interface\toolWidget.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\json\JSON.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\json\JSONValue.cpp" />
+    <ClCompile Include="$(ProjectDir)/ui_toolWidget.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\texture_exporter\lodepng.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\texture_exporter\textureExporter.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\maya_mesh\mayaMeshConvertor.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\maya_mesh\meshGeneratorController.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\maya_mesh\editorComponentGenerator.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\IControllerUpdate.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\mayaUtils.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\pluginController.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\mainWindowCmd.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\parameters.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\qtProgress.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\interface\toolWidget.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\json\JSON.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\json\JSONValue.h" />
+    <ClInclude Include="$(ProjectDir)/ui_toolWidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="$(ProjectDir)/../../psd2m_maya_plugin/src\interface\toolWidget.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Forms">
+      <UniqueIdentifier>{1900FA6B-7D90-3119-A40B-14B2CCD45647}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{38E4BC12-A71D-38FA-BC95-37C4C35C9F36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\interface">
+      <UniqueIdentifier>{314BFAAC-9880-367A-B3CE-A8CE3A5D4EA9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\json">
+      <UniqueIdentifier>{251DC774-6A46-397F-94E0-F522A05CF8F3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mesh_maya_generator">
+      <UniqueIdentifier>{F8D455E8-3DD5-33F1-AC65-7916152AE2F9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\texture_exporter">
+      <UniqueIdentifier>{D9D54821-685E-38E5-A913-183C856243C2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{A8CCDE29-4562-311F-8950-3DE5537A79B6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\interface">
+      <UniqueIdentifier>{8DB9ECEB-D0F9-3C2E-A8FC-F7E7EE480CA4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\json">
+      <UniqueIdentifier>{7B2B6C14-458B-3643-9015-78EB68897213}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mesh_maya_generator">
+      <UniqueIdentifier>{51A15A38-25D0-3508-BE1E-6F872DB6B8C9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\texture_exporter">
+      <UniqueIdentifier>{7CCB7AAD-F61A-3689-BAE9-9A72C0C4CCBC}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

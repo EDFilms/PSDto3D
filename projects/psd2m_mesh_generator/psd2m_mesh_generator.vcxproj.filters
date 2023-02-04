@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\dataMesh.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\linear_mesh\bezierCurve.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\linear_mesh\boundingBox.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\linear_mesh\linearMesh.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\curve_mesh\bezier.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\curve_mesh\curve.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\curve_mesh\curveNode.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\curve_mesh\curveData.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\curve_mesh\curveMeshGenerator.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\influence_mesh\influenceMesh.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\influence_mesh\meshFace.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\dataMesh.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\linear_mesh\bezierCurve.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\linear_mesh\boundingBox.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\linear_mesh\linearMesh.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\curve_mesh\bezier.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\curve_mesh\curve.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\curve_mesh\curveNode.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\curve_mesh\curveData.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\curve_mesh\curveMeshGenerator.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\influence_mesh\influenceMesh.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_mesh_generator/src\mesh_generator\influence_mesh\meshFace.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{38E4BC12-A71D-38FA-BC95-37C4C35C9F36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mesh_generator">
+      <UniqueIdentifier>{049B4302-0C15-37D5-B0C6-85ED6411093D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mesh_generator\curve_mesh">
+      <UniqueIdentifier>{BFCC4D60-69F6-31F2-9D52-2F21C5461831}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mesh_generator\influence_mesh">
+      <UniqueIdentifier>{43A28142-CBB5-344C-BBC8-C526099117E5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mesh_generator\linear_mesh">
+      <UniqueIdentifier>{3DC487F5-48F9-35BC-A239-9351A074D8C1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{A8CCDE29-4562-311F-8950-3DE5537A79B6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mesh_generator">
+      <UniqueIdentifier>{B0D5F430-6B0D-3EE5-8F2E-6E8B85AD3E74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mesh_generator\curve_mesh">
+      <UniqueIdentifier>{235655CF-D00A-38E7-8CF8-85BE11F151F7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mesh_generator\influence_mesh">
+      <UniqueIdentifier>{0CEDB1E9-4A94-385C-AC6E-B6C1F9C69C20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mesh_generator\linear_mesh">
+      <UniqueIdentifier>{F59661F3-5D77-3095-960C-B02743B4FA0C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

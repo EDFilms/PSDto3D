@@ -1,0 +1,513 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_Maya2017|x64">
+      <Configuration>Debug_Maya2017</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_Maya2018|x64">
+      <Configuration>Debug_Maya2018</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_Maya2019|x64">
+      <Configuration>Debug_Maya2019</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_Maya2017|x64">
+      <Configuration>Release_Maya2017</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_Maya2018|x64">
+      <Configuration>Release_Maya2018</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_Maya2019|x64">
+      <Configuration>Release_Maya2019</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{410217DA-BDFD-390A-9DE6-10C3F6C17980}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>psd2m_maya_plugin</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir>$(SolutionDir)\..\build\plugin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\..\build\int\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetExt>.mll</TargetExt>
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName Condition="'$(Configuration)'=='Debug_Maya2017'">PSD23D_Maya2017_dev</TargetName>
+    <TargetName Condition="'$(Configuration)'=='Debug_Maya2018'">PSD23D_Maya2018_dev</TargetName>
+    <TargetName Condition="'$(Configuration)'=='Debug_Maya2019'">PSD23D_Maya2019_dev</TargetName>
+    <TargetName Condition="'$(Configuration)'=='Release_Maya2017'">PSD23D_Maya2017_dev</TargetName>
+    <TargetName Condition="'$(Configuration)'=='Release_Maya2018'">PSD23D_Maya2018_dev</TargetName>
+    <TargetName Condition="'$(Configuration)'=='Release_Maya2019'">PSD23D_Maya2019_dev</TargetName>
+    <MayaDir Condition="'$(Configuration)'=='Debug_Maya2017'">C:\Program Files\Autodesk\Maya2017</MayaDir>
+    <MayaDir Condition="'$(Configuration)'=='Debug_Maya2018'">C:\Program Files\Autodesk\Maya2018</MayaDir>
+    <MayaDir Condition="'$(Configuration)'=='Debug_Maya2019'">C:\Program Files\Autodesk\Maya2019</MayaDir>
+    <MayaDir Condition="'$(Configuration)'=='Release_Maya2017'">C:\Program Files\Autodesk\Maya2017</MayaDir>
+    <MayaDir Condition="'$(Configuration)'=='Release_Maya2018'">C:\Program Files\Autodesk\Maya2018</MayaDir>
+    <MayaDir Condition="'$(Configuration)'=='Release_Maya2019'">C:\Program Files\Autodesk\Maya2019</MayaDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Maya2017|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MayaDir)/include;$(SolutionDir)\psd2m_maya_plugin;$(SolutionDir)\..\psd2m_maya_plugin\src;$(SolutionDir)\..\psd2m_mesh_generator\src;$(SolutionDir)\..\psd2m_psd_reader\src;$(SolutionDir)\..\psd2m_util\src</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "$(MayaDir)/include" /external:I "$(MayaDir)/include/QtWidgets" /external:I "$(MayaDir)/include/QtGui" /external:I "$(MayaDir)/include/QtCore" /external:I "$(MayaDir)/./mkspecs/win32-msvc2012"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;ulong=unsigned long;ULONG=unsigned long;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;CMAKE_INTDIR="Debug";PSD23D_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;CMAKE_INTDIR=\"Debug\";PSD23D_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\psd2m_maya_plugin;$(ProjectDir)/../../psd2m_maya_plugin/src;$(ProjectDir)/PSD23D_autogen\include_Debug;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_psd_reader\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_mesh_generator\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_util\src;$(MayaDir)/include;$(MayaDir)/include\QtWidgets;$(MayaDir)/include\QtGui;$(MayaDir)/include\QtCore;$(MayaDir)/mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>$(SolutionDir)\psd2m_maya_plugin;$(ProjectDir)/../../psd2m_maya_plugin/src;$(ProjectDir)/PSD23D_autogen\include_Debug;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_psd_reader\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_mesh_generator\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_util\src;$(MayaDir)/include;$(MayaDir)/include\QtWidgets;$(MayaDir)/include\QtGui;$(MayaDir)/include\QtCore;$(MayaDir)/mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PreBuildEvent>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <Link>
+      <AdditionalDependencies>psd_reader.lib;mesh_generator.lib;util.lib;zlibstatic.lib;OpenMaya.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;clew.lib;Qt5Widgets.lib;Qt5Gui.lib;Qt5Core.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(MayaDir)/lib;$(ProjectDir)/../../build/lib/$(ConfigurationName);$(ProjectDir)/../../psd2m_psd_reader\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64 /export:initializePlugin /export:uninitializePlugin</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>$(ProjectDir)/../../build/lib/$(ConfigurationName)/$(TargetName).lib</ImportLibrary>
+      <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Maya2019|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MayaDir)/include;$(SolutionDir)\psd2m_maya_plugin;$(SolutionDir)\..\psd2m_maya_plugin\src;$(SolutionDir)\..\psd2m_mesh_generator\src;$(SolutionDir)\..\psd2m_psd_reader\src;$(SolutionDir)\..\psd2m_util\src</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "$(MayaDir)/include" /external:I "$(MayaDir)/include/QtWidgets" /external:I "$(MayaDir)/include/QtGui" /external:I "$(MayaDir)/include/QtCore" /external:I "$(MayaDir)/./mkspecs/win32-msvc2012"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;ulong=unsigned long;ULONG=unsigned long;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;CMAKE_INTDIR="Debug";PSD23D_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;CMAKE_INTDIR=\"Debug\";PSD23D_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\psd2m_maya_plugin;$(ProjectDir)/../../psd2m_maya_plugin/src;$(ProjectDir)/PSD23D_autogen\include_Debug;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_psd_reader\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_mesh_generator\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_util\src;$(MayaDir)/include;$(MayaDir)/include\QtWidgets;$(MayaDir)/include\QtGui;$(MayaDir)/include\QtCore;$(MayaDir)/mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>$(SolutionDir)\psd2m_maya_plugin;$(ProjectDir)/../../psd2m_maya_plugin/src;$(ProjectDir)/PSD23D_autogen\include_Debug;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_psd_reader\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_mesh_generator\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_util\src;$(MayaDir)/include;$(MayaDir)/include\QtWidgets;$(MayaDir)/include\QtGui;$(MayaDir)/include\QtCore;$(MayaDir)/mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PreBuildEvent>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <Link>
+      <AdditionalDependencies>psd_reader.lib;mesh_generator.lib;util.lib;zlibstatic.lib;OpenMaya.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;clew.lib;Qt5Widgets.lib;Qt5Gui.lib;Qt5Core.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(MayaDir)/lib;$(ProjectDir)/../../build/lib/$(ConfigurationName);$(ProjectDir)/../../psd2m_psd_reader\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64 /export:initializePlugin /export:uninitializePlugin</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>$(ProjectDir)/../../build/lib/$(ConfigurationName)/$(TargetName).lib</ImportLibrary>
+      <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Maya2018|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MayaDir)/include;$(SolutionDir)\psd2m_maya_plugin;$(SolutionDir)\..\psd2m_maya_plugin\src;$(SolutionDir)\..\psd2m_mesh_generator\src;$(SolutionDir)\..\psd2m_psd_reader\src;$(SolutionDir)\..\psd2m_util\src</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "$(MayaDir)/include" /external:I "$(MayaDir)/include/QtWidgets" /external:I "$(MayaDir)/include/QtGui" /external:I "$(MayaDir)/include/QtCore" /external:I "$(MayaDir)/./mkspecs/win32-msvc2012"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;ulong=unsigned long;ULONG=unsigned long;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;CMAKE_INTDIR="Debug";PSD23D_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;CMAKE_INTDIR=\"Debug\";PSD23D_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\psd2m_maya_plugin;$(ProjectDir)/../../psd2m_maya_plugin/src;$(ProjectDir)/PSD23D_autogen\include_Debug;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_psd_reader\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_mesh_generator\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_util\src;$(MayaDir)/include;$(MayaDir)/include\QtWidgets;$(MayaDir)/include\QtGui;$(MayaDir)/include\QtCore;$(MayaDir)/mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>$(SolutionDir)\psd2m_maya_plugin;$(ProjectDir)/../../psd2m_maya_plugin/src;$(ProjectDir)/PSD23D_autogen\include_Debug;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_psd_reader\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_mesh_generator\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_util\src;$(MayaDir)/include;$(MayaDir)/include\QtWidgets;$(MayaDir)/include\QtGui;$(MayaDir)/include\QtCore;$(MayaDir)/mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PreBuildEvent>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <Link>
+      <AdditionalDependencies>psd_reader.lib;mesh_generator.lib;util.lib;zlibstatic.lib;OpenMaya.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;clew.lib;Qt5Widgets.lib;Qt5Gui.lib;Qt5Core.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(MayaDir)/lib;$(ProjectDir)/../../build/lib/$(ConfigurationName);$(ProjectDir)/../../psd2m_psd_reader\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64 /export:initializePlugin /export:uninitializePlugin</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>$(ProjectDir)/../../build/lib/$(ConfigurationName)/$(TargetName).lib</ImportLibrary>
+      <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Maya2017|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MayaDir)/include;$(SolutionDir)\psd2m_maya_plugin;$(SolutionDir)\..\psd2m_maya_plugin\src;$(SolutionDir)\..\psd2m_mesh_generator\src;$(SolutionDir)\..\psd2m_psd_reader\src;$(SolutionDir)\..\psd2m_util\src</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "$(MayaDir)/include" /external:I "$(MayaDir)/include/QtWidgets" /external:I "$(MayaDir)/include/QtGui" /external:I "$(MayaDir)/include/QtCore" /external:I "$(MayaDir)/./mkspecs/win32-msvc2012"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;ulong=unsigned long;ULONG=unsigned long;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;CMAKE_INTDIR="RelWithDebInfo";PSD23D_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;CMAKE_INTDIR=\"RelWithDebInfo\";PSD23D_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\psd2m_maya_plugin;$(ProjectDir)/../../psd2m_maya_plugin/src;$(ProjectDir)/PSD23D_autogen\include_RelWithDebInfo;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_psd_reader\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_mesh_generator\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_util\src;$(MayaDir)/include;$(MayaDir)/include\QtWidgets;$(MayaDir)/include\QtGui;$(MayaDir)/include\QtCore;$(MayaDir)/mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>$(SolutionDir)\psd2m_maya_plugin;$(ProjectDir)/../../psd2m_maya_plugin/src;$(ProjectDir)/PSD23D_autogen\include_RelWithDebInfo;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_psd_reader\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_mesh_generator\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_util\src;$(MayaDir)/include;$(MayaDir)/include\QtWidgets;$(MayaDir)/include\QtGui;$(MayaDir)/include\QtCore;$(MayaDir)/mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PreBuildEvent>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <Link>
+      <AdditionalDependencies>psd_reader.lib;mesh_generator.lib;util.lib;zlibstatic.lib;OpenMaya.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;clew.lib;Qt5Widgets.lib;Qt5Gui.lib;Qt5Core.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(MayaDir)/lib;$(ProjectDir)/../../build/lib/$(ConfigurationName);$(ProjectDir)/../../psd2m_psd_reader\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64 /export:initializePlugin /export:uninitializePlugin</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>$(ProjectDir)/../../build/lib/$(ConfigurationName)/$(TargetName).lib</ImportLibrary>
+      <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Maya2019|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MayaDir)/include;$(SolutionDir)\psd2m_maya_plugin;$(SolutionDir)\..\psd2m_maya_plugin\src;$(SolutionDir)\..\psd2m_mesh_generator\src;$(SolutionDir)\..\psd2m_psd_reader\src;$(SolutionDir)\..\psd2m_util\src</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "$(MayaDir)/include" /external:I "$(MayaDir)/include/QtWidgets" /external:I "$(MayaDir)/include/QtGui" /external:I "$(MayaDir)/include/QtCore" /external:I "$(MayaDir)/./mkspecs/win32-msvc2012"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;ulong=unsigned long;ULONG=unsigned long;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;CMAKE_INTDIR="RelWithDebInfo";PSD23D_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;CMAKE_INTDIR=\"RelWithDebInfo\";PSD23D_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\psd2m_maya_plugin;$(ProjectDir)/../../psd2m_maya_plugin/src;$(ProjectDir)/PSD23D_autogen\include_RelWithDebInfo;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_psd_reader\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_mesh_generator\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_util\src;$(MayaDir)/include;$(MayaDir)/include\QtWidgets;$(MayaDir)/include\QtGui;$(MayaDir)/include\QtCore;$(MayaDir)/mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>$(SolutionDir)\psd2m_maya_plugin;$(ProjectDir)/../../psd2m_maya_plugin/src;$(ProjectDir)/PSD23D_autogen\include_RelWithDebInfo;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_psd_reader\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_mesh_generator\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_util\src;$(MayaDir)/include;$(MayaDir)/include\QtWidgets;$(MayaDir)/include\QtGui;$(MayaDir)/include\QtCore;$(MayaDir)/mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PreBuildEvent>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <Link>
+      <AdditionalDependencies>psd_reader.lib;mesh_generator.lib;util.lib;zlibstatic.lib;OpenMaya.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;clew.lib;Qt5Widgets.lib;Qt5Gui.lib;Qt5Core.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(MayaDir)/lib;$(ProjectDir)/../../build/lib/$(ConfigurationName);$(ProjectDir)/../../psd2m_psd_reader\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64 /export:initializePlugin /export:uninitializePlugin</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>$(ProjectDir)/../../build/lib/$(ConfigurationName)/$(TargetName).lib</ImportLibrary>
+      <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Maya2018|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MayaDir)/include;$(SolutionDir)\psd2m_maya_plugin;$(SolutionDir)\..\psd2m_maya_plugin\src;$(SolutionDir)\..\psd2m_mesh_generator\src;$(SolutionDir)\..\psd2m_psd_reader\src;$(SolutionDir)\..\psd2m_util\src</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "$(MayaDir)/include" /external:I "$(MayaDir)/include/QtWidgets" /external:I "$(MayaDir)/include/QtGui" /external:I "$(MayaDir)/include/QtCore" /external:I "$(MayaDir)/./mkspecs/win32-msvc2012"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;ulong=unsigned long;ULONG=unsigned long;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;CMAKE_INTDIR="RelWithDebInfo";PSD23D_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;CMAKE_INTDIR=\"RelWithDebInfo\";PSD23D_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\psd2m_maya_plugin;$(ProjectDir)/../../psd2m_maya_plugin/src;$(ProjectDir)/PSD23D_autogen\include_RelWithDebInfo;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_psd_reader\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_mesh_generator\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_util\src;$(MayaDir)/include;$(MayaDir)/include\QtWidgets;$(MayaDir)/include\QtGui;$(MayaDir)/include\QtCore;$(MayaDir)/mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>$(SolutionDir)\psd2m_maya_plugin;$(ProjectDir)/../../psd2m_maya_plugin/src;$(ProjectDir)/PSD23D_autogen\include_RelWithDebInfo;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_psd_reader\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_mesh_generator\src;$(ProjectDir)/../../psd2m_maya_plugin/src\..\..\psd2m_util\src;$(MayaDir)/include;$(MayaDir)/include\QtWidgets;$(MayaDir)/include\QtGui;$(MayaDir)/include\QtCore;$(MayaDir)/mkspecs\win32-msvc2012;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PreBuildEvent>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <Link>
+      <AdditionalDependencies>psd_reader.lib;mesh_generator.lib;util.lib;zlibstatic.lib;OpenMaya.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;clew.lib;Qt5Widgets.lib;Qt5Gui.lib;Qt5Core.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(MayaDir)/lib;$(ProjectDir)/../../build/lib/$(ConfigurationName);$(ProjectDir)/../../psd2m_psd_reader\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64 /export:initializePlugin /export:uninitializePlugin</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>$(ProjectDir)/../../build/lib/$(ConfigurationName)/$(TargetName).lib</ImportLibrary>
+      <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="$(ProjectDir)/../../psd2m_maya_plugin/src\interface\toolWidget.ui">
+      <Message>Generating ui_toolWidget.h, ui_toolWidget.cpp</Message>
+      <Command>setlocal
+"$(MayaDir)\bin\uic.exe" -o "$(ProjectDir)/ui_toolWidget.h" "$(SolutionDir)/../psd2m_maya_plugin/src/interface/toolWidget.ui"
+"$(MayaDir)\bin\moc.exe" -o "$(ProjectDir)/ui_toolWidget.h" "$(SolutionDir)/../psd2m_maya_plugin/src/interface/toolWidget.cpp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+      </Command>
+      <AdditionalInputs>%(AdditionalInputs)</AdditionalInputs>
+      <Outputs>$(ProjectDir)/ui_toolWidget.h</Outputs>
+      <LinkObjects>false</LinkObjects>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_Maya2017|x64'">setlocal
+"$(MayaDir)\bin\uic.exe" -o "$(ProjectDir)/ui_toolWidget.h" "$(SolutionDir)/../psd2m_maya_plugin/src/interface/toolWidget.ui"
+"$(MayaDir)\bin\moc.exe" -I "$(MayaDir)/include" -I "$ProjectDir)/../../psd2m_maya_plugin/src" -I. -DWIN32 -o "$(ProjectDir)/ui_toolWidget.cpp" "$(ProjectDir)/../../psd2m_maya_plugin/src/interface/toolWidget.h"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+      </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_Maya2018|x64'">setlocal
+"$(MayaDir)\bin\uic.exe" -o "$(ProjectDir)/ui_toolWidget.h" "$(SolutionDir)/../psd2m_maya_plugin/src/interface/toolWidget.ui"
+"$(MayaDir)\bin\moc.exe" -I "$(MayaDir)/include" -I "$ProjectDir)/../../psd2m_maya_plugin/src" -I. -DWIN32 -o "$(ProjectDir)/ui_toolWidget.cpp" "$(ProjectDir)/../../psd2m_maya_plugin/src/interface/toolWidget.h"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+      </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_Maya2019|x64'">setlocal
+"$(MayaDir)\bin\uic.exe" -o "$(ProjectDir)/ui_toolWidget.h" "$(SolutionDir)/../psd2m_maya_plugin/src/interface/toolWidget.ui"
+"$(MayaDir)\bin\moc.exe" -I "$(MayaDir)/include" -I "$ProjectDir)/../../psd2m_maya_plugin/src" -I. -DWIN32 -o "$(ProjectDir)/ui_toolWidget.cpp" "$(ProjectDir)/../../psd2m_maya_plugin/src/interface/toolWidget.h"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+      </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_Maya2017|x64'">setlocal
+"$(MayaDir)\bin\uic.exe" -o "$(ProjectDir)/ui_toolWidget.h" "$(SolutionDir)/../psd2m_maya_plugin/src/interface/toolWidget.ui"
+"$(MayaDir)\bin\moc.exe" -I "$(MayaDir)/include" -I "$ProjectDir)/../../psd2m_maya_plugin/src" -I. -DWIN32 -o "$(ProjectDir)/ui_toolWidget.cpp" "$(ProjectDir)/../../psd2m_maya_plugin/src/interface/toolWidget.h"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+      </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_Maya2018|x64'">setlocal
+"$(MayaDir)\bin\uic.exe" -o "$(ProjectDir)/ui_toolWidget.h" "$(SolutionDir)/../psd2m_maya_plugin/src/interface/toolWidget.ui"
+"$(MayaDir)\bin\moc.exe" -I "$(MayaDir)/include" -I "$ProjectDir)/../../psd2m_maya_plugin/src" -I. -DWIN32 -o "$(ProjectDir)/ui_toolWidget.cpp" "$(ProjectDir)/../../psd2m_maya_plugin/src/interface/toolWidget.h"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+      </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_Maya2019|x64'">setlocal
+"$(MayaDir)\bin\uic.exe" -o "$(ProjectDir)/ui_toolWidget.h" "$(SolutionDir)/../psd2m_maya_plugin/src/interface/toolWidget.ui"
+"$(MayaDir)\bin\moc.exe" -I "$(MayaDir)/include" -I "$ProjectDir)/../../psd2m_maya_plugin/src" -I. -DWIN32 -o "$(ProjectDir)/ui_toolWidget.cpp" "$(ProjectDir)/../../psd2m_maya_plugin/src/interface/toolWidget.h"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+      </Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\texture_exporter\lodepng.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\texture_exporter\textureExporter.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\maya_mesh\mayaMeshConvertor.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\maya_mesh\meshGeneratorController.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\maya_mesh\editorComponentGenerator.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\pluginController.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\mainWindowCmd.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\parameters.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\qtProgress.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\interface\toolWidget.cpp" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\texture_exporter\lodepng.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\texture_exporter\textureExporter.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\maya_mesh\mayaMeshConvertor.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\maya_mesh\meshGeneratorController.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\maya_mesh\editorComponentGenerator.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\IControllerUpdate.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\mayaUtils.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\pluginController.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\mainWindowCmd.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\parameters.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\qtProgress.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\interface\toolWidget.h" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\json\JSON.cpp" />
+    <ClCompile Include="$(ProjectDir)/../../psd2m_maya_plugin/src\json\JSONValue.cpp" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\json\JSON.h" />
+    <ClInclude Include="$(ProjectDir)/../../psd2m_maya_plugin/src\json\JSONValue.h" />
+    <ClInclude Include="$(ProjectDir)/ui_toolWidget.h" />
+    <ClCompile Include="$(ProjectDir)/ui_toolWidget.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)\psd2m_mesh_generator\psd2m_mesh_generator.vcxproj">
+      <Project>{3C876298-4D3C-3594-93D7-3B3FC90F22FD}</Project>
+      <Name>psd2m_mesh_generator</Name>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)\psd2m_psd_reader\psd2m_psd_reader.vcxproj">
+      <Project>{BCAB7B79-68C1-36B6-B671-F22301892B65}</Project>
+      <Name>psd2m_psd_reader</Name>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)\psd2m_util\psd2m_util.vcxproj">
+      <Project>{BA5D2FB7-F240-3811-B146-3E54B15917B9}</Project>
+      <Name>psd2m_util</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
