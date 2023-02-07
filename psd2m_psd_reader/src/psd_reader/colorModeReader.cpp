@@ -35,7 +35,7 @@ namespace psd_reader
 		// Get the length
 		unsigned char length[4];
 		fread(&length, sizeof(length), 1, pFile);
-		colorModeInfo.Length = Utils::Calculate(length, sizeof(colorModeInfo.Length));
+		colorModeInfo.Length = util::StringAsInt(length, sizeof(colorModeInfo.Length));
 		const std::string mess("[COLOR MODE DATA] Size " + std::to_string(colorModeInfo.Length));
 
 		std::cout << mess << std::endl;

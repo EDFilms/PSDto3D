@@ -1,0 +1,8 @@
+# ignore ALL Visual Studio user preference files
+*.vcxproj.user
+
+# ignore ALL Visual Studio cache directories
+.vs
+
+# ignore the Builds folder specifically
+/Builds

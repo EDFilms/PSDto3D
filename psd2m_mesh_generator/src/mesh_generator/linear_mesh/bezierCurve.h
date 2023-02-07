@@ -31,18 +31,28 @@ namespace mesh_generator
 	public:
 		BezierCurve();
 		~BezierCurve();
+		void Free();
 
-		const std::vector<Vector2F*>& GetCurve() const { return this->Curves; };
-		int GetCurveSize() const { return int(Curves.size()); };
-		void GenerateBezierCurve(PathRecord const& refPoint);
+		void CloneFrom( const BezierCurve& that );
+
+		const std::vector<PathPoints>& GetPaths() const { return this->Paths; }
+		const std::vector<Vector2F*>& GetCurves() const { return this->Curves; };
+		PathPoints GetPathPoints(int index) const { return this->Paths[index]; };
+		void SetPathPoints(int index, const PathPoints& points ) { this->Paths[index]=points; }
+		Vector2F GetPoint(int index) const { return *(this->Curves[index]); };
+		int GetPathSize() const { return int(Paths.size()); }; // TODO: rename to GetPathCount()
+		int GetCurveSize() const { return int(Curves.size()); }; // TODO: rename to GetPointCount()
+		void GenerateBezierCurve(PathRecord const& refPoint, Vector2F clampMin, Vector2F clampMax, bool createCurves=true);
+		void ClampCurvePoints( Vector2F min, Vector2F max );
 
 	private:
-		std::vector<Vector2F*> Curves;
+		std::vector<PathPoints> Paths; // original low-resolution control points
+		std::vector<Vector2F*> Curves; // generated high-resolution points on curve
 
 		static Vector2F* CalculateBezierPoint(float const& t, Vector2F const& p0, Vector2F const& p1, Vector2F const& p2, Vector2F const& p3);
 		Vector2F* CalculateBezierPoint(float const& t, PathPoints const& p0, PathPoints const& p1) const;
-		void GenerateBezierClosedCurve(std::vector<PathPoints*> const& refPoint);
-		void GenerateBezierOpenCurve(std::vector<PathPoints*> const& refPoint);
+		void GenerateBezierClosedCurve(std::vector<PathPoints*> const& refPoint, bool createCurves);
+		void GenerateBezierOpenCurve(std::vector<PathPoints*> const& refPoint, bool createCurves);
 	};
 }
 #endif // BEZIERCURVE_H

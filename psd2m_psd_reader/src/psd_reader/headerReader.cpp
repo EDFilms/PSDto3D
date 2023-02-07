@@ -39,9 +39,9 @@ namespace psd_reader
 
 		const auto itemsRead = int(fread(&header, sizeof(HEADER), 1, pFile));
 		if (!itemsRead) return success;
-		if (!util::Utils::CheckSignature(header.Signature, "8BPS")) return success;
+		if (!util::CheckSignature(header.Signature, "8BPS")) return success;
 
-		const int version = util::Utils::Calculate(header.Version, sizeof(header.Version));
+		const int version = util::StringAsInt(header.Version, sizeof(header.Version));
 		if (1 != version) return success;
 
 		for (char i : header.Reserved)
@@ -50,11 +50,11 @@ namespace psd_reader
 		}
 
 		success = true;
-		headerInfo.Channels = short(util::Utils::Calculate(header.Channels, sizeof(header.Channels)));
-		headerInfo.Height = util::Utils::Calculate(header.Rows, sizeof(header.Rows));
-		headerInfo.Width = util::Utils::Calculate(header.Columns, sizeof(header.Columns));
-		headerInfo.BitsPerPixel = short(util::Utils::Calculate(header.Depth, sizeof(header.Depth)));
-		headerInfo.ColourMode = short(util::Utils::Calculate(header.Mode, sizeof(header.Mode)));
+		headerInfo.Channels = short(util::StringAsInt(header.Channels, sizeof(header.Channels)));
+		headerInfo.Height = util::StringAsInt(header.Rows, sizeof(header.Rows));
+		headerInfo.Width = util::StringAsInt(header.Columns, sizeof(header.Columns));
+		headerInfo.BitsPerPixel = short(util::StringAsInt(header.Depth, sizeof(header.Depth)));
+		headerInfo.ColourMode = short(util::StringAsInt(header.Mode, sizeof(header.Mode)));
 		return success;
 	}
 }

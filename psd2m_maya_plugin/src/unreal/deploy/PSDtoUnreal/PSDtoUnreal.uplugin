@@ -1,0 +1,25 @@
+{
+    "FileVersion" : 3,
+    "Version" : 1,
+    "VersionName" : "1.0",
+    "FriendlyName" : "PSDtoUnreal",
+    "Description" : "PSD to 3D Plugin for Unreal Engine",
+    "Category" : "Editor",
+    "CreatedBy" : "E.D. Films, Inc.",
+    "CreatedByURL" : "http://edfilms.net",
+    "DocsURL" : "",
+    "MarketplaceURL" : "",
+    "SupportURL" : "",
+    "EnabledByDefault" : true,
+    "CanContainContent" : false,
+    "IsBetaVersion" : false,
+    "Installed" : false,
+    "Modules" :
+    [
+        {
+            "Name" : "PSDtoUnreal",
+            "Type" : "Editor",
+            "LoadingPhase" : "Default"
+        }
+    ]
+}

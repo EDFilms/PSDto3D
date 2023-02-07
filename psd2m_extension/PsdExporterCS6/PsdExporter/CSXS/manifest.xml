@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ExtensionManifest Version="3.0" ExtensionBundleId="com.EDFilms.PsdExporter" ExtensionBundleVersion="0.1.0"
+		ExtensionBundleName="PsdExporter">
+	<ExtensionList>
+		<Extension Id="com.EDFilms.PsdExporter.extension_1" Version="3.0" />
+	</ExtensionList>
+	<ExecutionEnvironment>
+		<HostList>
+			<Host Name="PHSP" Version="[8.0,99.9]" />
+			<Host Name="PHXS" Version="[8.0,99.9]" />
+		</HostList>
+		<LocaleList>
+			<Locale Code="All" />
+		</LocaleList>
+		<RequiredRuntimeList>
+			<RequiredRuntime Name="CSXS" Version="3.0" />
+
+		</RequiredRuntimeList>
+	</ExecutionEnvironment>
+	<DispatchInfoList>
+		<Extension Id="com.EDFilms.PsdExporter.extension_1">
+			<DispatchInfo >
+				<Resources>
+				<MainPath>./index.html</MainPath>
+				<ScriptPath>./PsdExporter.jsx</ScriptPath>
+				</Resources>
+				<Lifecycle>
+					<AutoVisible>true</AutoVisible>
+				</Lifecycle>
+				<UI>
+					<Type>Panel</Type>
+					<Menu>PsdExporter</Menu>
+					<Geometry>
+						<MinSize>
+					        <Height>200</Height>
+					        <Width>300</Width>
+					   	</MinSize>
+					</Geometry>
+				</UI>
+			</DispatchInfo>
+		</Extension>
+	</DispatchInfoList>
+</ExtensionManifest>

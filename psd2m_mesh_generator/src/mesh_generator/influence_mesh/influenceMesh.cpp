@@ -35,12 +35,12 @@ namespace mesh_generator
 	{
 		// Mesh data
 		std::vector<Vector2F> vertices = mesh.GetVertices();
-		std::vector<int> faceIndices = mesh.GetFacesIndices();
+		std::vector<int> faceVerts = mesh.GetFaceVerts();
 
 		// Create Queue that will be processed
 		std::queue<MeshFace> toProcess;
-		auto faceIt = faceIndices.cbegin();
-		for (auto facesCount : mesh.GetFacesCount())
+		auto faceIt = faceVerts.cbegin();
+		for (auto facesCount : mesh.GetFaceSizes())
 		{
 			MeshFace face = MeshFace(faceIt, faceIt + facesCount);
 			face.SetShouldSubdivide(vertices, influenceLayer, params.MinPolygonSize, params.MaxPolygonSize);

@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Rsrc-Class-Path: ./ ucf.jar
+Class-Path: .
+Rsrc-Main-Class: com.adobe.ucf.UCF
+Main-Class: org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader
+

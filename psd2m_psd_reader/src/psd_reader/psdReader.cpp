@@ -16,6 +16,8 @@
 
 
 #include "psdReader.h"
+#include "util\utils.h"
+
 
 namespace psd_reader
 {
@@ -23,13 +25,12 @@ namespace psd_reader
 #pragma region CONSRUCTOR
 
 	//----------------------------------------------------------------------------------------
-	PsdReader::PsdReader(std::string const& pathFile)
+	PsdReader::PsdReader(const char* filename_utf8)
 	{
-		const char* cstrFileName(pathFile.c_str());
-		if (!DoesFileExist(cstrFileName))
+		if (!DoesFileExist(filename_utf8))
 			return;
 
-		this->File = _fsopen(cstrFileName, "rb", _SH_DENYWR);
+		this->File = _wfsopen( util::to_utf16(filename_utf8).c_str(), L"rb", _SH_DENYWR);
 	}
 
 	//----------------------------------------------------------------------------------------
@@ -38,16 +39,15 @@ namespace psd_reader
 #pragma endregion 
 
 	//----------------------------------------------------------------------------------------
-	void PsdReader::SetProgress(std::function<void(unsigned)> & initializeProgress, std::function<void(unsigned)>& initializeSubProgress
-		, std::function<void()> & incrementProgress, std::function<void()> & completeSubProgress)
+	void PsdReader::SetProgress(util::ProgressJob* progressJob)
 	{
-		this->ProgressData = PsdProgress(initializeProgress, initializeSubProgress, incrementProgress, completeSubProgress);
+		this->ProgressJob = progressJob;
 	}
 
 	//----------------------------------------------------------------------------------------
-	bool PsdReader::DoesFileExist(const char *filename)
+	bool PsdReader::DoesFileExist(const char *filename_utf8)
 	{
-		std::ifstream file(filename);
+		std::ifstream file( util::to_utf16(filename_utf8) );
 		const auto fileExist = file.good();
 		std::cout << (fileExist ? "[PARSING PATH] It is a valid Path." : "[PARSING PATH] It is not a valid Path.") << std::endl;
 		return fileExist;
@@ -71,10 +71,10 @@ namespace psd_reader
 	{
 		if (this->File == nullptr) return;
 
-		if (!LoadHeader(data)) return;
-		if (!LoadColorModeData(data)) return;
-		if (!LoadImageResource(data)) return;
-		if (!LoadLayerAndMask(data)) return;
+		if( (!LoadHeader(data))         ||  (this->ProgressJob->IsCancelled()) ) return;
+		if( (!LoadColorModeData(data))  ||  (this->ProgressJob->IsCancelled()) ) return;
+		if( (!LoadImageResource(data))  ||  (this->ProgressJob->IsCancelled()) ) return;
+		if( (!LoadLayerAndMask(data))   ||  (this->ProgressJob->IsCancelled()) ) return;
 		// Use to read the complete merged/composite image
 		// Not implemented
 		//if (!LoadImageData(data)) return;
@@ -146,7 +146,7 @@ namespace psd_reader
 		bool success;	// No errors
 		try
 		{
-			success = LayerAndMaskReader::Read(this->File, data.HeaderData, data.LayerMaskData, this->ProgressData);
+			success = LayerAndMaskReader::Read(this->File, data.HeaderData, data.LayerMaskData, *(this->ProgressJob));
 			if (!success)
 			{
 				std::cout << "[PARSING LAYER AND MASK] Error parsing Layer Mask data" << std::endl;

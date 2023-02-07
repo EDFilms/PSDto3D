@@ -17,89 +17,216 @@
 #ifndef PARAMETERS_H
 #define PARAMETERS_H
 
-#include <vector>
-#include "ui_toolWidget.h"
-#include <maya/MQtUtil.h>
-#include "psd_reader/psdReader.h"
-#include "mesh_generator/curve_mesh/curveMeshGenerator.h"
-#include "mesh_generator/influence_mesh/influenceMesh.h"
-#include "mesh_generator/linear_mesh/linearMesh.h"
-#include "json/JSON.h"
+#include "mesh_generator/curve_mesh/curveMeshGenerator.h"	// for CurveParameters
+#include "mesh_generator/influence_mesh/influenceMesh.h"	// for InfluenceParameters
+#include "mesh_generator/linear_mesh/linearMesh.h"			// for BillboardMeshParameters, LinearMeshParameters
+#include "mesh_generator/delaunay_mesh/delaunayMesh.h"		// for DelaunayMeshParameters
+#include "util/helpers.h"
+#include "util/bounds_2D.h"
 
-namespace maya_plugin
+typedef unsigned long ULONG; // TODO: Remove this; with older Maya vesions, and with Visual Studio 2017 toolset, Qt headers depend on windows.h or require this
+#include <QString.h>
+#include <set>
+
+class QString;					// forward declaration
+class QFrame;					// forward declaration
+class QLabel;					// forward declaration
+
+namespace psd_reader
 {
+	struct PsdData;				// forward declaration
+	struct LayerData;			// forward declaration
+}
+
+namespace psd_to_3d
+{
+	struct GlobalParameters;	// forward declaration
+	class SceneController;		// forward declaration
+	using util::boundsPixels;
+
+
+	//----------------------------------------------------------------------------------------------
 	struct LayerParameters
 	{
 		enum Algorithm
 		{
 			LINEAR,
-			CURVE
+			DELAUNAY,
+			CURVE,
+			BILLBOARD
 		};
 
-		bool IsActive = true;
-		Algorithm Algo = Algorithm::LINEAR;
+		// User parameters
+		Algorithm Algo = BILLBOARD;
+		int AtlasIndex = -1; // texture atlas group index, -1 if no atlas
+		bool EnableTextureCrop = true; // texture output cropping, if not using an atlas
+		bool EnableInfluence = true;
 
-		QLabel* LabelAlgoSelected;
-		QLabel* LabelInfluence;
-		QLabel* LabelDescription;
-		mesh_generator::LinearParameters LinearParameters;
+		// Algorithm Parameters
+		mesh_generator::BillboardMeshParameters BillboardParameters;
+		mesh_generator::LinearMeshParameters LinearParameters;
+		mesh_generator::DelaunayMeshParameters DelaunayParameters;
 		mesh_generator::CurveParameters CurveParameters;
 		mesh_generator::InfluenceParameters InfluenceParameters;
 
-		// Influence Parameters
+		// Setup flags, layer contents and geometry
+		QString LayerName; // name of layer in psd file
+		boundsPixels AnchorRegion; // layer anchor, copied from psd file
+		int DepthIndex = 0;
 		bool HasInfluenceLayer = false;
-		bool InfluenceActivated = true;
-		bool HasVectorMask = false;
-		bool HasGlobalPath = false;
+		bool HasVectorSupport = false;   // has vector mask, for vector mode
+		bool HasLinearSupport = false;   // has path object, for linear mode
+		bool HasDelaunaySupport = false; // has path object, for delaunay mode (same as HasLinearSupport)
 
-		void SetInfluenceLayer(psd_reader::PsdData const& psdData, psd_reader::LayerData const& layer)
-		{
-			this->HasInfluenceLayer = psdData.LayerMaskData.GetIndexInfluenceLayer(layer.LayerName) != -1;
-			this->HasGlobalPath = psdData.ImageResourceData.IsPathExist(layer.LayerName);
-			this->HasVectorMask = !layer.PathRecords.empty();
-		}
+		// Status flags, for UI display
+		// true if layer properties were modified since the last export
+		bool IsModifiedMesh = false;
+		bool IsModifiedTexture = false;
+		bool IsFailedMesh = false;
+		bool IsActive = true;
 
-		void UpdateDescription() const;
+		// User Interface - Controls related to this layer
+		QFrame* ListFrame;
+		QLabel* LabelLayerTitle;
+		QLabel* LabelAlgoSelected;
+		QLabel* LabelLayerSize;
+		QLabel* LabelAtlasName; // texture atlas group name
+		QLabel* LabelAtlasSize;
+		QLabel* LabelInfluence;
+		QLabel* LabelDescription;
+
+		LayerParameters() = default; // should not be used, make this private to verify
+		LayerParameters( const QString& layerName );
+		LayerParameters( const LayerParameters& that ) = default;
+		~LayerParameters() = default;
+
+		void SetInfluenceLayer(psd_reader::PsdData const& psdData, psd_reader::LayerData const& layer);
+		void ClearWidgets();
 	};
 
-	struct GlobalParameters
+
+	//----------------------------------------------------------------------------------------------
+	// Layer display information, for the UI
+	struct LayerStats
 	{
-		// State modification
-		bool Generate = false;
-		bool Exportation = false;
+		bool isAlgoSupported;
+		bool isLayerReady;
+		bool isAtlasReady;
+		boundsPixels layerBounds;
+		boundsPixels atlasBounds; // actual size of atlas, scaled down or padded up from fit size
+		boundsPixels atlasBoundsFit; // raw fit size of atlas packing
+	};
 
-		bool Exported = false;
-		bool Generated = false;
-		bool SelectionChanged = false;
 
-		QString PsdName = "";
-		QString FilePath = "";
+	//----------------------------------------------------------------------------------------------
+	struct AtlasParameters
+	{
+		bool isModifiedTexture;
+		bool isCustomSize;
+		QString atlasName;
+		int customSize;
+		int customPadding;
+		int packingAlgo; // from rbp::MaxRectsBinPack::FreeRectChoiceHeuristic
+		std::set<int> layerIndices;
 
-		// Settings
-		float Depth = 0;
-		float Scale = 1;
-		bool KeepGroupStructure = true;
-		QString AliasPsdName = "";
-
-		// Layer Management
-		void UpdateLayers(psd_reader::PsdData const& psdData);
-		LayerParameters* GetLayerParameter(std::string const& name);
-		std::vector<LayerParameters*> GetAllParameters();
-		void ClearLayerParameters();
-
-		// Json Serialization
-		void UpdateValuesFromJson();
-		void WriteValuesToJson();
+		AtlasParameters( const QString& atlasName )
+		: isModifiedTexture(false), isCustomSize(false), atlasName(atlasName),
+		  customSize(1024), customPadding(2), packingAlgo(3)
+		{}
+		~AtlasParameters() = default;
+		bool IsMatch( const AtlasParameters& that ) const;
 
 	private:
-		std::map<std::string, LayerParameters*> NameLayerMap;
-
-		void SetDefaultValues();
-		void DeserializeContents(JSONObject& root);
-		JSONValue* SerializeContents();
-
-		static std::wstring StringToWString(const std::string& str);
-		static std::string WStringToString(const std::wstring& str);
+		AtlasParameters(); // not implemented, prevent default construction
 	};
+
+
+	//----------------------------------------------------------------------------------------------
+	struct PreferenceParameters
+    {
+		QString FileImportPath = "";
+		QString FileExportPath = "";
+		// slider control variables; the internal parameter values corresponding to slider at 0, 50 and 100
+		double DelaunayInnerDetailLo = 0.2000f, DelaunayInnerDetailMid = 0.0150f, DelaunayInnerDetailHi = 0.001f;
+		double DelaunayOuterDetailLo = 0.2000f, DelaunayOuterDetailMid = 0.0150f, DelaunayOuterDetailHi = 0.001f;
+		double DelaunayFalloffDetailLo = 1.00f, DelaunayFalloffDetailMid = 1.40f, DelaunayFalloffDetailHi = 2.00f;
+
+        void Reset();
+		void Store();
+		void Fetch();
+    };
+
+
+	//----------------------------------------------------------------------------------------------
+	struct GlobalParameters
+	{
+		GlobalParameters() = default;
+		~GlobalParameters() = default;
+
+		enum FileWriteMode // For PSDtoFBX
+		{
+			BINARY,
+			ASCII
+		};
+
+		enum FileWriteLayout // For PSDtoFBX
+		{
+			SINGLE,				// combined FBX file for entire scene
+			MULTI_PER_TEXTURE,	// separate FBX file per texture atlas
+			MULTI_PER_LAYER		// separate FBX file per PSD layer
+		};
+
+		// Settings, user visible
+		int TextureProxy = 1; // 1 for full size, 2 for half size, 4 for quarter size, 8 for eighth size
+		float Depth = 0;
+		float Scale = 1.0f;
+		bool KeepGroupStructure = false;
+		QString AliasPsdName = ""; // name of the root object or group in the exported file
+		FileWriteMode FileWriteMode = FileWriteMode::BINARY;
+		FileWriteLayout FileWriteLayout = FileWriteLayout::SINGLE;
+
+		// Settings, non-user visible
+		const int Padding = 5; // pixels of padding around images (atlas islands use setting in AtlasParams)
+		const int Defringe = 4; // pixels of defringe around opaque regions of images
+
+		QString PsdName = ""; // import filename without extension
+		QString FileImportFilename = ""; // import filename with extension
+		QString FileImportPath = ""; // import drive and path
+		QString FileImportFilepath() { return FileImportPath + "/" + FileImportFilename; }
+		QString FileExportPath = ""; // export drive and path
+		QString FileExportName = ""; // export filename without extention, also filename prefix for export
+		QString FileExportExt = ""; // export file extention
+
+		// Preferences
+		PreferenceParameters Prefs;
+
+		void Reset(); // set default values
+		void Fetch();
+	};
+
+
+	//----------------------------------------------------------------------------------------------
+	struct LicensingParameters
+    {
+		QString UserInfoFirstName = "";
+		QString UserInfoLastName = "";
+		QString UserInfoEmail = "";
+		QString LicenseKey = "";
+
+        void Reset();
+		void Store();
+		void Fetch();
+    };
+
+	//----------------------------------------------------------------------------------------------
+	struct ConfParameters
+	{
+		int language;
+		enum { english, french };
+
+        void Reset();
+		void Fetch();
+	};
+
 }
 #endif // PARAMETERS_H

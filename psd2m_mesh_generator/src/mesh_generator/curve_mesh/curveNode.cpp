@@ -82,7 +82,8 @@ namespace mesh_generator
 		{
 			Vector2F n1 = this->Vertex;
 			Vector2F n2 = neighbour->Vertex;
-			if (Vector2F::AreSimilar(n1, n2, distance))
+			if( ((distance==0.0f) && (n1==n2)) ||
+			    ((distance!=0.0f) && Vector2F::AreSimilar(n1, n2, distance)) )
 			{
 				toRemove.push_back(neighbour);
 			}

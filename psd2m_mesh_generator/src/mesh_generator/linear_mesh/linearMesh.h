@@ -19,19 +19,31 @@
 
 #include <utility>
 #include <vector>
+#include <set>
 #include "util/math_2D.h"
+#include "util/bounds_2D.h"
+#include "util/progressJob.h"
 #include "bezierCurve.h"
-#include "boundingBox.h"
 #include "../dataMesh.h"
 
 using namespace util;
 
 namespace mesh_generator
 {
-	struct LinearParameters
+	struct BillboardMeshParameters
+	{
+		int BillboardAlphaThresh = 4;
+
+		bool operator==(const BillboardMeshParameters& that) const { return (this->BillboardAlphaThresh==that.BillboardAlphaThresh); }
+		bool operator!=(const BillboardMeshParameters& that) const { return !(this->operator==(that)); }
+	};
+
+	struct LinearMeshParameters
 	{
 		int LinearHeightPoly = 10;
-		float GridOrientation = 0.0f;
+
+		bool operator==(const LinearMeshParameters& that) const { return (this->LinearHeightPoly==that.LinearHeightPoly); }
+		bool operator!=(const LinearMeshParameters& that) const { return !(this->operator==(that)); }
 	};
 
 	//----------------------------------------------------------------------------------------------
@@ -51,20 +63,38 @@ namespace mesh_generator
 		int IndexToRemove = -1;
 		bool IsIncluded = false;
 		bool SideSplit[4] = { false, false, false, false }; // top, right, bottom, left;
+		std::set<Vector2F> curvePoints; // points contained by poly, not in original order
 
+		bool ContainsPoint( const Vector2F& p ); // if point is bounded by the poly
+		// Searches the curve, adding points bounded by the poly to the curvePoints list
+		// Walks using the given index and direction, stops when outside the poly bounds
+		void AddCurvePoints( const BezierCurve& curve, int indexStart, int indexDir );
+		Vector2F FitVertexToCurvePoints( int index ); // tucks in vertex to fit the curve
 		std::vector<int> GetVertexIndexes();
 	};
 
-	struct GlobalParameters
+	struct BillboardMeshAlgoParameters
+	{
+		BillboardMeshAlgoParameters( const BillboardMeshParameters& params ) : Parameters(params) {}
+		int GetAlphaThresh() const
+		{
+			return this->Parameters.BillboardAlphaThresh;
+		}
+	private:
+		BillboardMeshParameters Parameters;
+	};
+
+	struct LinearMeshAlgoParameters
 	{
 	public:
 		int RowCount = 0;
 		int ColumnCount = 0;
 		float Precision = 0.f;
 		Vector2F VectNormalH, VectNormalV = Vector2F();
+		Vector2F VectSpacerH, VectSpacerV = Vector2F();
 		Vector2F GeneratedTopLeft, GeneratedTopRight, GeneratedBottomRight, GeneratedBottomLeft = Vector2F();
 
-		GlobalParameters(std::string name, LinearParameters const& params) : Name(std::move(name)), Parameters(params){}
+		LinearMeshAlgoParameters(std::string name, const LinearMeshParameters& params) : Name(std::move(name)), Parameters(params){}
 
 		std::string GetName() const { return this->Name; }
 		float GetPrecision() const
@@ -74,24 +104,27 @@ namespace mesh_generator
 
 	private:
 		std::string Name;
-		LinearParameters Parameters;
+		LinearMeshParameters Parameters;
 	};
 
 	//----------------------------------------------------------------------------------------------
 	class LinearMesh
 	{
 	public:
-		static DataMesh GenerateMesh(std::string const& name, LinearParameters const& params, boundingBox& bounds, std::vector<BezierCurve*> curves);
+		static DataMesh GenerateMesh(const std::string& name, const LinearMeshParameters& params,
+			boundsUV& bounds, const std::vector<BezierCurve*>& curves, int width, int height, ProgressTask& progressTask);
+		static DataSpline GenerateSpline(const std::string& name, const LinearMeshParameters& params,
+			boundsUV& bounds, const std::vector<BezierCurve*>& curves, int width, int height, ProgressTask& progressTask);
 
 	private:
-		static MeshVertex** GenerateGrid(boundingBox & bounds, GlobalParameters* paramsGeneration);
-		static std::vector<MeshPoly*> FilterGrid(MeshVertex ** initialGrid, const std::vector<BezierCurve*>& curves, boundingBox & bounds, GlobalParameters* paramsGeneration);
-		static void IdentificationContourPoly(MeshPoly ** polys, BezierCurve const & curve, boundingBox & bounds, GlobalParameters* paramsGeneration);
-		static void CleanAloneSplit(MeshPoly ** polys, GlobalParameters* paramsGeneration);
-		static std::vector<MeshPoly*> BuildPolyMesh(MeshPoly ** polys, GlobalParameters* paramsGeneration);
-		static DataMesh BuildDataMesh(MeshVertex** grid, std::vector<MeshPoly*> polys, GlobalParameters* paramsGeneration);
+		static MeshVertex** GenerateGrid(boundsUV & bounds, LinearMeshAlgoParameters* paramsGeneration);
+		static std::vector<MeshPoly*> FilterGrid(MeshVertex ** initialGrid, const std::vector<BezierCurve*>& curves, boundsUV & bounds, LinearMeshAlgoParameters* paramsGeneration);
+		static void IdentificationContourPoly(MeshPoly ** polys, BezierCurve const & curve, boundsUV & bounds, LinearMeshAlgoParameters* paramsGeneration);
+		static void CleanAloneSplit(MeshPoly ** polys, LinearMeshAlgoParameters* paramsGeneration);
+		static std::vector<MeshPoly*> BuildPolyMesh(MeshPoly ** polys, LinearMeshAlgoParameters* paramsGeneration);
+		static DataMesh BuildDataMesh(MeshVertex** grid, std::vector<MeshPoly*> polys, LinearMeshAlgoParameters* paramsGeneration, int width, int height);
 		static Vector2F GetCenterSegment(Vector2F pos1, Vector2F pos2);
-		static void FixEdgeCaseThreeAndFiveVertice(MeshPoly ** polys, int row, int column, bool isSelected, bool isSelectedInversed);
+		static void FixEdgeCaseThreeAndFiveVertice(MeshPoly ** polys, int row, int column, bool isSelected, bool isSelectedInversed, LinearMeshAlgoParameters* paramsGeneration);
 
 	};
 }

@@ -118,7 +118,7 @@ namespace psd_reader
 			{
 				fread(&byteValue, sizeof(byteValue), 1, file);
 
-				int len = util::Utils::Calculate(byteValue, sizeof(byteValue));
+				int len = util::StringAsInt(byteValue, sizeof(byteValue));
 				if (128 > len)
 				{
 					len++;
@@ -128,7 +128,7 @@ namespace psd_reader
 					{
 						fread(&byteValue, sizeof(byteValue), 1, file);
 
-						value = util::Utils::Calculate(byteValue, sizeof(byteValue));
+						value = util::StringAsInt(byteValue, sizeof(byteValue));
 
 						*p = value;
 						p += sizeof(byteValue);
@@ -143,7 +143,7 @@ namespace psd_reader
 					len += 2;
 					fread(&byteValue, sizeof(byteValue), 1, file);
 
-					value = util::Utils::Calculate(byteValue, sizeof(byteValue));
+					value = util::StringAsInt(byteValue, sizeof(byteValue));
 
 					count += len;
 

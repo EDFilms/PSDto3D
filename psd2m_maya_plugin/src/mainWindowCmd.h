@@ -17,59 +17,100 @@
 #ifndef mainWindowCmd_h
 #define mainWindowCmd_h
 
+#if defined PSDTO3D_MAYA_VERSION
+#include "maya_mesh/mayaMeshConvertor.h"
 #include <maya/MArgList.h>
 #include <maya/MPxCommand.h>
+#else
+#include "mayaStub.h"
+#endif
 
-#include "pluginController.h"
-#include "interface/toolWidget.h"
-#include "maya_mesh/meshGeneratorController.h"
+#include "IControllerUpdate.h" // rename to IPluginController.h
+#include "IPluginOutput.h"
+#include "interface/licensingWidget.h"
 
-namespace maya_plugin
+namespace psd_to_3d
 {
+	class ToolWidget; // forward declaration
+
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	class Psd23DPlugin
+	class PluginContext : public LicensingWidget::LicensingCallback
 	{
 	public:
 
-		static Psd23DPlugin& getInstance()
+		static PluginContext& getInstance()
 		{
-			static Psd23DPlugin Instance;
+			static PluginContext Instance;
 			return Instance;
 		}
 
-		Psd23DPlugin(Psd23DPlugin const&) = delete;
-		void operator=(Psd23DPlugin const&) = delete;
+		PluginContext(PluginContext const&) = delete;
+		void operator=(PluginContext const&) = delete;
+		const ConfParameters* GetConfParams() const { return &ConfParams; }
+		const ToolWidget* GetToolWidget() const { return GuiTool; }
+		ToolWidget* GetToolWidget() { return GuiTool; }
+		const IPluginController* GetPluginController() const { return Controller; }
+		IPluginController* GetPluginController() { return Controller; }
+		// TODO: Add IPluginInput, which takes a path and returns a PsdData
+		IPluginOutput* GetPluginOutput() { return Output; }
+		void SetPluginOutput(IPluginOutput* output) { this->Output = output; }
 
+		void InitSafe(); // safe to call repeatedly
+		void Free();
+        void OnActivateLicense( LicensingParameters& data ); // from LicensingWidget::LicensingCallback
 		void OpenGuiWindow();
-		bool IsHidden();
+		bool IsLicensingHidden();
+		bool IsGuiHidden();
 		void CloseGuiWindow(); 
 		void RaiseGuiWindow();
 
+		// Run the plugin
+		void doIt();
+
 	private:
 
-		Psd23DPlugin()
+		PluginContext()
 		{
-			this->GuiPsdMaya = new ToolWidget();
-			this->Plugin = new PluginController(this->GuiPsdMaya);
-			this->GuiPsdMaya->AddController(this->Plugin);
+			Zero();
+			// Members instantiated in InitSafe()
 		}
 
-		~Psd23DPlugin()
+		~PluginContext()
 		{
-			this->GuiPsdMaya->close();
-			delete this->Plugin;
-			delete this->GuiPsdMaya;
-		} 
+			Free();
+		}
+
+		void Zero()
+		{
+			this->GuiLicensing = nullptr;
+			this->GuiTool = nullptr;
+			this->Controller = nullptr;
+			this->Output = nullptr;
+		}
+
+        bool LicenseCheck();
 		
-		ToolWidget* GuiPsdMaya;
-		PluginController* Plugin;
+		ConfParameters ConfParams;
+		LicensingWidget* GuiLicensing;
+		ToolWidget* GuiTool;
+		IPluginController* Controller;
+		IPluginOutput* Output;
 	};
+
+}
+
+namespace maya_plugin
+{
+	using namespace psd_to_3d;
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	class MainWindowCmd: MPxCommand
 	{
 	public:
 
+#if defined PSDTO3D_MAYA_VERSION
+		static MayaPluginOutput mayaPluginOutput;
+#endif
 		static MString MENU_NAME;
 		static const MString COMMAND_NAME;
 		static const MString MENU_COMMAND_OPEN;
@@ -78,10 +119,13 @@ namespace maya_plugin
 		MainWindowCmd() = default;
 		~MainWindowCmd() = default;
 
-		static void* Creator() 
+		static void* CreateInstance() 
 		{
-			return new MainWindowCmd(); 
+			// NOTE: This must NOT be a singleton, it will be deleted by Maya
+			return new MainWindowCmd();
 		}
+
+		// Run the plugin
 		MStatus doIt(const MArgList& args) override;
 	};
 }

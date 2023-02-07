@@ -60,7 +60,7 @@ namespace psd_reader
 		// Get length
 		unsigned char length[4];
 		fread(&length, sizeof(length), 1, file);
-		imageResource.Length = util::Utils::Calculate(length, sizeof(imageResource.Length));
+		imageResource.Length = util::StringAsInt(length, sizeof(imageResource.Length));
 
 		// start the reading
 		int bytesRead = 0;
@@ -90,7 +90,7 @@ namespace psd_reader
 		unsigned char ID[2];
 		fread(&ID, sizeof(ID), 1, file);
 		bytesRead += sizeof(ID);
-		short id = (short)util::Utils::Calculate(ID, sizeof(ID));
+		short id = (short)util::StringAsInt(ID, sizeof(ID));
 
 		// Read Name
 		unsigned char sizeReaded;
@@ -98,7 +98,7 @@ namespace psd_reader
 		bytesRead += sizeof(sizeReaded);
 
 		// Pascal string, padded to make the size even (a null name consists of two bytes of 0)
-		int elementSize = util::Utils::Calculate(&sizeReaded, sizeof(sizeReaded));
+		int elementSize = util::StringAsInt(&sizeReaded, sizeof(sizeReaded));
 		if( 0 < elementSize)
 		{ 
 			name = new char[elementSize];
@@ -116,19 +116,18 @@ namespace psd_reader
 		unsigned char Size[4];
 		fread(&Size, sizeof(Size), 1, file);
 		bytesRead += sizeof(Size);
-		int size = util::Utils::Calculate(Size, sizeof(size));
+		int size = util::StringAsInt(Size, sizeof(size));
 		if (size == 0) return true;
 		size += size % 2;
 
 		// Continue if OSType == "8BIM"
-		if (!util::Utils::CheckSignature(osType, "8BIM")) return success;
+		if (!util::CheckSignature(osType, "8BIM")) return success;
 		
 		// Read the specific Image Resource IDs
 		if (id >= 2000 && id <= 2997 /*|| id == 2999 || id == 1025*/)
 		{
 			ResourceBlockPath resourcebp;
 			std::string vectorName = std::string(name, elementSize);
-			std::replace(vectorName.begin(), vectorName.end(), ' ', '_');
 			resourcebp.Name = vectorName;
 			ReadPaths(file, resourcebp, size, bytesRead);
 			imageResource.ResourceBlockPaths.push_back(resourcebp);
@@ -150,6 +149,7 @@ namespace psd_reader
 	}
 
 	//----------------------------------------------------------------------------------------
+	// TODO: Duplicate code from LayerAndMaskReader::ReadPaths()
 	bool ImageResourceReader::ReadPaths(FILE* file, ResourceBlockPath & resourceBlockPath, int sizeBlock, int& bytesRead)
 	{
 		unsigned char selectorData[2];
@@ -161,13 +161,15 @@ namespace psd_reader
 		{
 			fread(selectorData, sizeof(selectorData), 1, file);
 			bytesRead += sizeof(selectorData);
-			const auto selector = short(Utils::Calculate(selectorData, sizeof(selectorData)));
+			const auto selector = short(util::StringAsInt(selectorData, sizeof(selectorData)));
 			switch (selector)
 			{
 			case 0:
 			case 3:
 			{
-				if (!pathRecord.Points.empty() && !(pathRecord.IsClosedPath && pathRecord.Points.size() <= 2))
+				// Disregard paths containing only a single point or no points, and
+				// disregard paths claiming to be closed paths but with only two points
+				if( (pathRecord.Points.size() >= 2) && !(pathRecord.IsClosedPath && (pathRecord.Points.size()==2)) )
 				{
 					resourceBlockPath.PathRecords.push_back(pathRecord);
 				}
@@ -199,7 +201,7 @@ namespace psd_reader
 			}
 			}
 		}
-		if (!pathRecord.Points.empty() && !(pathRecord.IsClosedPath && pathRecord.Points.size() <= 2))
+		if (!pathRecord.Points.empty() && !(pathRecord.IsClosedPath && pathRecord.Points.size() < 2))
 		{
 			resourceBlockPath.PathRecords.push_back(pathRecord);
 		}
@@ -214,27 +216,27 @@ namespace psd_reader
 
 		fread(&shortValue, sizeof(shortValue), 1, file);
 		bytesRead += sizeof(shortValue);
-		imageResource.ResolutionInfo.HRes = short(Utils::Calculate(shortValue, sizeof(imageResource.ResolutionInfo.HRes)));
+		imageResource.ResolutionInfo.HRes = short(util::StringAsInt(shortValue, sizeof(imageResource.ResolutionInfo.HRes)));
 
 		fread(&intValue, sizeof(intValue), 1, file);
 		bytesRead += sizeof(intValue);
-		imageResource.ResolutionInfo.HResUnit = Utils::Calculate(intValue, sizeof(imageResource.ResolutionInfo.HResUnit));
+		imageResource.ResolutionInfo.HResUnit = util::StringAsInt(intValue, sizeof(imageResource.ResolutionInfo.HResUnit));
 
 		fread(&shortValue, sizeof(shortValue), 1, file);
 		bytesRead += sizeof(shortValue);
-		imageResource.ResolutionInfo.WidthUnit = short(Utils::Calculate(shortValue, sizeof(imageResource.ResolutionInfo.WidthUnit)));
+		imageResource.ResolutionInfo.WidthUnit = short(util::StringAsInt(shortValue, sizeof(imageResource.ResolutionInfo.WidthUnit)));
 
 		fread(&shortValue, sizeof(shortValue), 1, file);
 		bytesRead += sizeof(shortValue);
-		imageResource.ResolutionInfo.VRes = short(Utils::Calculate(shortValue, sizeof(imageResource.ResolutionInfo.VRes)));
+		imageResource.ResolutionInfo.VRes = short(util::StringAsInt(shortValue, sizeof(imageResource.ResolutionInfo.VRes)));
 
 		fread(&intValue, sizeof(intValue), 1, file);
 		bytesRead += sizeof(intValue);
-		imageResource.ResolutionInfo.VResUnit = Utils::Calculate(intValue, sizeof(imageResource.ResolutionInfo.VResUnit));
+		imageResource.ResolutionInfo.VResUnit = util::StringAsInt(intValue, sizeof(imageResource.ResolutionInfo.VResUnit));
 
 		fread(&shortValue, sizeof(shortValue), 1, file);
 		bytesRead += sizeof(shortValue);
-		imageResource.ResolutionInfo.HeightUnit = short(Utils::Calculate(shortValue, sizeof(imageResource.ResolutionInfo.HeightUnit)));
+		imageResource.ResolutionInfo.HeightUnit = short(util::StringAsInt(shortValue, sizeof(imageResource.ResolutionInfo.HeightUnit)));
 
 		return true;
 	}

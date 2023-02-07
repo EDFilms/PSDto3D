@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 
 
+## [Build 070, PSDtoUnreal]
+
+Added support for Unreal 5.1.0
+For early design discussion only; not intended for production use.
+No license required.
+
+### Installation
+
+- Ensure you have Unreal 5.1.0 installed ... From the Epic games launcher -> Library tab -> Yellow "+" button -> Dropdown arrow in the icon that appears -> Select 5.1.0 -> Click "Install" in the icon
+
+- In windows file explorer, from the Unreal Engine install location, open the \Engine\Plugins\Editor folder ... Should be this path: C:\Program Files\Epic Games\UE_5.1\Engine\Plugins\Editor
+
+- Copy the unreal support files and plugin folder psd2m_maya_plugin\src\unreal\deploy\PSDtoUnreal into the Editor folder from the previous step
+
+- Copy the runtime dependencies from psd2m_maya_plugin\deps into the PSDtoUnreal\Binaries\Win64 from the previous step
+
+- Ensure the folder structure is correct ... You should have .dll files in this path: C:\Program Files\Epic Games\UE_5.1\Engine\Plugins\Editor\PSDtoUnreal\Binaries\Win64
+
+- Ensure the "BuildId" value is correct inside PSDtoUnreal\Binaries\Win64\UnrealEditor.modules.  This value is different between development and release builds of Unreal.  But, it is the same for all plugins within a build.  So, the value can be copied from another UnrealEditor.modules file, for example, from \Engine\Plugins\Editor\PluginBrowser\Binaries\Win64\UnrealEditor.modules
+
+- Run the Unreal Engine, and open any existing project
+
+- The PSDtoUnreal dialog can be launched from the Window menu -> PSDtoUnreal
+
+
 ## [Build 000, PSDto3D]
 
 Original version of PSDto3D

@@ -17,19 +17,29 @@
 #ifndef EDITORCOMPONENTGENERATOR_H
 #define EDITORCOMPONENTGENERATOR_H
 
+#if defined PSDTO3D_MAYA_VERSION
 #include <maya/MFnLambertShader.h>
 #include <maya/MDagModifier.h>
+#else
+#include "mayaStub.h"
+#endif
 
 namespace maya_plugin
 {
 	class EditorComponentGenerator
 	{
 	public:
-		static MObject CreateTransformShape(MDagModifier& dag, MString const& name, float const& depth, MObject& parent);
-		static MString CreateMaterialNode(MFnLambertShader& fnLambert, MDagModifier& dag, MString const& name);
-		static void CreateGroupShaderNode(MDagModifier& dag, MString const& name, MString const& materialName, MObject& meshObj);
-		static void CreatePlaced2DTexture(MDagModifier& dag, MString const& name, MString const& materialName);
-		static void SetTexture(MString const& name, MString const& pathTexture, MFnLambertShader const& lambertMat);
+		static const char* EditorComponentGenerator::meshNamePostfix; // blank, no postfix
+		static const char* EditorComponentGenerator::materialNamePostfix; //"_Lb"
+		static const char* EditorComponentGenerator::textureNamePostfix; //"_PNG"
+		static const char* EditorComponentGenerator::shaderGroupNamePostfix; //"_SG"
+		static MString CreateUniqueName( MString const& name);
+		static MObject CreateTransformShape(   MDagModifier& dag, MString const& name, float const& depth, MObject& parent);
+		static MObject CreateMaterialNode(     MDagModifier& dag, MString const& name);
+		static void CreateShaderGroupNode(     MDagModifier& dag, MString const& name, MFnLambertShader const& fnLambert, MObject& meshObj );
+		static void UpdateShaderGroupNode(     MDagModifier& dag, MString const& name, MFnLambertShader const& fnLambert, MObject& meshObj );
+		static void CreatePlaced2DTextureNode( MDagModifier& dag, MString const& name, MFnLambertShader const& fnLambert );
+		static void UpdateTextureNode(         MDagModifier& dag, MString const& name, MFnLambertShader const& fnLambert, MString const& textureFilepath );
 	};
 }
 #endif // EDITORCOMPONENTGENERATOR_H

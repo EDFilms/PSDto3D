@@ -17,25 +17,39 @@
 #ifndef QT_PROGRESS_H
 #define QT_PROGRESS_H
 
-#include "ui_toolWidget.h"
+#include "util/progressJob.h"
 
-namespace maya_plugin
+class QString; // forward declaration
+class QProgressBar; // forward declaration
+class QProgressDialog; // forward declaration
+
+namespace psd_to_3d
 {
-	struct Progress
+	class ProgressAgent : public util::ProgressJob
 	{
+	public:
 		void SetProgressBar(QProgressBar* progressBar);
-		void InitializeProgressBar(unsigned steps);
-		void InitializeSubProgress(unsigned steps);
-		void IncrementProgressBar();
-		void CompleteSubProgress();
-		void CompleteProgressBar();
+		void BeginProgressBar(const QString& windowTitle, unsigned taskCount, bool cancelButton=false);
+		void EndProgressBar(bool okButton=false);
+		void SetValue(float value); // directly set progress bar overall value, range [ 0.0, 1.0 ]
+
+		//  from ProgressJob, virtual methods
+		void Reset( int taskCount );
+		void Update();
+		void SetLabel( const char* text ); // TODO: Handle multibyte strings
+		bool IsCancelled();
+		//  from ProgressJob, nonvirtual methods
+		// ProgressTask& GetTask();
+		// int GetTaskTotal();
+		// float GetTaskValue();
+		// float GetJobValue();
+		// void NextTask();
 
 	private:
+		QProgressDialog* ProgressDialog = nullptr;
 		QProgressBar* ProgressBar = nullptr;
-		unsigned TotalSteps = 1;
-		unsigned CurrentStep = 0;
-		unsigned TotalSubSteps = 0;
-		unsigned CurrentSubStep = 0;
+		bool cancelButton = false;
+		unsigned long timeLastUpdate = 0;
 	};
 }
 #endif // QT_PROGRESS_H

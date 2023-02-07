@@ -59,6 +59,9 @@ namespace psd_reader
 
 
 	//----------------------------------------------------------------------------------------------
+	// Data class: Photoshop format "Image Resources" block, Path data item
+	// Named path which is stored separately from layer vector masks
+	// Linear mode requires matching name between ResourceBlockPath and LayerData
 	struct ResourceBlockPath
 	{
 		std::string Name = "";
@@ -72,6 +75,8 @@ namespace psd_reader
 	};
 
 	//----------------------------------------------------------------------------------------------
+	// Data class: Photoshop format "Image Resources" block
+	// Named paths which are stored separately from layer vector masks
 	struct ImageResourceData
 	{
 		int Length;
@@ -87,9 +92,9 @@ namespace psd_reader
 
 		bool IsPathExist(std::string const& layerName) const
 		{
-			for (auto resourceBlockPath : this->ResourceBlockPaths)
+			for( int i=0; i<this->ResourceBlockPaths.size(); i++ )
 			{
-				if (resourceBlockPath.Name.compare(layerName) == 0)
+				if (this->ResourceBlockPaths[i].Name.compare(layerName) == 0)
 				{
 					return true;
 				}
@@ -97,17 +102,17 @@ namespace psd_reader
 			return false;
 		}
 
-		ResourceBlockPath GetBlockPath(std::string const& layerName)
+		const ResourceBlockPath& GetBlockPath(std::string const& layerName) const
 		{
-			for (auto resourceBlockPath : this->ResourceBlockPaths)
+			static ResourceBlockPath nullPath;
+			for( int i=0; i<this->ResourceBlockPaths.size(); i++ )
 			{
-				if (resourceBlockPath.Name.compare(layerName) == 0)
+				if (this->ResourceBlockPaths[i].Name.compare(layerName) == 0)
 				{
-					return resourceBlockPath;
+					return (this->ResourceBlockPaths[i]);
 				}
 			}
-
-			return ResourceBlockPath();
+			return nullPath; // returns as const, so shouldn't be modified
 		}
 	};
 
@@ -116,11 +121,13 @@ namespace psd_reader
 #pragma region READER
 
 	//----------------------------------------------------------------------------------------------
+	// Reader class: Photoshop format "Image Resources" block
+	// Named paths which are stored separately from layer vector masks
 	class ImageResourceReader
 	{
 	public:
-		ImageResourceReader() = default;;
-		~ImageResourceReader() = default;;
+		ImageResourceReader() = default;
+		~ImageResourceReader() = default;
 		static float fixedPoint(const unsigned char* value, bool checkSigne, int size, int positionPoint);
 		static bool Read(FILE* file, ImageResourceData& imageResource);
 

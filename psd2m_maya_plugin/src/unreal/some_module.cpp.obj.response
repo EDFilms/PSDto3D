@@ -1,0 +1,424 @@
+/Zc:inline
+/nologo
+/Oi
+/c
+/Gw
+/Gy
+/Zm1000
+/wd4819
+/D_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1
+/D_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS=1
+/D_WINDLL
+/D_DISABLE_EXTENDED_ALIGNED_STORAGE
+/source-charset:utf-8
+/execution-charset:utf-8
+/Ob2
+/Ox
+/Ot
+/GF
+/errorReport:prompt
+/EHsc
+/Z7
+/MD
+/bigobj
+/fp:fast
+/Zo
+/Zp8
+/we4456
+/we4458
+/we4459
+/wd4463
+/wd4668
+/wd4244
+/wd4838
+
+/I .
+
+/I Developer
+/I Developer\DerivedDataCache\Public
+/I Developer\TargetPlatform\Public
+/I Developer\Android\AndroidDeviceDetection\Public\Interfaces
+/I Developer\DirectoryWatcher\Public
+/I Developer\SourceControl\Public
+/I Developer\GameplayDebugger\Public
+/I Developer\FunctionalTesting\Classes
+/I Developer\FunctionalTesting\Public
+/I Developer\AutomationController\Public
+/I Developer\Localization\Public
+/I Developer\Settings\Public
+/I Developer\CollectionManager\Public
+/I Developer\MeshBuilder\Public
+/I Developer\ToolMenus\Public
+/I Developer\MeshUtilities\Public
+/I Developer\MeshMergeUtilities\Public
+/I Developer\HierarchicalLODUtilities\Public
+/I Developer\MeshReductionInterface\Public
+/I Developer\AssetTools\Public
+/I Developer\DesktopPlatform\Public
+/I Developer\LauncherServices\Public
+/I Developer\TargetDeviceServices\Public
+/I Developer\MessageLog\Public
+/I Developer\SkeletalMeshUtilitiesCommon\Public
+/I Developer\MaterialUtilities\Public
+/I Developer\LocalizationService\Public
+/I Developer\PakFileUtilities\Public
+/I Developer\ScriptDisassembler\Public
+/I Developer\IoStoreUtilities\Public
+/I Developer\SettingsEditor\Public
+/I Developer\SourceCodeAccess\Public
+/I Developer\OutputLog\Public
+/I Developer\BlueprintNativeCodeGen\Public
+/I Developer\Windows
+/I Developer\Windows\LiveCoding\Public
+
+/I Editor
+/I Editor\UnrealEd\Private
+/I Editor\UnrealEd\Private\Settings
+/I Editor\PackagesDialog\Public
+/I Editor\AssetTagsEditor\Public
+/I Editor\EditorStyle\Public
+/I Editor\UnrealEd\Classes
+/I Editor\UnrealEd\Public
+/I Editor\Documentation\Public
+/I Editor\UnrealEdMessages\Classes
+/I Editor\UnrealEdMessages\Public
+/I Editor\BlueprintGraph\Classes
+/I Editor\BlueprintGraph\Public
+/I Editor\EditorSubsystem\Public
+/I Editor\AudioEditor\Classes
+/I Editor\AudioEditor\Public
+/I Editor\LevelEditor\Public
+/I Editor\IntroTutorials\Public
+/I Editor\VREditor
+/I Editor\VREditor\Public
+/I Editor\CommonMenuExtensions\Public
+/I Editor\PropertyEditor\Public
+/I Editor\ActorPickerMode\Public
+/I Editor\SceneDepthPickerMode\Public
+/I Editor\DetailCustomizations\Public
+/I Editor\ClassViewer\Public
+/I Editor\GraphEditor\Public
+/I Editor\StructViewer\Public
+/I Editor\ContentBrowser\Public
+/I Editor\ContentBrowserData\Public
+/I Editor\ToolMenusEditor\Public
+/I Editor\AddContentDialog\Public
+/I Editor\KismetCompiler\Public
+/I Editor\Kismet\Classes
+/I Editor\Kismet\Public
+/I Editor\AnimGraph\Classes
+/I Editor\AnimGraph\Public
+/I Editor\CurveEditor\Public
+/I Editor\SequencerWidgets\Public
+/I Editor\InputBindingEditor\Public
+/I Editor\MaterialEditor\Public
+/I Editor\SourceControlWindows\Public
+/I Editor\StatsViewer\Classes
+/I Editor\StatsViewer\Public
+/I Editor\SwarmInterface\Public
+/I Editor\EditorWidgets\Public
+/I Editor\InternationalizationSettings\Classes
+/I Editor\InternationalizationSettings\Public
+/I Editor\MeshPaint\Public
+/I Editor\MeshPaintMode\Public
+/I Editor\GameProjectGeneration\Classes
+/I Editor\GameProjectGeneration\Public
+/I Editor\HardwareTargeting\Public
+/I Editor\PluginWarden\Public
+/I Editor\PixelInspector\Public
+/I Editor\Sequencer\Public
+/I Editor\SceneOutliner\Public
+/I Editor\ViewportInteraction\Public
+/I Editor\ClothingSystemEditor\Public
+/I Editor\ClothingSystemEditorInterface\Public
+/I Editor\Persona\Public
+/I Editor\SkeletonEditor\Public
+/I Editor\AnimationEditor\Public
+/I Editor\AdvancedPreviewScene\Public
+/I Editor\PIEPreviewDeviceProfileSelector\Public
+/I Editor\LandscapeEditorUtilities\Public
+/I Editor\Experimental
+/I Editor\Experimental\EditorInteractiveToolsFramework\Public
+/I Editor\BehaviorTreeEditor\Classes
+/I Editor\BehaviorTreeEditor\Public
+/I Editor\ProjectTargetPlatformEditor\Public
+/I Editor\MainFrame\Public
+/I Editor\MergeActors\Public
+/I Editor\PlacementMode\Public
+/I Editor\ViewportSnapping\Public
+/I Editor\PhysicsAssetEditor\Public
+/I Editor\VirtualTexturingEditor\Classes
+/I Editor\VirtualTexturingEditor\Public
+
+/I Programs\UnrealLightmass\Public
+
+/I Runtime
+/I Runtime\AssetRegistry\Public
+/I Runtime\TraceLog\Public
+/I Runtime\Core\Public
+/I Runtime\CoreUObject\Public
+/I Runtime\Slate\Public
+/I Runtime\ApplicationCore\Public
+/I Runtime\RHI\Public
+/I Runtime\InputCore\Classes
+/I Runtime\InputCore\Public
+/I Runtime\Json\Public
+/I Runtime\SlateCore\Public
+/I Runtime\ImageWrapper\Public
+/I Runtime\LevelSequence\Public
+/I Runtime\Engine\Classes
+/I Runtime\Engine\Public
+/I Runtime\Net
+/I Runtime\Net\Core\Classes
+/I Runtime\Net\Core\Public
+/I Runtime\Messaging\Public
+/I Runtime\MessagingCommon\Public
+/I Runtime\RenderCore\Public
+/I Runtime\Analytics
+/I Runtime\Analytics\AnalyticsET\Public
+/I Runtime\Analytics\Analytics\Public
+/I Runtime\Sockets\Public
+/I Runtime\Net\Common\Public
+/I Runtime\EngineMessages\Public
+/I Runtime\EngineSettings\Classes
+/I Runtime\EngineSettings\Public
+/I Runtime\SynthBenchmark\Public
+/I Runtime\Renderer\Public
+/I Runtime\GameplayTags\Classes
+/I Runtime\GameplayTags\Public
+/I Runtime\PacketHandlers
+/I Runtime\PacketHandlers\PacketHandler\Classes
+/I Runtime\PacketHandlers\PacketHandler\Public
+/I Runtime\PacketHandlers\ReliabilityHandlerComponent\Public
+/I Runtime\AudioPlatformConfiguration\Public
+/I Runtime\MeshDescription\Public
+/I Runtime\StaticMeshDescription\Public
+/I Runtime\PakFile\Public
+/I Runtime\RSA\Public
+/I Runtime\NetworkReplayStreaming
+/I Runtime\NetworkReplayStreaming\NetworkReplayStreaming\Public
+/I Runtime\PhysicsCore\Public
+/I Runtime\DeveloperSettings\Public
+/I Runtime\Experimental
+/I Runtime\Experimental\Chaos\Public
+/I Runtime\Experimental\ChaosCore\Public
+/I Runtime\Experimental\Voronoi\Public
+/I Runtime\SignalProcessing\Public
+/I Runtime\AudioExtensions\Public
+/I Runtime\AudioMixerCore\Public
+/I Runtime\PropertyAccess\Public
+/I Runtime\Projects\Public
+/I Runtime\SandboxFile\Public
+/I Runtime\Online
+/I Runtime\Online\HTTP\Public
+/I Runtime\UnrealAudio\Public
+/I Runtime\AudioMixer\Classes
+/I Runtime\AudioMixer\Public
+/I Runtime\HeadMountedDisplay\Public
+/I Runtime\Landscape\Classes
+/I Runtime\Landscape\Public
+/I Runtime\NetworkFileSystem\Public
+/I Runtime\UMG\Public
+/I Runtime\MovieScene\Public
+/I Runtime\TimeManagement\Public
+/I Runtime\MovieSceneTracks\Public
+/I Runtime\AnimationCore\Public
+/I Runtime\PropertyPath\Public
+/I Runtime\NavigationSystem\Public
+/I Runtime\MaterialShaderQualitySettings\Classes
+/I Runtime\Experimental\InteractiveToolsFramework\Public
+/I Runtime\Windows
+/I Runtime\Windows\XAudio2\Public
+/I Runtime\GameplayTasks\Classes
+/I Runtime\GameplayTasks\Public
+/I Runtime\AIModule\Public
+/I Runtime\AIModule\Classes
+/I Runtime\ClothingSystemRuntimeInterface\Public
+/I Runtime\AnimGraphRuntime\Public
+/I Runtime\AppFramework\Public
+/I Runtime\CinematicCamera\Public
+/I Runtime\Portal
+/I Runtime\Portal\LauncherPlatform\Public
+/I Runtime\IESFile\Public
+/I Runtime\ImageWriteQueue\Public
+/I Runtime\RawMesh\Public
+/I Runtime\MeshUtilitiesCommon\Public
+/I Runtime\JsonUtilities\Public
+/I Runtime\Foliage\Public
+/I Runtime\VectorVM\Public
+/I Runtime\ClothingSystemRuntimeCommon\Public
+/I Runtime\ClothingSystemRuntimeNv\Public
+/I Runtime\GameplayMediaEncoder\Public
+/I Runtime\Navmesh\Public
+/I Runtime\MovieSceneCapture\Public
+/I Runtime\MessagingRpc\Public
+/I Runtime\Portal\Rpc\Public
+/I Runtime\Portal\Services\Public
+/I Runtime\Media\Public
+
+/I ThirdParty
+/I ThirdParty\Intel
+/I ThirdParty\libSampleRate\Public
+/I ThirdParty\Intel\Embree\Embree2140\Win64\include
+/I ThirdParty\Vorbis\libvorbis-1.3.2\include
+/I ThirdParty\Windows
+/I ThirdParty\VHACD\public
+
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AssetRegistry
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\CoreUObject
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\Slate
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\InputCore
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\SlateCore
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ImageWrapper
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\EditorStyle
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\LevelSequence
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\Engine
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\NetCore
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\EngineMessages
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\EngineSettings
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\Renderer
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\GameplayTags
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\PacketHandler
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AudioPlatformConfiguration
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\MeshDescription
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\StaticMeshDescription
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\PhysicsCore
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\DeveloperSettings
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\Chaos
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AudioExtensions
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\PropertyAccess
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\UnrealEd
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\SourceControl
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\UnrealEdMessages
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\GameplayDebugger
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\BlueprintGraph
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\EditorSubsystem
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\FunctionalTesting
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AutomationController
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\Localization
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AudioEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AudioMixer
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\LevelEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\IntroTutorials
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\HeadMountedDisplay
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\VREditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\Landscape
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\PropertyEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\DetailCustomizations
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ClassViewer
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\GraphEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\StructViewer
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ContentBrowser
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ContentBrowserData
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\UMG
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\MovieScene
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\TimeManagement
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\MovieSceneTracks
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AnimationCore
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\PropertyPath
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\NavigationSystem
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\MaterialShaderQualitySettings
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\InteractiveToolsFramework
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ToolMenusEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ToolMenus
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AddContentDialog
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AssetTools
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\GameplayTasks
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AIModule
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\Kismet
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ClothingSystemRuntimeInterface
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AnimGraph
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AnimGraphRuntime
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\CinematicCamera
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\CurveEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ImageWriteQueue
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\InputBindingEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\TargetDeviceServices
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\MaterialEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\StatsViewer
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\SwarmInterface
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\InternationalizationSettings
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\JsonUtilities
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\MeshPaint
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\MeshPaintMode
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\Foliage
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\VectorVM
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\MaterialUtilities
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\GameProjectGeneration
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\HardwareTargeting
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\PixelInspectorModule
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\Sequencer
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\SceneOutliner
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ViewportInteraction
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ClothingSystemEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ClothingSystemRuntimeCommon
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ClothingSystemRuntimeNv
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\ClothingSystemEditorInterface
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\Persona
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\SkeletonEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedPreviewScene
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\PIEPreviewDeviceProfileSelector
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\LandscapeEditorUtilities
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\EditorInteractiveToolsFramework
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\BehaviorTreeEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\MergeActors
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\MovieSceneCapture
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\SourceCodeAccess
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\MessagingRpc
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\PortalRpc
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\PortalServices
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\BlueprintNativeCodeGen
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\PhysicsAssetEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\VirtualTexturingEditor
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\LiveCoding
+
+/I ThirdParty\PhysX3\PxShared\include
+/I ThirdParty\PhysX3\PxShared\include\cudamanager
+/I ThirdParty\PhysX3\PxShared\include\filebuf
+/I ThirdParty\PhysX3\PxShared\include\foundation
+/I ThirdParty\PhysX3\PxShared\include\pvd
+/I ThirdParty\PhysX3\PxShared\include\task
+/I ThirdParty\PhysX3\PhysX_3.4\Include
+/I ThirdParty\PhysX3\PhysX_3.4\Include\cooking
+/I ThirdParty\PhysX3\PhysX_3.4\Include\common
+/I ThirdParty\PhysX3\PhysX_3.4\Include\extensions
+/I ThirdParty\PhysX3\PhysX_3.4\Include\geometry
+/I ThirdParty\PhysX3\APEX_1.4\include
+/I ThirdParty\PhysX3\APEX_1.4\include\clothing
+/I ThirdParty\PhysX3\APEX_1.4\include\nvparameterized
+/I ThirdParty\PhysX3\APEX_1.4\include\legacy
+/I ThirdParty\PhysX3\APEX_1.4\include\PhysX3
+/I ThirdParty\PhysX3\APEX_1.4\common\include
+/I ThirdParty\PhysX3\APEX_1.4\common\include\autogen
+/I ThirdParty\PhysX3\APEX_1.4\framework\include
+/I ThirdParty\PhysX3\APEX_1.4\framework\include\autogen
+/I ThirdParty\PhysX3\APEX_1.4\shared\general\RenderDebug\public
+/I ThirdParty\PhysX3\APEX_1.4\shared\general\PairFilter\include
+/I ThirdParty\PhysX3\APEX_1.4\shared\internal\include
+/I ThirdParty\FreeImage\FreeImage-3.18.0\Dist
+/I ThirdParty\Ogg\libogg-1.2.2\include
+/I ThirdParty\Windows\DirectX\include
+/I ThirdParty\FBX\2020.1.1\include
+/I ThirdParty\FBX\2020.1.1\include\fbxsdk
+/I ThirdParty\FreeType2\FreeType2-2.10.0\include
+/I ThirdParty\PhysX3\NvCloth\include
+/I ThirdParty\PhysX3\NvCloth\extensions\include
+/I ThirdParty\PhysX3\PxShared\src\foundation\include
+
+/I "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\INCLUDE"
+/I "C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.2\include\um"
+/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"
+/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"
+/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"
+/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"
+
+/FI"C:\WORKSPACE\DEPOT\UNREAL\Engine\Intermediate\Build\Win64\UE4Editor\Development\UnrealEd\PCH.UnrealEd.h"
+/Yu"C:\WORKSPACE\DEPOT\UNREAL\Engine\Intermediate\Build\Win64\UE4Editor\Development\UnrealEd\PCH.UnrealEd.h"
+/Fp"C:\WORKSPACE\DEPOT\UNREAL\Engine\Intermediate\Build\Win64\UE4Editor\Development\UnrealEd\PCH.UnrealEd.h.pch"
+"C:\WORKSPACE\DEPOT\UNREAL\Engine\Intermediate\Build\Win64\UE4Editor\Development\UnrealEd\Module.UnrealEd.gen.11_of_11.cpp"
+
+/Fo"C:\WORKSPACE\DEPOT\UNREAL\Engine\Intermediate\Build\Win64\UE4Editor\Development\UnrealEd\Module.UnrealEd.gen.11_of_11.cpp.obj"
+
+/TP
+/GR-
+/W4

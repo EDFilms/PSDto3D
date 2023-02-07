@@ -22,7 +22,7 @@
 #include "imageResourceReader.h"
 #include "layerAndMaskReader.h"
 #include "imageDataReader.h"
-#include "progress.h"
+#include "util\progressJob.h"
 #include <functional>
 using namespace util;
 
@@ -33,29 +33,29 @@ namespace psd_reader
 	//----------------------------------------------------------------------------------------------
 	struct PsdData
 	{
-		HeaderData HeaderData;
-		ColorModeData ColorModeData;
-		ImageResourceData ImageResourceData;
-		LayerAndMaskData LayerMaskData;
-		ImageData ImageData;
+		// Photoshop format blocks, see https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/
+		HeaderData HeaderData;					// "File Header" block
+		ColorModeData ColorModeData;			// "Color Mode Data" block
+		ImageResourceData ImageResourceData;	// "Image Resources" block
+		LayerAndMaskData LayerMaskData;			// "Layer and Mask Information" block
+		ImageData ImageData;					// "Image Data" block
 	};
 
 	//----------------------------------------------------------------------------------------------
 	class PsdReader
 	{
 	public:
-		PsdReader(std::string const& pathFile);
+		PsdReader(const char* filename_utf8);
 		virtual	~PsdReader();
-		void SetProgress(std::function<void(unsigned)>& initializeProgress, std::function<void(unsigned)>& initializeSubProgress, std::function<
-		                 void()>& incrementProgress, std::function<void()>& completeSubProgress);
+		void SetProgress( ProgressJob* progressJob );
 		PsdData ParsePsd();
 
 	private:
 
 		FILE* File;
-		PsdProgress ProgressData;
+		ProgressJob* ProgressJob;
 
-		static bool DoesFileExist(const char* filename);
+		static bool DoesFileExist(const char* filename_utf8);
 		
 		
         void ParseSection(PsdData & data) const;

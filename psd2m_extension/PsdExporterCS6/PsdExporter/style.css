@@ -1,0 +1,69 @@
+body {
+	font-size: 75%;
+    font-family: Corbel;
+    
+}
+
+fieldset{
+    border: 0.5px solid #424242;
+}
+
+p
+{
+    font-size: 10px;
+}
+
+.btn_generate {
+background: #535353;
+color: #f0f0f0; 
+font-size: 12px; 
+line-height: 2px; 
+padding: 10px; 
+border-radius: 50px; 
+font-family: Corbel, serif; 
+font-weight: normal;
+font-style: normal; 
+font-variant: normal;
+border: 2px solid #aeaeae;
+display: inline-block;
+margin-top: 10px;
+}
+.btn_generate:active {
+font-size: 12px; 
+line-height: 2px; 
+padding: 10px; 
+background: #f0f0f0;
+border-radius: 50px; 
+border: 1px solid #5ca0f9;
+color:#000000; 
+}
+
+input[type=number]
+{
+    border:1px solid;
+    width:50px;
+    height:16px;
+    padding-left: 2px;
+    background: #454545;
+    border-color: #666666;
+    color:#f0f0f0;
+}
+
+input[type=checkbox]
+{
+    background: #424242;
+    color:#f0f0f0;
+}
+
+input[type=checkbox]:active
+{
+    color:#f0f0f0;
+}
+
+#content 
+{
+    margin-right:auto;
+    margin-left:auto;
+    vertical-align:middle;
+    width:100%;
+}

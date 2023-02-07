@@ -13,243 +13,286 @@
 //
 //----------------------------------------------------------------------------------------------
 
-#include "parameters.h"
-#include <QFileInfo>
-#include <locale>
-#include <codecvt>
+// TODO: Need this, otherwise error linking method QByteArray QString::toUtf8() const & Q_REQUIRED_RESULT
+//#define QT_COMPILING_QSTRING_COMPAT_CPP // added in project settings
 
-namespace maya_plugin
+#include "parameters.h"
+#include "scene_controller/sceneController.h"
+#include "interface/ui_wrapper.h" // for version flags, like IsStandaloneVersion
+
+typedef unsigned long ULONG; // TODO: Remove this; with older Maya vesions, and with Visual Studio 2017 toolset, Qt headers depend on windows.h or require this
+#include <QString.h>
+#include <QtGlobal>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLayout>
+#include "util/helpers.h"
+#if defined PSDTO3D_MAYA_VERSION
+#include <maya/MGlobal.h>
+#else
+#include "mayaStub.h"
+#endif
+
+#include <QSettings>
+
+namespace psd_to_3d
 {
+
 #pragma region LAYER PARAMETERS
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void LayerParameters::UpdateDescription() const
+	LayerParameters::LayerParameters( const QString& layerName )
+	: LayerName(layerName), AnchorRegion(0,0,0,0)
 	{
-		QString algoSelected;
-		algoSelected.append("Algo selected: ");
-		if (this->Algo == LayerParameters::LINEAR)
-			algoSelected.append("<b>Linear</b>");
-		else
-			algoSelected.append("<b>Curve</b>");
-		this->LabelAlgoSelected->setText(algoSelected);
-
-		QString Influence;
-		Influence.append("Influence: ");
-		if (this->HasInfluenceLayer)
-			Influence.append(this->InfluenceActivated ? "<b>Active</b>" : "<b>Inactive</b>");
-		else
-			Influence.append("<font color='#f48c42'>Not available</font >");
-		this->LabelInfluence->setText(Influence);
-
-
-		QString description;
-		description.append("Linear (path): ");
-		description.append(this->HasGlobalPath ? "<font color='green'>Available</font>" : "<font color='#f48c42'>Not available </font>");
-		description.append(" ... | ... Curve (layer mask): ");
-		description.append(this->HasVectorMask ? "<font color='green'>Available </font>" : "<font color='#f48c42'>Not available</font>");
-		this->LabelDescription->setText(description);
-	}
-
-	//--------------------------------------------------------------------------------------------------------------------------------------
-	void GlobalParameters::UpdateLayers(psd_reader::PsdData const& psdData)
-	{
-		std::map<std::string, LayerParameters*> copy(this->NameLayerMap.begin(), this->NameLayerMap.end());
-		this->NameLayerMap.clear();
-
-		for (auto layer : psdData.LayerMaskData.Layers)
+		if( !IsLinearModeSupported )
 		{
-			if (layer.Type > psd_reader::TEXTURE_LAYER)
-				continue;
-
-			LayerParameters* layerParam = nullptr;
-
-			const auto it = copy.find(layer.LayerName);
-			if (it == copy.end())
-				layerParam = new LayerParameters();
-			else
-				layerParam = it->second;
-
-			layerParam->SetInfluenceLayer(psdData, layer);
-			this->NameLayerMap.try_emplace(layer.LayerName, layerParam);
+			Algo = Algorithm::BILLBOARD;
 		}
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	LayerParameters* GlobalParameters::GetLayerParameter(std::string const& name)
+	void LayerParameters::SetInfluenceLayer(psd_reader::PsdData const& psdData, psd_reader::LayerData const& layer)
 	{
-		return this->NameLayerMap.at(name);
+		this->HasInfluenceLayer = psdData.LayerMaskData.GetIndexInfluenceLayer(layer.LayerName) != -1;
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	std::vector<LayerParameters*> GlobalParameters::GetAllParameters()
+	void LayerParameters::ClearWidgets()
 	{
-		std::vector<LayerParameters*> params;
-		for (auto layerMap : NameLayerMap)
-		{
-			params.push_back(layerMap.second);
-		}
-
-		return params;
+		ListFrame = nullptr;
+		LabelLayerTitle = nullptr;
+		LabelAlgoSelected = nullptr;
+		LabelLayerSize = nullptr;
+		LabelAtlasName =  nullptr;
+		LabelAtlasSize = nullptr;
+		LabelInfluence = nullptr;
+		LabelDescription = nullptr;
 	}
 
-	//--------------------------------------------------------------------------------------------------------------------------------------
-	void GlobalParameters::ClearLayerParameters()
-	{
-		for (auto layerMap : this->NameLayerMap)
-		{
-			delete layerMap.second;
-		}
 
-		this->NameLayerMap.clear();
-	}
+// LAYER PARAMETERS
+#pragma endregion
+
+
+#pragma region GLOBAL PARAMETERS
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void GlobalParameters::UpdateValuesFromJson()
+	void GlobalParameters::Reset()
 	{
-		// Try to get the params metadata.
-		QFileInfo qtFilePath(this->FilePath);
-		QFileInfo paramsPath = qtFilePath.path() + "/" + qtFilePath.baseName() + "/parameters.json";
-		if (!paramsPath.exists())
-		{
-			SetDefaultValues();
-			return;
-		}
-
-		// Try to open the metadata.
-		MString path = MQtUtil::toMString(paramsPath.absoluteFilePath());
-		std::ifstream file(path.asChar());
-		if (!file.is_open())
-		{
-			SetDefaultValues();
-			return;
-		}
-
-		std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-		file.close();
-
-		JSONValue* value = JSON::Parse(content.c_str());
-		JSONObject root = value->AsObject();
-		DeserializeContents(root);
-
-		delete value;
-	}
-
-	//--------------------------------------------------------------------------------------------------------------------------------------
-	void GlobalParameters::WriteValuesToJson()
-	{
-		if (this->FilePath == nullptr || this->FilePath.isEmpty())
-		{
-			return;
-		}
-
-		QFileInfo qtFilePath(this->FilePath);
-		QFileInfo paramsPath = qtFilePath.path() + "/" + qtFilePath.baseName() + "/parameters.json";
-		MString path = MQtUtil::toMString(paramsPath.absoluteFilePath());
-
-		std::ofstream file(path.asChar());
-		file << WStringToString(SerializeContents()->Stringify(true));
-		file.close();
-	}
-
-	//--------------------------------------------------------------------------------------------------------------------------------------
-	void GlobalParameters::SetDefaultValues()
-	{
+		this->TextureProxy = 1;
 		this->Depth = 0;
-		this->Scale = 1;
-		this->KeepGroupStructure = true;
+		this->Scale = 1.0f;
+		this->KeepGroupStructure = false;
 		this->AliasPsdName = "";
+		this->FileWriteMode = FileWriteMode::BINARY;
+		this->FileWriteLayout = FileWriteLayout::SINGLE;
 
-		this->ClearLayerParameters();
+		this->FileExportPath = "";
+		this->FileExportName = ""; // filename without extention
+		this->FileExportExt = ""; // file extention
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void GlobalParameters::DeserializeContents(JSONObject & root)
+	void GlobalParameters::Fetch()
 	{
-		this->Depth = root[L"Depth"]->AsNumber();
-		this->Scale = root[L"Scale"]->AsNumber();
-		this->AliasPsdName = MQtUtil::toQString(root[L"AliasPsdName"]->AsString().c_str());
-		this->KeepGroupStructure = root[L"KeepGroupStructure"]->AsBool();
+		this->Prefs.Fetch();
+		this->FileImportPath           = this->Prefs.FileImportPath;
+		this->FileExportPath           = this->Prefs.FileExportPath;
+	}
 
-		this->ClearLayerParameters();
-		JSONArray layers = root[L"Layers"]->AsArray();
-		for (auto layer : layers)
-		{
-			JSONObject layerObject = layer->AsObject();
+// GLOBAL PARAMETERS
+#pragma endregion
 
-			LayerParameters* layerParams = new LayerParameters;
-			layerParams->Algo = LayerParameters::Algorithm(int(layerObject[L"Algo"]->AsNumber()));
-			layerParams->InfluenceActivated = layerObject[L"InfluenceActivated"]->AsBool();
 
-			JSONObject linearParams = layerObject[L"LinearParameters"]->AsObject();
-			layerParams->LinearParameters.LinearHeightPoly = linearParams[L"LinearHeightPoly"]->AsNumber();
-			layerParams->LinearParameters.GridOrientation = linearParams[L"GridOrientation"]->AsNumber();
+#pragma region LICENSING PARAMETERS
 
-			JSONObject curveParams = layerObject[L"CurveParameters"]->AsObject();
-			layerParams->CurveParameters.MergeVertexDistance = curveParams[L"MergeVertexDistance"]->AsNumber();
+	const char* optionDefaultUserInfoFirstName = "PSDto3D_UserInfoFirstName";
+	const char* optionDefaultUserInfoLastName = "PSDto3D_UserInfoLastName";
+	const char* optionDefaultUserInfoEmail = "PSDto3D_UserInfoEmail";
+	const char* optionDefaultLicenseKey = "PSDto3D_LicenseKey";
+#if defined PSDTO3D_MAYA_VERSION
+	const char* optionDefaultFilename = "PSDtoMaya";
+#else
+	const char* optionDefaultFilename = "PSDtoFBX";
+#endif
+	const char* optionConfLanguage = "Language";
+	const char* optionConfFilename = "language";
 
-			JSONObject influenceParams = layerObject[L"InfluenceParameters"]->AsObject();
-			layerParams->InfluenceParameters.MinPolygonSize = influenceParams[L"MinPolygonSize"]->AsNumber();
-			layerParams->InfluenceParameters.MaxPolygonSize = influenceParams[L"MaxPolygonSize"]->AsNumber();
 
-			this->NameLayerMap.try_emplace(WStringToString(layerObject[L"Name"]->AsString()), layerParams);
-		}
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	void LicensingParameters::Reset()
+    {
+		this->UserInfoFirstName = "";
+		this->UserInfoLastName = "";
+		this->UserInfoEmail = "";
+		this->LicenseKey = "";
+    }
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	// Read internal data values from preferences
+	void LicensingParameters::Fetch()
+	{
+		QSettings settings(QSettings::IniFormat, QSettings::UserScope, "EDFilms", optionDefaultFilename);
+		QString empty("");
+		this->UserInfoFirstName = settings.value( optionDefaultUserInfoFirstName, empty ).toString();
+		this->UserInfoLastName = settings.value( optionDefaultUserInfoLastName, empty ).toString();
+		this->UserInfoEmail = settings.value( optionDefaultUserInfoEmail, empty ).toString();
+		this->LicenseKey = settings.value( optionDefaultLicenseKey, empty ).toString();
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	JSONValue* GlobalParameters::SerializeContents()
+	// Write internal data values to preferences
+	void LicensingParameters::Store()
 	{
-		JSONObject root;
-
-		root[L"Depth"] = new JSONValue(this->Depth);
-		root[L"Scale"] = new JSONValue(this->Scale);
-		root[L"AliasPsdName"] = new JSONValue(StringToWString(MQtUtil::toMString(this->AliasPsdName).asChar()));
-		root[L"KeepGroupStructure"] = new JSONValue(this->KeepGroupStructure);
-
-		JSONArray layers;
-		for (auto pair : this->NameLayerMap)
-		{
-			JSONObject layerObject;
-
-			layerObject[L"Name"] = new JSONValue(StringToWString(pair.first));
-			layerObject[L"Algo"] = new JSONValue(pair.second->Algo);
-			layerObject[L"InfluenceActivated"] = new JSONValue(pair.second->InfluenceActivated);
-
-			JSONObject linearParams;
-			linearParams[L"LinearHeightPoly"] = new JSONValue(pair.second->LinearParameters.LinearHeightPoly);
-			linearParams[L"GridOrientation"] = new JSONValue(pair.second->LinearParameters.GridOrientation);
-
-			JSONObject curveParams;
-			curveParams[L"MergeVertexDistance"] = new JSONValue(pair.second->CurveParameters.MergeVertexDistance);
-
-			JSONObject influenceParams;
-			influenceParams[L"MinPolygonSize"] = new JSONValue(pair.second->InfluenceParameters.MinPolygonSize);
-			influenceParams[L"MaxPolygonSize"] = new JSONValue(pair.second->InfluenceParameters.MaxPolygonSize);
-
-			layerObject[L"LinearParameters"] = new JSONValue(linearParams);
-			layerObject[L"CurveParameters"] = new JSONValue(curveParams);
-			layerObject[L"InfluenceParameters"] = new JSONValue(influenceParams);
-
-			layers.push_back(new JSONValue(layerObject));
-		}
-
-		root[L"Layers"] = new JSONValue(layers);
-
-		return new JSONValue(root);
-	}
-
-	//--------------------------------------------------------------------------------------------------------------------------------------
-	std::wstring GlobalParameters::StringToWString(const std::string& str)
-	{
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-		return converter.from_bytes(str);
-	}
-
-	//--------------------------------------------------------------------------------------------------------------------------------------
-	std::string GlobalParameters::WStringToString(const std::wstring& str)
-	{
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-		return converter.to_bytes(str);
+		QSettings settings(QSettings::IniFormat, QSettings::UserScope, "EDFilms", optionDefaultFilename);
+		settings.setValue( optionDefaultUserInfoFirstName, this->UserInfoFirstName.toUtf8().data() );
+		settings.setValue( optionDefaultUserInfoLastName, this->UserInfoLastName.toUtf8().data() );
+		settings.setValue( optionDefaultUserInfoEmail, this->UserInfoEmail.toUtf8().data() );
+		settings.setValue( optionDefaultLicenseKey, this->LicenseKey.toUtf8().data() );
 	}
 
 #pragma endregion
+// LICENSING PARAMETERS [end]
+
+#pragma region CONF PARAMETERS
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	void ConfParameters::Reset()
+	{
+		language = ConfParameters::english;
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	// Read internal data values from ini
+	void ConfParameters::Fetch()
+	{
+		QSettings settings(QSettings::IniFormat, QSettings::UserScope, "EDFilms", optionConfFilename);
+		QString english("english");
+		QString french("french");
+		QString result = settings.value( optionConfLanguage, english ).toString();
+		if( result.compare( french, Qt::CaseInsensitive ) == 0 )
+			language = ConfParameters::french;
+		else language = ConfParameters::english;
+	}
+
+#pragma 
+
+// ATLAS PARAMETERS [begin]
+#pragma region ATLAS PARAMETERS
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	// returns true if two atlas params should return the same result, ignoring atlas names
+	bool AtlasParameters::IsMatch( const AtlasParameters& that ) const
+	{
+		return (
+			(this->layerIndices == that.layerIndices) &&
+			(this->packingAlgo == that.packingAlgo) &&
+			(this->isCustomSize == that.isCustomSize) &&
+			( // unless isCustomSize is toggled off, the custom size and padding values must also match
+			  (this->isCustomSize==false) ||
+			  ( (this->customSize == that.customSize) && (this->customPadding == that.customPadding) )
+			)
+		);
+	}
+
+#pragma endregion
+// ATLAS PARAMETERS [end]
+
+
+// PREFERENCE PARAMETERS [begin]
+#pragma region PREFERENCE PARAMETERS
+
+	const char* optionDefaultFileImportPath = "PSDto3D_DefaultImportDir";
+	const char* optionDefaultFileExportPath = "PSDto3D_DefaultExportDir";
+	const char* optionDefaultDelaunayInnerDetailLo     = "PSDto3D_DelaunayInnerDetailLo";
+	const char* optionDefaultDelaunayInnerDetailMid    = "PSDto3D_DelaunayInnerDetailMid";
+	const char* optionDefaultDelaunayInnerDetailHi     = "PSDto3D_DelaunayInnerDetailHi";
+	const char* optionDefaultDelaunayOuterDetailLo     = "PSDto3D_DelaunayOuterDetailLo";
+	const char* optionDefaultDelaunayOuterDetailMid    = "PSDto3D_DelaunayOuterDetailMid";
+	const char* optionDefaultDelaunayOuterDetailHi     = "PSDto3D_DelaunayOuterDetailHi";
+	const char* optionDefaultDelaunayFalloffDetailLo   = "PSDto3D_DelaunayFalloffDetailLo";
+	const char* optionDefaultDelaunayFalloffDetailMid  = "PSDto3D_DelaunayFalloffDetailMid";
+	const char* optionDefaultDelaunayFalloffDetailHi   = "PSDto3D_DelaunayFalloffDetailHi";
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	void PreferenceParameters::Reset()
+    {
+		this->FileImportPath = "";
+		this->FileExportPath = "";
+    }
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	// Read internal data values from preferences
+	void PreferenceParameters::Fetch()
+	{
+		(*this) = PreferenceParameters(); // set values to default
+		QSettings settings(QSettings::IniFormat, QSettings::UserScope, "EDFilms", optionDefaultFilename);
+		QString empty("");
+		this->FileImportPath = settings.value( optionDefaultFileImportPath, empty ).toString();
+		this->FileExportPath = settings.value( optionDefaultFileExportPath, empty ).toString();
+
+		// TESTING ONLY: Store these on disk, to experiment with calibrating slider values at runtime
+		//this->DelaunayInnerDetailLo    = settings.value( optionDefaultDelaunayInnerDetailLo,    this->DelaunayInnerDetailLo  ).toFloat();
+		//this->DelaunayInnerDetailMid   = settings.value( optionDefaultDelaunayInnerDetailMid,   this->DelaunayInnerDetailMid ).toFloat();
+		//this->DelaunayInnerDetailHi    = settings.value( optionDefaultDelaunayInnerDetailHi,    this->DelaunayInnerDetailHi  ).toFloat();
+		//this->DelaunayOuterDetailLo    = settings.value( optionDefaultDelaunayOuterDetailLo,    this->DelaunayOuterDetailLo  ).toFloat();
+		//this->DelaunayOuterDetailMid   = settings.value( optionDefaultDelaunayOuterDetailMid,   this->DelaunayOuterDetailMid ).toFloat();
+		//this->DelaunayOuterDetailHi    = settings.value( optionDefaultDelaunayOuterDetailHi,    this->DelaunayOuterDetailHi  ).toFloat();
+		//this->DelaunayFalloffDetailLo  = settings.value( optionDefaultDelaunayFalloffDetailLo,  this->DelaunayFalloffDetailLo  ).toFloat();
+		//this->DelaunayFalloffDetailMid = settings.value( optionDefaultDelaunayFalloffDetailMid, this->DelaunayFalloffDetailMid ).toFloat();
+		//this->DelaunayFalloffDetailHi  = settings.value( optionDefaultDelaunayFalloffDetailHi,  this->DelaunayFalloffDetailHi  ).toFloat();
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	// Write internal data values to preferences
+	void PreferenceParameters::Store()
+	{
+		QSettings settings(QSettings::IniFormat, QSettings::UserScope, "EDFilms", optionDefaultFilename);
+		settings.setValue( optionDefaultFileImportPath, this->FileImportPath.toUtf8().data() );
+		settings.setValue( optionDefaultFileExportPath, this->FileExportPath.toUtf8().data() );
+
+		// TESTING ONLY: Store these on disk, to experiment with calibrating slider values at runtime
+		//settings.setValue( optionDefaultDelaunayInnerDetailLo,  this->DelaunayInnerDetailLo );
+		//settings.setValue( optionDefaultDelaunayInnerDetailMid, this->DelaunayInnerDetailMid );
+		//settings.setValue( optionDefaultDelaunayInnerDetailHi,  this->DelaunayInnerDetailHi );
+		//settings.setValue( optionDefaultDelaunayOuterDetailLo,  this->DelaunayOuterDetailLo );
+		//settings.setValue( optionDefaultDelaunayOuterDetailMid, this->DelaunayOuterDetailMid );
+		//settings.setValue( optionDefaultDelaunayOuterDetailHi,  this->DelaunayOuterDetailHi );
+		//settings.setValue( optionDefaultDelaunayFalloffDetailLo,  this->DelaunayFalloffDetailLo );
+		//settings.setValue( optionDefaultDelaunayFalloffDetailMid, this->DelaunayFalloffDetailMid );
+		//settings.setValue( optionDefaultDelaunayFalloffDetailHi,  this->DelaunayFalloffDetailHi );
+
+		settings.sync();
+	}
+
+// PREFERENCE PARAMETERS
+#pragma endregion
+
+#pragma region OUTPUTS
+
+	GraphLayer GraphLayerGroup::null;
+
+	GraphLayerGroup::~GraphLayerGroup()
+	{
+		for( GraphLayer*& graphLayer : graphLayerList )
+		{
+			if( graphLayer!=nullptr ) delete graphLayer;
+			graphLayer = nullptr;
+		}
+		graphLayerList.clear();
+	}
+
+	GraphLayer* GraphLayerGroup::AllocGraphLayer( int layerIndex )
+	{
+		while( graphLayerList.size()<=layerIndex )
+		{
+			graphLayerList.push_back(nullptr);
+		}
+		if( graphLayerList[layerIndex]==nullptr ) graphLayerList[layerIndex] = new GraphLayer();
+		return graphLayerList[layerIndex];
+	}
+
+// OUTPUTS
+#pragma endregion
+
 }
+

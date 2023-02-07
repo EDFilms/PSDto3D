@@ -17,48 +17,55 @@
 #ifndef MESHGENERATORCONTROLLER_H
 #define MESHGENERATORCONTROLLER_H
 
-#include "interface/toolWidget.h"
+#include "IPluginOutput.h"
+#include "parameters.h"
+#include "outputs.h"
+
 #include "psd_reader/psdReader.h"
 #include "mesh_generator/dataMesh.h"
+#include "util/progressJob.h"
 #include <map>
+#if defined PSDTO3D_MAYA_VERSION
 #include <maya/MObject.h>
 #include <maya/MDagModifier.h>
+#else
+#include "mayaStub.h"
+#endif
 #include "qtProgress.h"
 
 using namespace mesh_generator;
 using namespace psd_reader;
+using namespace psd_to_3d;
+using util::ProgressTask;
 
-namespace maya_plugin
+
+namespace psd_to_3d
 {
-	//----------------------------------------------------------------------------------------------
-	struct GroupLayer
-	{
-		MObject Transform;
-		std::vector<std::string> LayerNames;
-	};
+	class LayerParametersFilter; // forward declaration
+	using util::ProgressJob; // forward declaration
+
 
 	//----------------------------------------------------------------------------------------------
 	class MeshGeneratorController
 	{
 	public:
-		MeshGeneratorController();
+		MeshGeneratorController( const PsdData& data, const SceneController& scene );
 		~MeshGeneratorController();
 
-		static void GenerateMayaMeshes(PsdData& data, GlobalParameters& params, Progress& progress);
+		void GenerateMesh(DataSurface& mesh_out, const LayerParameters& layerParams, int layerIndex, ProgressTask& progressTask) const;
+		void CreateTreeStructure(GroupByNameMap& tree_out, GraphLayerByIndexMap& meshes_in_out, LayerParametersFilter& filter ) const;
+		void ApplyInfluenceLayer(DataMesh& mesh_in_out, int layerIndex, const InfluenceParameters& influenceParams) const;
 
 	private:
-		static void InitializeProgressBar(PsdData& data, GlobalParameters& params, Progress& progress);
-
-		static void CreateEditorMayaComponents(GlobalParameters& params, Progress& progress, std::map<std::string, GroupLayer>& tree, std::map<std::string, DataMesh>& meshes);
-		static std::map<std::string, GroupLayer> CreateTreeStructure(GlobalParameters const& params, psd_reader::PsdData const& data);
-		static void CreateShapeEditorComponent(MDagModifier& dag, GlobalParameters const& params, DataMesh const& mesh, float, MObject & transformParent);
-		static void UpdateShapeEditorComponent(MObject& mFnMesh, MDagModifier& dag, GlobalParameters const& params,
-		                                DataMesh const& mesh, float);
-
-		static DataMesh GenerateDataLinearMesh(ResourceBlockPath const& resourceBlockPath, LayerParameters const* params);
-		static DataMesh GenerateDataCurveGridMesh(LayerData const& layer, LayerParameters const* params);
-
-		static void ApplyInfluenceLayer(PsdData const& data, std::map<std::string, DataMesh>& meshes, GlobalParameters& params, Progress& progress);
+		const PsdData& data;
+		const SceneController& scene;
+		DataSurface GenerateDataLinearMesh(const PsdData& data, const LayerParameters& layerParams, int layerIndex, ProgressTask& progressTask) const;
+		DataSurface GenerateDataDelaunayMesh(const PsdData& data, const LayerParameters& layerParams, int layerIndex, ProgressTask& progressTask) const;
+		DataSurface GenerateDataCurveGridMesh(const PsdData& data, const LayerParameters& layerParams, int layerIndex, ProgressTask& progressTask) const;
+		DataSurface GenerateDataBillboardMesh(const PsdData& data, const LayerParameters& layerParams, int layerIndex, ProgressTask& progressTask) const;
 	};
+
 }
+
+
 #endif // MESHGENERATORCONTROLLER_H

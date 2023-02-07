@@ -58,14 +58,14 @@ namespace psd_reader
 	}
 
 	//----------------------------------------------------------------------------------------
-	bool LayerAndMaskReader::Read(FILE* file, const HeaderData& headerData, LayerAndMaskData& layerMaskData, PsdProgress const& progress)	// Actually ignore it
+	bool LayerAndMaskReader::Read(FILE* file, const HeaderData& headerData, LayerAndMaskData& layerMaskData, ProgressJob& progress)	// Actually ignore it
 	{
 		unsigned char dataLength[4];
 		int bytesRead = 0;
 
 		fread(&dataLength, sizeof(dataLength), 1, file);
 		bytesRead += sizeof(dataLength);
-		const int totalBytes = Utils::Calculate(dataLength, sizeof(dataLength));
+		const int totalBytes = util::StringAsInt(dataLength, sizeof(dataLength));
 
 		ProcessLayerMaskInformation(file, bytesRead, headerData, layerMaskData, progress);
 		ReadHeaderAdditionalLayerGlobalInfo(file, bytesRead, headerData, layerMaskData, progress);
@@ -83,7 +83,7 @@ namespace psd_reader
 
 
 	//----------------------------------------------------------------------------------------
-	void LayerAndMaskReader::ProcessLayerMaskInformation(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerMaskData, PsdProgress const& progress)
+	void LayerAndMaskReader::ProcessLayerMaskInformation(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerMaskData, ProgressJob& progress)
 	{
 		ReadLayerInfoSection(file, bytesRead, headerData,layerMaskData, progress);
 		ReadGlobalLayerMaskInfo(file, bytesRead, layerMaskData);
@@ -95,7 +95,7 @@ namespace psd_reader
 	}
 
 	//----------------------------------------------------------------------------------------
-	bool LayerAndMaskReader::ReadLayerInfoSection(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerMaskData, PsdProgress const& progress)
+	bool LayerAndMaskReader::ReadLayerInfoSection(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerMaskData, ProgressJob& progress)
 	{
 		unsigned char dataLength[4];
 		unsigned char layerLength[2];
@@ -103,7 +103,7 @@ namespace psd_reader
 
 		fread(&dataLength, sizeof(dataLength), 1, file);
 		bytesRead += sizeof(dataLength);
-		int totalBytesLayer = Utils::Calculate(dataLength, sizeof(dataLength));
+		int totalBytesLayer = util::StringAsInt(dataLength, sizeof(dataLength));
 		totalBytesLayer += totalBytesLayer % 2;
 
 		if (totalBytesLayer == 0) return true;
@@ -112,12 +112,12 @@ namespace psd_reader
 		fread(&layerLength, sizeof(layerLength), 1, file);
 		bytesLayerinfoRead += sizeof(layerLength);
 		// If it is a negative number, its absolute value is the number of layers and the first alpha channel contains the transparency data for the merged result.
-		const short layerCount = std::abs(short(Utils::Calculate(layerLength, sizeof(layerLength))));
-		layerMaskData.LayerCount = layerCount;
+		const short layerCount = std::abs(short(util::StringAsInt(layerLength, sizeof(layerLength))));
 
-		for (int i = 0; i < layerCount; i++)
+		for( short layerIndex = 0; layerIndex < layerCount; layerIndex++ )
 		{
 			LayerData currentlayer;
+			currentlayer.LayerIndex = layerIndex;
 			ReadLayerRecordsSection(file, bytesLayerinfoRead, currentlayer);
 			ReadLayerInfoSectionExtraDataField(file, bytesLayerinfoRead, currentlayer);
 			if(currentlayer.Type == TEXTURE_LAYER)
@@ -157,22 +157,22 @@ namespace psd_reader
 
 		// Rectangle containing the contents of the layer. Specified as top, left, bottom, right coordinates
 		fread(&coordinateLayer, sizeof(coordinateLayer), 1, file); // Top
-		layerData.AnchorTop = Utils::Calculate(coordinateLayer, sizeof(coordinateLayer));
+		layerData.AnchorTop = util::StringAsInt(coordinateLayer, sizeof(coordinateLayer));
 
 		fread(&coordinateLayer, sizeof(coordinateLayer), 1, file); //Left
-		layerData.AnchorLeft = Utils::Calculate(coordinateLayer, sizeof(coordinateLayer));
+		layerData.AnchorLeft = util::StringAsInt(coordinateLayer, sizeof(coordinateLayer));
 
 		fread(&coordinateLayer, sizeof(coordinateLayer), 1, file); // Bottom
-		layerData.AnchorBottom = Utils::Calculate(coordinateLayer, sizeof(coordinateLayer));
+		layerData.AnchorBottom = util::StringAsInt(coordinateLayer, sizeof(coordinateLayer));
 
 		fread(&coordinateLayer, sizeof(coordinateLayer), 1, file); // Right
-		layerData.AnchorRight = Utils::Calculate(coordinateLayer, sizeof(coordinateLayer));
+		layerData.AnchorRight = util::StringAsInt(coordinateLayer, sizeof(coordinateLayer));
 
 		tmpBytesRead += (sizeof(coordinateLayer) * 4);
 
 		// Number of channels in the layer
 		fread(&channelCount, sizeof(channelCount), 1, file);
-		const auto nbrChannel = (unsigned short)Utils::Calculate(channelCount, sizeof(channelCount));
+		const auto nbrChannel = (unsigned short)util::StringAsInt(channelCount, sizeof(channelCount));
 		tmpBytesRead += sizeof(channelCount);
 
 		layerData.NbrChannel = nbrChannel;
@@ -182,10 +182,10 @@ namespace psd_reader
 		for (int i = 0; i < nbrChannel; i++)
 		{
 			fread(&channelID, sizeof(channelID), 1, file);
-			short channelId = (short) Utils::Calculate(channelID, sizeof(channelID));
+			short channelId = (short) util::StringAsInt(channelID, sizeof(channelID));
 			layerData.ChannelId.push_back(channelId);
 			fread(&dataLength, sizeof(dataLength), 1, file);
-			int length = Utils::Calculate(dataLength, sizeof(dataLength));
+			int length = util::StringAsInt(dataLength, sizeof(dataLength));
 			layerData.ChannelLength.push_back(length);
 			tmpBytesRead += sizeof(channelID);
 			tmpBytesRead += sizeof(dataLength);
@@ -222,12 +222,12 @@ namespace psd_reader
 
 		//	Length of the extra data field(= the total length of the next five fields).
 		fread(&dataLength, sizeof(dataLength), 1, file);
-		int extraFieldLength = Utils::Calculate(dataLength, sizeof(dataLength));
+		int extraFieldLength = util::StringAsInt(dataLength, sizeof(dataLength));
 		tmpBytesRead += sizeof(dataLength);
 
 		// Layer mask / adjustment layer data
 		fread(&dataLength, sizeof(dataLength), 1, file);
-		int layerMaskDataLength = Utils::Calculate(dataLength, sizeof(dataLength));
+		int layerMaskDataLength = util::StringAsInt(dataLength, sizeof(dataLength));
 		tmpBytesRead += sizeof(dataLength);
 
 		for (int i = 0; i < layerMaskDataLength; i++)
@@ -238,7 +238,7 @@ namespace psd_reader
 
 		// Layer blending ranges data
 		fread(&dataLength, sizeof(dataLength), 1, file);
-		int layerBlendingRangesDataLength = Utils::Calculate(dataLength, sizeof(dataLength));
+		int layerBlendingRangesDataLength = util::StringAsInt(dataLength, sizeof(dataLength));
 		tmpBytesRead += sizeof(dataLength);
 
 		for (int i = 0; i < layerBlendingRangesDataLength; i++)
@@ -250,15 +250,14 @@ namespace psd_reader
 		// size string
 		unsigned char sizeString[1];
 		fread(&sizeString, sizeof(sizeString), 1, file);
-		int size = Utils::Calculate(sizeString, sizeof(sizeString));
+		int size = util::StringAsInt(sizeString, sizeof(sizeString));
 		tmpBytesRead += sizeof(sizeString);
 
 		// string name layer
 		unsigned char* nameChars = new unsigned char[size];
 		fread(nameChars, size * sizeof(unsigned char), 1, file);
-		std::string name = Utils::PascalString(size, nameChars);
+		std::string name = util::PascalString(size, nameChars); // TODO: Handle unicode characters, 'luni' field and others
 		tmpBytesRead += (size * sizeof(unsigned char));
-		std::replace(name.begin(), name.end(), ' ', '_');
 		layerData.LayerName = name;
 
 		// junk from pascal string padded to a multiple of 4 bytes
@@ -286,27 +285,28 @@ namespace psd_reader
 	}
 
 	//----------------------------------------------------------------------------------------
-	bool LayerAndMaskReader::ReadChannelImageData(FILE* file, int& bytesRead, int channelDepth, LayerAndMaskData& layerMaskData, PsdProgress const& progress)
+	bool LayerAndMaskReader::ReadChannelImageData(FILE* file, int& bytesRead, int channelDepth, LayerAndMaskData& layerMaskData, ProgressJob& progress)
 	{
 		unsigned char compression[2];
 
-		progress.InitializeProgress(layerMaskData.LayerCount);
-		for (int i = 0; i < layerMaskData.LayerCount; i++)
+		progress.SetLabel("Reading image data..."); // TODO: localize string
+		progress.Reset(layerMaskData.LayerCount());
+		for( int layerIndex = 0; (layerIndex < layerMaskData.LayerCount()) && (!progress.IsCancelled()); layerIndex++ )
 		{
-			int const nbrChannels = layerMaskData.Layers[i].NbrChannel;
-			int const length = (layerMaskData.Layers[i].AnchorBottom - layerMaskData.Layers[i].AnchorTop)
-				* (layerMaskData.Layers[i].AnchorRight - layerMaskData.Layers[i].AnchorLeft);
+			int const nbrChannels = layerMaskData.Layers[layerIndex].NbrChannel;
+			int const length = (layerMaskData.Layers[layerIndex].AnchorBottom - layerMaskData.Layers[layerIndex].AnchorTop)
+				* (layerMaskData.Layers[layerIndex].AnchorRight - layerMaskData.Layers[layerIndex].AnchorLeft);
 			
 			const int byteperchannel = channelDepth / 8;
-			progress.InitializeSubProgress(length * nbrChannels * byteperchannel);
+			progress.NextTask();
 
-			for (int j = 0; j < nbrChannels; j++)
+			for( int channelIndex = 0; (channelIndex < nbrChannels) && (!progress.IsCancelled()); channelIndex++ )
 			{
 				// No pixel for user mask
-				if(layerMaskData.Layers[i].ChannelId[j] < -1)
+				if(layerMaskData.Layers[layerIndex].ChannelId[channelIndex] < -1)
 				{
 					unsigned char data[1];
-					int size = layerMaskData.Layers[i].ChannelLength[j];
+					int size = layerMaskData.Layers[layerIndex].ChannelLength[channelIndex];
 					for (auto k = 0; k < size; k++)
 					{
 						fread(&data, sizeof(data), 1, file);
@@ -317,7 +317,7 @@ namespace psd_reader
 
 				// Compression value
 				fread(&compression, sizeof(compression), 1, file);
-				const short compressionValue = short(Utils::Calculate(compression, sizeof(compression)));
+				const short compressionValue = short(util::StringAsInt(compression, sizeof(compression)));
 				bytesRead += sizeof(compression);
 
 				// -------------- RAW ------------------
@@ -325,35 +325,34 @@ namespace psd_reader
 				{
 				case 0:
 				{
-					auto* uncompressedData = static_cast<unsigned char *>(malloc(length));
+					auto* uncompressedData = static_cast<unsigned char *>(_aligned_malloc(length,16));
 					for (int k = 0; k < length; k++)
 					{
 						unsigned char value;
 						fread(&value, sizeof(value), 1, file);
 						uncompressedData[k] = value;
-						progress.IncrementProgress();
 						bytesRead += sizeof(value);
 					}
-					layerMaskData.Layers[i].ImageContent.push_back(uncompressedData);
+					layerMaskData.Layers[layerIndex].ImageContent.push_back(uncompressedData);
 					break;
 				}
 				// ----------------- RLE ------------------
 				case 1:
 				{
 					
-					const int rowCount = (layerMaskData.Layers[i].AnchorBottom - layerMaskData.Layers[i].AnchorTop);
+					const int rowCount = (layerMaskData.Layers[layerIndex].AnchorBottom - layerMaskData.Layers[layerIndex].AnchorTop);
 					short* sizes = new short[rowCount];
 
 					unsigned char linePixelCount[2];
 					int lengthGlobal = 0;
 					int indexPosition = 0;
-					auto* uncompressedData = static_cast<unsigned char *>(malloc(length));
+					auto* uncompressedData = static_cast<unsigned char *>(_aligned_malloc(length,16));
 
 					// Read row size information
 					for (int k = 0; k < rowCount; k++)
 					{
 						fread(linePixelCount, sizeof(linePixelCount), 1, file);
-						sizes[k] = short(Utils::Calculate(linePixelCount, sizeof(linePixelCount)));
+						sizes[k] = short(util::StringAsInt(linePixelCount, sizeof(linePixelCount)));
 						lengthGlobal += sizes[k];
 						bytesRead += sizeof(linePixelCount);
 					}
@@ -363,11 +362,13 @@ namespace psd_reader
 					{
 						for (int l = 0; l < sizes[k]; )
 						{
+							// TODO: bug, extreme lag and UI stutter apparently caused in this section
+
 							unsigned char data[1];
 							// PackBits
 							fread(&data, sizeof(data), 1, file);
 							bytesRead += sizeof(data);
-							short size = short(Utils::Calculate(data, sizeof(data)));
+							short size = short(util::StringAsInt(data, sizeof(data)));
 							l++;
 							if (size > 128)
 							{
@@ -375,13 +376,18 @@ namespace psd_reader
 								fread(data, sizeof(data), 1, file);
 								l++;
 								bytesRead += sizeof(data);
-								for (short h = 0; h <= size; h++)
-								{
-									uncompressedData[indexPosition] = *data;
-									indexPosition++;
-									progress.IncrementProgress();
-								}
 
+								// optimized
+								memset( uncompressedData + indexPosition, *data, (size+1) );
+								indexPosition += (size+1);
+
+								// unoptimized
+								//for (short h = 0; h <= size; h++)
+								//{
+								//	uncompressedData[indexPosition] = *data;
+								//	indexPosition++;
+								//	progress.GetTask().SetValue( h/(float)size ); // SetValueAndUpdate( h/(float)size )
+								//}
 							}
 							else if (size < 128)
 							{
@@ -391,13 +397,12 @@ namespace psd_reader
 									bytesRead += sizeof(data);
 									uncompressedData[indexPosition] = *data;
 									indexPosition++;
-									progress.IncrementProgress();
 									l++;
 								}
 							}
 						}
 					}
-					layerMaskData.Layers[i].ImageContent.push_back(uncompressedData);
+					layerMaskData.Layers[layerIndex].ImageContent.push_back(uncompressedData);
 					break;
 				}
 				// -------  ZIP without prediction --------
@@ -405,15 +410,15 @@ namespace psd_reader
 				case 2:
 				case 3:
 				{
-					int rows = (layerMaskData.Layers[i].AnchorBottom - layerMaskData.Layers[i].AnchorTop);
-					int cols = (layerMaskData.Layers[i].AnchorRight - layerMaskData.Layers[i].AnchorLeft);
+					int rows = (layerMaskData.Layers[layerIndex].AnchorBottom - layerMaskData.Layers[layerIndex].AnchorTop);
+					int cols = (layerMaskData.Layers[layerIndex].AnchorRight - layerMaskData.Layers[layerIndex].AnchorLeft);
 					int rowBytes = (cols * channelDepth + 7) / BYTE_VALUE;
 					
-					int lengthChannel = layerMaskData.Layers[i].ChannelLength[j];
-					auto*zipdata = static_cast<unsigned char *>(malloc(lengthChannel));
+					int lengthChannel = layerMaskData.Layers[layerIndex].ChannelLength[channelIndex];
+					auto*zipdata = static_cast<unsigned char *>(_aligned_malloc(lengthChannel,16));
 					const int count = int(fread(zipdata, 1, lengthChannel - 2, file)); // -2 is a value find in a another code of psd reader.
 
-					auto* unzipdata = static_cast<unsigned char *>(malloc(rows * rowBytes));
+					auto* unzipdata = static_cast<unsigned char *>(_aligned_malloc(rows * rowBytes,16));
 					bool unzipSuccess;
 					if (compressionValue == 2)
 					{
@@ -424,10 +429,9 @@ namespace psd_reader
 						unzipSuccess = psd_unzip_with_prediction(zipdata, count, unzipdata, rows * rowBytes, cols, channelDepth);
 					}
 
-					progress.IncrementProgress();
 					if(unzipSuccess)
 					{
-						layerMaskData.Layers[i].ImageContent.push_back(unzipdata);
+						layerMaskData.Layers[layerIndex].ImageContent.push_back(unzipdata);
 					}
 					
 					break;
@@ -435,9 +439,6 @@ namespace psd_reader
 				default: ;
 				}
 			}
-
-			progress.CompleteSubProgress();
-			progress.IncrementProgress();
 		}
 		return true;
 	}
@@ -448,7 +449,7 @@ namespace psd_reader
 		unsigned char dataLength[4];
 
 		fread(&dataLength, sizeof(dataLength), 1, file);
-		const int lengthGlobal = Utils::Calculate(dataLength, sizeof(dataLength));
+		const int lengthGlobal = util::StringAsInt(dataLength, sizeof(dataLength));
 		bytesRead += sizeof(dataLength);
 
 		if (lengthGlobal == 0) return 0;
@@ -492,7 +493,7 @@ namespace psd_reader
 
 
 	//----------------------------------------------------------------------------------------
-	bool LayerAndMaskReader::ReadHeaderAdditionalLayerGlobalInfo(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerDataMaskData, PsdProgress const& progress)
+	bool LayerAndMaskReader::ReadHeaderAdditionalLayerGlobalInfo(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerDataMaskData, ProgressJob& progress)
 	{
 		int tmpBytesRead = 0;
 		char signature[4];
@@ -517,10 +518,9 @@ namespace psd_reader
 	}
 
 	//----------------------------------------------------------------------------------------
-	void LayerAndMaskReader::AdditionnalLayerDataGlobal(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerDataMaskData, PsdProgress const& progress)
+	void LayerAndMaskReader::AdditionnalLayerDataGlobal(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerDataMaskData, ProgressJob& progress)
 	{
 		char dataKey[4];
-		unsigned char data[1];
 		unsigned char dataLength[4];
 
 		// KEY
@@ -537,10 +537,10 @@ namespace psd_reader
 
 		// LENGHT
 		fread(&dataLength, sizeof(dataLength), 1, file);
-		unsigned int size = (unsigned int)Utils::Calculate(dataLength, sizeof(dataLength));
+		unsigned int size = (unsigned int)util::StringAsInt(dataLength, sizeof(dataLength));
 		bytesRead += sizeof(dataLength);
 		size += (size % 2);
-		bytesRead += size * sizeof(data);
+		bytesRead += size * sizeof(dataLength[0]);
 
 		fseek(file, size, SEEK_CUR);
 	}
@@ -558,7 +558,7 @@ namespace psd_reader
 
 		// LENGHT
 		fread(&dataLength, sizeof(dataLength), 1, file);
-		unsigned int size = (unsigned int)Utils::Calculate(dataLength, sizeof(dataLength));
+		unsigned int size = (unsigned int)util::StringAsInt(dataLength, sizeof(dataLength));
 		bytesRead += sizeof(dataLength);
 		size += (size % 2);
 		bytesRead += size;
@@ -589,7 +589,7 @@ namespace psd_reader
 
 		// type layer
 		fread(&typeData, sizeof(typeData), 1, file);
-		const unsigned int type = Utils::Calculate(typeData, sizeof(typeData));
+		const unsigned int type = util::StringAsInt(typeData, sizeof(typeData));
 		layerData.Type = static_cast<TYPE_LAYER>(type);
 
 		if (size <= 4) return;
@@ -617,6 +617,7 @@ namespace psd_reader
 	}
 
 	//----------------------------------------------------------------------------------------
+	// TODO: Duplicate code from ImageResourceReader::ReadPaths()
 	bool LayerAndMaskReader::ReadPaths(FILE* file, std::vector<util::PathRecord> & pathRecords, int sizeBlock)
 	{
 		if (sizeBlock <= 0) return false;
@@ -627,7 +628,7 @@ namespace psd_reader
 		for (auto i = 0; i < size; i++)
 		{
 			fread(selectorData, sizeof(selectorData), 1, file);
-			const auto selector = short(Utils::Calculate(selectorData, sizeof(selectorData)));
+			const auto selector = short(util::StringAsInt(selectorData, sizeof(selectorData)));
 			switch (selector)
 			{
 			case 0:

@@ -1,0 +1,15 @@
+@echo INSTRUCTIONS:  Copy this to a .bat file and execute to install the python 'six' library, needed for licensing script
+@echo NOTE:  This file when named as .bat may be flagged as a virus, and deleted by a virus scanner
+
+@echo *** IMPORTANT: EDIT THIS SCRIPT to refer to correct location for python executable, on line 3... ***
+@pause
+set PYTHON=C:\ProgramData\python-3.7.4
+set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+
+bitsadmin /transfer downloadpip /download /priority FOREGROUND "https://bootstrap.pypa.io/get-pip.py" "C:\get-pip.py"
+python C:\get-pip.py
+pip install six
+
+@echo If the python library 'six' still isn't installed, then delete python,
+@echo download and run the python 3.7.4 full installer, and try again
+@echo

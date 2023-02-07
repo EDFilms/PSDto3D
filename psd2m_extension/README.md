@@ -44,16 +44,42 @@
 ## Installation
 Please read [INSTALL.md](INSTALL.md)
 
-<a id="How_to_Build"></a>
+<a id="How_to_Build_For_AdobeCS6"></a>
+## How to build
+<src_root>\psd2m_extension\PsdExporter
+- Currently do NOT build a zxp file for CS6.  Although the script <src_root>\psd2m_extension\PsdExporterCS6\build_extension_cs6.bat generates a zxp, it does not run correctly.  The photoshop plugin would need to ported to use CS6-style UI.  Note the build script requires Java JDK 7.
+- Instead, just copy and rename <src_root>\psd2m_extension\PsdExporterCS6\PsdExporter\jsx\PsdExporter.jsx to <installer_input>\photoshop\cs6\PsdExporter_CS6.jsx, where installer_input is a staging area of your choice.  Note PsdExporter.jsx in the parent directory is the wrong one.
+<a id="How_to_use_the_plugin_For_AdobeCS6"></a>
+## How to use
+- In Photoshop CS6, use File menu->Scripts->Browse... and select the jsx.  Parameters are hard-coded and can be changed by modifying the last line of the script, but no UI is available.
+
+<a id="How_to_Create_Project_For_AdobeCC"></a>
+## How to create project
+- Open eclipse build 20140224-0627
+- Use the default workspace location, which is analagous to an MSVC Solution, not a project
+- Go to File->New->Application Extension Project
+- Project name should be PsdExporter
+- Leave other settings as default
+- Exit eclipse
+- Delete the project contents
+- Copy the project contents from <src_root>\psd2m_extension\PsdExporter, with .project at root
+  But do NOT copy the key_edfilms.p12
+- Check the contents of \.staged-extension\CSXS\manifest.xml are correct
+- The install_tools\ExMan\ExManCmd.exe can be used to test
+  ExMan\ExManCmd.exe /remove_for_all "com.EDFilms.PsdExporter"
+  ExMan\ExManCmd.exe /install_for_all "PsdExporter.zxp"
+<a id="How_to_Build_For_AdobeCC"></a>
 ## How to build
 - In eclipse go to File -> export.
 - Select Adobe Extension Builder 3 ->Application Extension.
 - Create or select the certificate key "*.p12".
-- Enter the password for this project it is "edf2018" associate to the key "key_edfilms.p12" at the root of the directory.
+- Enter the password for this project it is "edfilms2018" associate to the key "key_edfilms.p12" at the root of the directory.
 - Select in the destination path the "build" folder on the root.
 - Click on finish.
+- Copy the result <src_root>\psd2m_extension\PsdExporter\PsdExporter.zxp to the directory <installer_input>\photoshop\cc in the installer staging area of your choice.
+- Copy the contents of <src_root>\psd2m_extension\install_tool to the same directory, so that PsdExporter.zxp and install_plugin.bat are in the same directory in the installer staging area.
 
-<a id="How_to_use_the_plugin"></a>
+<a id="How_to_use_the_plugin_For_AdobeCC"></a>
 ## How to use
 - If you want to install the plugin be sure the build folder contains the "PsdExporter.zpx" file.
 - Run install_plugin.bat.

@@ -3,4 +3,4 @@
 ExMan\ExManCmd.exe /remove "com.EDFilms.PsdExporter"
 
 :: Install the extension on CEP (photoshop)
-ExMan\ExManCmd.exe /install "..\build\PsdExporter.zxp"
+ExMan\ExManCmd.exe /install ".\PsdExporter.zxp"

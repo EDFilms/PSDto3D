@@ -18,15 +18,18 @@
 #define LAYERANDMASKREADER_H
 
 #include <vector>
+#include <map>
 #include <iostream>
-#include "util/vectorialPath.h"
 #include "headerReader.h"
-#include "progress.h"
+#include "util/vectorialPath.h"
+#include "util/ProgressJob.h"
 
 namespace psd_reader
 {
 #pragma region DATA
 	
+	using util::ProgressJob;
+
 	static const std::string KEY_LAYERS = "Lr16";
 	static const std::string KEY_GROUP = "lsct";
 	static const std::string KEY_VECTOR_MASK = "vmsk";
@@ -44,9 +47,15 @@ namespace psd_reader
 		INFLUENCE_LAYER = 4
 	};
 
+	//----------------------------------------------------------------------------------------------
+	// Data class: Photoshop format "Layer and Mask Information" block, Layer data item
+	// Layer color data and vector masks which are stored separately from resource block named paths
+	// Linear mode requires matching name between ResourceBlockPath and LayerData
 	struct LayerData
 	{
-		std::string LayerName;
+		int LayerIndex;
+		std::string LayerName; // normalized name with special characters removed
+		std::string LayerDisplayName;
 		TYPE_LAYER Type = TEXTURE_LAYER;
 		std::vector<short> ChannelId;
 		std::vector<int> ChannelLength;
@@ -65,26 +74,31 @@ namespace psd_reader
 		~LayerData()
 		{
 			LayerName = "";
+			LayerDisplayName = "";
 		};
 	};
 
 	//----------------------------------------------------------------------------------------------
+	// Data class: Photoshop format "Layer and Mask Information" block
+	// Layer color data and vector masks which are stored separately from resource block named paths
 	struct LayerAndMaskData
 	{
-		short LayerCount;
 		std::vector<LayerData> Layers;
 		static const std::string INFLUENCE_LAYER_TAG;
 
 		LayerAndMaskData()
 		{
-			LayerCount = 0;
 		};
 
 		~LayerAndMaskData()
 		{
 			Layers.clear();
-			LayerCount = 0;
 		};
+
+		int LayerCount() const
+		{
+			return (int)(Layers.size());
+		}
 
 		int GetIndexInfluenceLayer(std::string name) const
 		{
@@ -107,6 +121,8 @@ namespace psd_reader
 #pragma region READER
 
 	//----------------------------------------------------------------------------------------------
+	// Reader class: Photoshop format "Layer and Mask Information" block
+	// Layer color data and vector masks which are stored separately from resource block named paths
 	class LayerAndMaskReader
 	{
 	public:
@@ -114,18 +130,18 @@ namespace psd_reader
 
 		LayerAndMaskReader() = default;
 		~LayerAndMaskReader() = default;
-		static bool Read(FILE* file, const HeaderData& headerData, LayerAndMaskData & layerMaskData, PsdProgress const& progress);
-		static void ProcessLayerMaskInformation(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerMaskData, PsdProgress const& progress);
+		static bool Read(FILE* file, const HeaderData& headerData, LayerAndMaskData& layerMaskData, ProgressJob& progress);
+		static void ProcessLayerMaskInformation(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerMaskData, ProgressJob& progress);
 
 	private:
-		static bool ReadLayerInfoSection(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerMaskData, PsdProgress const& progress);
+		static bool ReadLayerInfoSection(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerMaskData, ProgressJob& progress);
 		static bool ReadLayerRecordsSection(FILE * file, int & bytesRead, LayerData& layerData);
 		static bool ReadLayerInfoSectionExtraDataField(FILE* file, int& bytesRead, LayerData& layerData);
-		static bool ReadChannelImageData(FILE* file, int& bytesRead, int channelDepth, LayerAndMaskData& layerMaskData, PsdProgress const& progress);
+		static bool ReadChannelImageData(FILE* file, int& bytesRead, int channelDepth, LayerAndMaskData& layerMaskData, ProgressJob& progress);
 		static bool ReadGlobalLayerMaskInfo(FILE* file, int& bytesRead, LayerAndMaskData& layerMaskData);
 		static bool ReadHeaderAdditionalLayerInfo(FILE* file, int& bytesRead, LayerData& layerData);
-		static bool ReadHeaderAdditionalLayerGlobalInfo(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerDataMaskData, PsdProgress const& progress);
-		static void AdditionnalLayerDataGlobal(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerDataMaskData, PsdProgress const& progress);
+		static bool ReadHeaderAdditionalLayerGlobalInfo(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerDataMaskData, ProgressJob& progress);
+		static void AdditionnalLayerDataGlobal(FILE* file, int& bytesRead, const HeaderData& headerData, LayerAndMaskData& layerDataMaskData, ProgressJob& progress);
 		static void AdditionnalLayerDataLayer(FILE* file, int& bytesRead, LayerData& layerData);
 		static void SectionDividerSetting(FILE * file, int const & size, LayerData& layerData);
 		static void ReadVectorMask(FILE* file, int const& size, LayerData& layerData);

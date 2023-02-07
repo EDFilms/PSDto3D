@@ -14,8 +14,8 @@
 //
 //----------------------------------------------------------------------------------------------
 
+#include "util/bounds_2D.h"
 #include "meshFace.h"
-#include "mesh_generator/linear_mesh/boundingBox.h"
 #include "influenceMesh.h"
 
 namespace mesh_generator
@@ -61,7 +61,7 @@ namespace mesh_generator
 			faceVertices.push_back(v);
 		}
 
-		boundingBox box;
+		boundsUV box;
 		box.GenerateBoundingBox(faceVertices);
 
 		// Get highest value of mask inside bounding box

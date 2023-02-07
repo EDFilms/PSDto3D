@@ -17,10 +17,11 @@
 #ifndef INFLUENCE_MESH_GENERATOR_H
 #define INFLUENCE_MESH_GENERATOR_H
 
-#include <vector>
 #include "util/math_2D.h"
 #include "mesh_generator/dataMesh.h"
 #include "meshFace.h"
+
+#include <vector>
 #include <queue>
 
 using namespace util;
@@ -31,6 +32,9 @@ namespace mesh_generator
 	{
 		float MinPolygonSize = 0.02f;
 		float MaxPolygonSize = 0.25f;
+
+		bool operator==(const InfluenceParameters& that) const { return (this->MinPolygonSize==that.MinPolygonSize) && (this->MaxPolygonSize==that.MaxPolygonSize); }
+		bool operator!=(const InfluenceParameters& that) const { return !(this->operator==(that)); }
 	};
 
 	//----------------------------------------------------------------------------------------------

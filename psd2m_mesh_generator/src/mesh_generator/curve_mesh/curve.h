@@ -18,9 +18,9 @@
 #define CURVE_H
 
 #include <vector>
+#include "util/bounds_2D.h"
 #include "util/vectorialPath.h"
 #include "bezier.h"
-#include "../linear_mesh/boundingBox.h"
 
 using namespace util;
 

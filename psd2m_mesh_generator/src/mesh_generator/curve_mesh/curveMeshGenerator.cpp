@@ -20,9 +20,10 @@
 
 namespace mesh_generator
 {
-	DataMesh CurveMeshGenerator::GenerateMesh(std::vector<Curve> curves, std::string const& name, CurveParameters const& params)
+	DataMesh CurveMeshGenerator::GenerateMesh(std::vector<Curve> curves, std::string const& name, CurveParameters const& params,
+		int width, int height, ProgressTask& progressTask )
 	{
-		DataMesh mesh = DataMesh(name);
+		DataMesh mesh = DataMesh(name, (float)width, (float)height);
 
 		// Create curves (data contains Curve & Intersection vector
 		std::vector<CurveData> paths;
@@ -43,11 +44,15 @@ namespace mesh_generator
 			}
 		}
 
+		progressTask.SetValueAndUpdate( 0.25f );
+
 		// Connect nodes of all intersections (this is how we find the neighbours)
 		for (auto pathData : paths)
 		{
 			pathData.ConnectNodes();
 		}
+
+		progressTask.SetValueAndUpdate( 0.50f );
 
 		// Remove nodes outside of "original" path
 		// Or remove neighbours so close that they overlap each other
@@ -61,9 +66,10 @@ namespace mesh_generator
 			}
 		}
 
+		float mergeVertexDistance = ( params.MergeVertexEnabled?  params.MergeVertexDistance : 0.0f );
 		for (auto node : nodes)
 		{
-			auto toRemove = node->MergeCloseNeighbours(params.MergeVertexDistance);
+			auto toRemove = node->MergeCloseNeighbours(mergeVertexDistance);
 			allNodesToRemove.insert(allNodesToRemove.end(), toRemove.begin(), toRemove.end());
 		}
 
@@ -75,6 +81,8 @@ namespace mesh_generator
 				nodes.erase(it);
 			}
 		}
+
+		progressTask.SetValueAndUpdate( 0.75f );
 
 		// Create Vertex vector for mesh and set index value
 		std::vector<Vector2F> vertices;
@@ -88,6 +96,17 @@ namespace mesh_generator
 		}
 
 		mesh.SetVertices(vertices);
+
+		// Create Points vector with pointers to vertices, and calculate bounds
+		// DO NOT modify the vertices array during this operation
+		boundsUV bounds = boundsUV();
+		std::vector<Vector2F*> points;
+		points.resize(vertices.size(),nullptr);
+		for( size_t i=0; i<vertices.size(); i++ ) points[i]=&(vertices[i]); // array of pointers
+		bounds.GenerateBoundingBox(points);
+		mesh.SetBoundsUV(bounds);
+		// Do not set XFormUV with mesh.SetXFormUV(xform);
+		// see calculation of GraphLayer.XFormUV in CreateTreeStructure()
 
 		// Use "Minimal Cycle Basis" to find all faces
 		MinimalCycleSearch(nodes, mesh);
@@ -252,7 +271,10 @@ namespace mesh_generator
 
 				node->RemoveNeighbour(neighbour);
 				neighbour->RemoveNeighbour(node);
-				mesh.AddFace(face);
+				if( face.size()>2 ) // ignore degenerate faces; need at least three vertices
+				{
+					mesh.AddFace(face);
+				}
 			}
 
 			node->ClearNeighbours();

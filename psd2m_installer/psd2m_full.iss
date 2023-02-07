@@ -6,43 +6,91 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{527B9D45-EC57-4734-AF9E-C85AE9F53B6A}
-AppName=PSD23D
-AppVersion=1.0.0
-;AppVerName=
+AppName=PSD to Maya
+AppVersion=PLUGIN_VER_TOKEN
+AppVerName=PSD to Maya PLUGIN_VER_TOKEN
 AppPublisher=EDFilms
-AppPublisherURL=http://www.example.com/
-AppSupportURL=http://www.example.com/
-AppUpdatesURL=http://www.example.com/
-DefaultDirName={pf}
-DefaultGroupName=PSD23D
+AppPublisherURL=http://www.edfilms.net/
+AppSupportURL=http://www.edfilms.net/
+AppUpdatesURL=http://www.edfilms.net/
+DefaultDirName={pf}\PSDtoMaya
+DefaultGroupName=PSDtoMaya
 AllowNoIcons=yes
 OutputBaseFilename=setup
 Compression=lzma
 SolidCompression=yes
+ArchitecturesInstallIn64BitMode=x64
+UninstallDisplayIcon={app}\maya\icons\PSD to 3D Icons.ico
+UninstallDisplayName=PSD to Maya PLUGIN_VER_TOKEN
+SetupIconFile=TEMP_PSDto3D_INSTALLER.ico
+; NO PSDtoMaya ICON YET, ONLY PSDtoFBX...
+;SetupIconFile=TEMP_PSDtoMaya_INSTALLER.ico
 
 [Languages]
-Name: "english"; MessagesFile: "compiler:Default.isl"
-Name: "french"; MessagesFile: "compiler:Languages\French.isl"
+Name: "english"; MessagesFile: "compiler:Default.isl";
+;Name: "french"; MessagesFile: "compiler:Languages\French.isl";
 
 [Types]
 Name: "full";     Description: "Full installation";
 Name: "custom";   Description: "Custom installation"; Flags: iscustom;
-                                             
+
 [Components]
-Name: main; Description: Photoshop;    Types: full custom; Flags: fixed
-Name: mp2016; Description: Maya 2016;   Types: full
-Name: mp2017; Description: Maya 2017;   Types: full
+Name: extCC; Description: Photoshop Creative Cloud Extension; Types: full custom;
+;Name: mp2017; Description: Maya 2017;   Types: full
 Name: mp2018; Description: Maya 2018;   Types: full
+Name: mp2019; Description: Maya 2019;   Types: full
+Name: mp2020; Description: Maya 2020;   Types: full
+Name: mp2022; Description: Maya 2022;   Types: full
+Name: mp2023; Description: Maya 2023;   Types: full
 
 [Files]
-Source: "D:\01-projet\1718_26_EDF_0\build\photoshop\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main;
-Source: "D:\01-projet\1718_26_EDF_0\build\plugin\Release\PSD23D_Maya2016_1.0.0.mll"; DestDir: "{code:GetDataDir|2016}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2016;
-Source: "D:\01-projet\1718_26_EDF_0\build\plugin\Release\PSD23D_Maya2017_1.0.0.mll"; DestDir: "{code:GetDataDir|2017}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2017;
-Source: "D:\01-projet\1718_26_EDF_0\build\plugin\Release\PSD23D_Maya2018_1.0.0.mll"; DestDir: "{code:GetDataDir|2018}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018
+Source: "..\Builds\installer\stage_full\maya\conf\english\language.ini"; DestDir: "{userappdata}\EDFilms"; Flags: ignoreversion recursesubdirs createallsubdirs; Languages: english;
+;Source: "..\Builds\installer\stage_full\maya\conf\french\language.ini"; DestDir: "{userappdata}\EDFilms"; Flags: ignoreversion recursesubdirs createallsubdirs; Languages: french;
+Source: "..\Builds\installer\stage_full\photoshop\cc\Extension\*"; DestDir: "{commoncf32}\Adobe\CEP\extensions\com.EDFilms.PsdExporter"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: extCC;
+Source: "..\Builds\installer\stage_full\photoshop\*"; DestDir: "{app}\photoshop"; Flags: ignoreversion recursesubdirs createallsubdirs;
+;Source: "..\Builds\installer\stage_full\maya\2017\PSDto3D_Maya2017_PLUGIN_VER_TOKEN.mll"; DestDir: "{code:GetDataDir|2017\plug-ins}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2017;
+;Source: "..\Builds\installer\stage_full\maya\2017\PSDto3D_Maya2017_PLUGIN_VER_TOKEN.mll"; DestDir: "{app}\maya\2017\plug-ins"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2017;
+;Source: "..\Builds\installer\stage_full\maya\2017\shelf_PSDto3D.mel"; DestDir: "{code:GetDataDir|2017\prefs\shelves}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2017
+;Source: "..\Builds\installer\stage_full\maya\2017\shelf_PSDto3D.mel"; DestDir: "{app}\maya\2017\prefs\shelves"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2017
+Source: "..\Builds\installer\stage_full\maya\2018\PSDto3D_Maya2018_PLUGIN_VER_TOKEN.mll"; DestDir: "{code:GetDataDir|2018\plug-ins}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018;
+Source: "..\Builds\installer\stage_full\maya\2018\PSDto3D_Maya2018_PLUGIN_VER_TOKEN.mll"; DestDir: "{app}\maya\2018\plug-ins"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018;
+Source: "..\Builds\installer\stage_full\maya\2018\shelf_PSDto3D.mel"; DestDir: "{code:GetDataDir|2018\prefs\shelves}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018
+Source: "..\Builds\installer\stage_full\maya\2018\shelf_PSDto3D.mel"; DestDir: "{app}\maya\2018\prefs\shelves"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018
+Source: "..\Builds\installer\stage_full\maya\2019\PSDto3D_Maya2019_PLUGIN_VER_TOKEN.mll"; DestDir: "{code:GetDataDir|2019\plug-ins}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2019
+Source: "..\Builds\installer\stage_full\maya\2019\PSDto3D_Maya2019_PLUGIN_VER_TOKEN.mll"; DestDir: "{app}\maya\2019\plug-ins"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2019
+Source: "..\Builds\installer\stage_full\maya\2019\shelf_PSDto3D.mel"; DestDir: "{code:GetDataDir|2019\prefs\shelves}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2019
+Source: "..\Builds\installer\stage_full\maya\2019\shelf_PSDto3D.mel"; DestDir: "{app}\maya\2019\prefs\shelves"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2019
+Source: "..\Builds\installer\stage_full\maya\2020\PSDto3D_Maya2020_PLUGIN_VER_TOKEN.mll"; DestDir: "{code:GetDataDir|2020\plug-ins}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2020
+Source: "..\Builds\installer\stage_full\maya\2020\PSDto3D_Maya2020_PLUGIN_VER_TOKEN.mll"; DestDir: "{app}\maya\2020\plug-ins"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2020
+Source: "..\Builds\installer\stage_full\maya\2020\shelf_PSDto3D.mel"; DestDir: "{code:GetDataDir|2020\prefs\shelves}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2020
+Source: "..\Builds\installer\stage_full\maya\2020\shelf_PSDto3D.mel"; DestDir: "{app}\maya\2020\prefs\shelves"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2020
+Source: "..\Builds\installer\stage_full\maya\2022\PSDto3D_Maya2022_PLUGIN_VER_TOKEN.mll"; DestDir: "{code:GetDataDir|2022\plug-ins}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2022
+Source: "..\Builds\installer\stage_full\maya\2022\PSDto3D_Maya2022_PLUGIN_VER_TOKEN.mll"; DestDir: "{app}\maya\2022\plug-ins"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2022
+Source: "..\Builds\installer\stage_full\maya\2022\shelf_PSDto3D.mel"; DestDir: "{code:GetDataDir|2022\prefs\shelves}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2022
+Source: "..\Builds\installer\stage_full\maya\2022\shelf_PSDto3D.mel"; DestDir: "{app}\maya\2022\prefs\shelves"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2022
+Source: "..\Builds\installer\stage_full\maya\2023\PSDto3D_Maya2023_PLUGIN_VER_TOKEN.mll"; DestDir: "{code:GetDataDir|2023\plug-ins}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2023
+Source: "..\Builds\installer\stage_full\maya\2023\PSDto3D_Maya2023_PLUGIN_VER_TOKEN.mll"; DestDir: "{app}\maya\2023\plug-ins"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2023
+Source: "..\Builds\installer\stage_full\maya\2023\shelf_PSDto3D.mel"; DestDir: "{code:GetDataDir|2023\prefs\shelves}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2023
+Source: "..\Builds\installer\stage_full\maya\2023\shelf_PSDto3D.mel"; DestDir: "{app}\maya\2023\prefs\shelves"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2023
+Source: "..\Builds\installer\stage_full\maya\icons\PSD to 3D Icons.ico"; DestDir: "{app}\maya\icons"; Flags: ignoreversion recursesubdirs createallsubdirs;
+Source: "..\Builds\installer\stage_full\docs\Online Documentation.url"; DestDir: "{app}\docs"; Flags: ignoreversion recursesubdirs createallsubdirs;
+
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
+[Icons]
+Name: "{group}\Online Documentation"; Filename: "{app}\docs\Online Documentation.url"; WorkingDir: "{app}\docs"; IconFilename: "{commonpf32}\Microsoft\Edge\Application\msedge.exe"; Comment: "PSD to 3D Online Documentation";
+
+[CustomMessages]
+english.HelpAndSupport=Help & Support
+;french.HelpAndSupport=Aide et support technique
+english.HelpAndSupportEx=
+;french.HelpAndSupportEx=
+; these are in RTF format, edit by saving a RTF file to disk then open as plain text to copy the contents
+english.HelpMsg={\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang13322{\fonttbl{\f0\fnil\fcharset0 Tahoma;}}{\colortbl ;\red0\green0\blue255;}{\*\generator Riched20 10.0.19041}\viewkind4\uc1 \pard\f0\fs16 Thank you for purchasing PSD to Maya!\par\par\par For documentation and tutorials, please visit our website.\par\par{{\field{\*\fldinst{HYPERLINK https://edfilms.notion.site/PSD-to-3D-user-manual-6221458afd534a5aa14a46b77048a396 }}{\fldrslt{Online Documentation}}}}\f0\fs16\par\par\par If you are experiencing difficulties with installation or licensing, please visit our online troubleshooting guide.\par\par{{\field{\*\fldinst{HYPERLINK https://edfilms.notion.site/Troubleshooting-1b487fa562be4d8aa10f0d0fb5d3a1fe }}{\fldrslt{Troubleshooting Guide}}}}\f0\fs22\par}
+;french.HelpMsg={\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang13322{\fonttbl{\f0\fnil\fcharset0 Tahoma;}}{\colortbl ;\red0\green0\blue255;}{\*\generator Riched20 10.0.19041}\viewkind4\uc1 \pard\f0\fs16 Merci d\rquote avoir achet\'e9 PSD to Maya!\par\par\par Pour obtenir la documentation et les tutoriels, n\rquote h\'e9sitez pas \'e0 visiter notre site web.\par\par{{\field{\*\fldinst{HYPERLINK https://edfilms.notion.site/PSD-to-3D-user-manual-6221458afd534a5aa14a46b77048a396 }}{\fldrslt{Documentation en ligne}}}\f0\fs16\par\par\par Si vous \'e9prouvez des difficult\'e9s avec l'assistant d'installation ou avec l'enregistrement de votre licence, veuillez vous r\'e9f\'e9rer \'e0 notre guide de d\'e9pannage en ligne.\par\par{{\field{\*\fldinst{HYPERLINK https://edfilms.net/en/psd-to-fbx-troubleshooting-guide/ }}{\fldrslt{Guide de d\'e9pannage}}}}\f0\fs22\par}
+
 [run]
-Filename: "{app}\install_plugin.bat"; Flags: shellexec runhidden waituntilterminated;
+Filename: "{app}\photoshop\cc\install_plugin.bat"; Flags: shellexec runhidden waituntilterminated;
 
 
 [Code]
@@ -53,14 +101,34 @@ var
 
 procedure InitializeWizard;
 var
+  OutputMsgWizardPage: TOutputMsgWizardPage;
+  AfterID: Integer;
+  RichViewer: TRichEditViewer;  
   OrigPath: string;                                                                        
 
 begin
   { Create the pages }
 
+  AfterID := wpInfoAfter;
+  //AfterID := wpSelectDir; // testing only
+  
+  OutputMsgWizardPage := CreateOutputMsgPage(AfterID, ExpandConstant('{cm:HelpAndSupport}'), ExpandConstant('{cm:HelpAndSupportEx}'), ExpandConstant('{cm:HelpMsg}'));
+
+  RichViewer := TRichEditViewer.Create(OutputMsgWizardPage);
+  RichViewer.Left := 0;
+  RichViewer.Top := 0;
+  RichViewer.Color := OutputMsgWizardPage.Surface.Color;
+  RichViewer.Width := OutputMsgWizardPage.SurfaceWidth;
+  RichViewer.Height := OutputMsgWizardPage.SurfaceHeight;
+  RichViewer.Parent := OutputMsgWizardPage.Surface;
+  RichViewer.BorderStyle := bsNone;
+  RichViewer.TabStop := False;
+  RichViewer.ReadOnly := True;
+  RichViewer.RTFText := ExpandConstant('{cm:HelpMsg}');
+
   DataDirPage := CreateInputDirPage(wpSelectDir,
-    'Select Maya plugin Install', 'Where should PSD23D plug-in files be installed?',
-    'Select the install maya folder or use the default Document folder.',
+    'Select Maya plugin Install', 'Where should PSD to Maya plug-in file be installed?',
+    'Select the install maya folder. Default install folder is ' + ExpandConstant('{userdocs}') + '\maya',
     False, '');
   DataDirPage.Add('');
   DataDirPage.Values[0] :=  ExpandConstant('{userdocs}') + '\maya'; 
@@ -80,8 +148,6 @@ end;
 function GetDataDir(Param: String): String;
 begin
   { Return the selected DataDir }
-  Result := DataDirPage.Values[0] + '\' + Param + '\plug-ins';
+  Result := DataDirPage.Values[0] + '\' + Param;
 end;
-
-
 

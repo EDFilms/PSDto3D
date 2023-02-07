@@ -14,66 +14,179 @@
 //
 //----------------------------------------------------------------------------------------------
 
-#include "boundingBox.h"
+#include "helpers.h"
+#include "bounds_2D.h"
 #include <iostream>
 #include <string>
 #include <algorithm>
 
-namespace mesh_generator
+
+namespace util
 {
-#pragma region ACCESSORS
+
+#pragma region TRANSFORM
 
 	//----------------------------------------------------------------------------------------
-	Vector2F* boundingBox::BoundPoints() { return Points; }
+	void xformUV::InitTransform(const boundsUV& boundsFrom, const boundsUV& boundsTo, bool rotate)
+    {
+		float rotation;
+		Vector2F scale;
+		Vector2F translation;
+
+		// Calculate scale and rotation components of 2D transform
+		Vector2F spanFrom = boundsFrom.GetSize(), spanTo = boundsTo.GetSize();
+		if( rotate )
+		{
+			rotation = -90.0f;
+			scale.x = spanTo.y / spanFrom.x;
+			scale.y = spanTo.x / spanFrom.y;
+		}
+		else
+		{
+			rotation = 0.0f;
+			scale.x = spanTo.x / spanFrom.x;
+			scale.y = spanTo.y / spanFrom.y;
+		}
+		Matrix2F m = Matrix2F::Rotation(rotation).MultiplyRight( Matrix2F::Scale( scale.x, scale.y ) );
+
+		// Calculate transform component of 2D transform
+		Vector2F p = m.Transform( boundsFrom.BottomLeftPoint() );
+		if( rotate )
+		{
+			p = boundsTo.TopLeftPoint() - p;
+		}
+		else
+		{
+			p = boundsTo.BottomLeftPoint() - p;
+		}
+		m.tx = p.x;
+		m.ty = p.y;
+
+		// Assign the transform matrix
+		this->mat = m;
+
+
+		// Here's an example of a texture rotation, with upper left corner going from (0,0.5) -> (0.75,0),
+		// source width is 1.0 and height 0.25, dest width is 0.25 and height 1.0
+
+		// FROM
+		//(0,0)                 (0,0)
+		//[ . . . . . . . .]    [ . . . . . . # D]
+		//[ . . . . . . . .]    [ . . . . . . # L]
+		//[ . . . . . . . .]    [ . . . . . . # R]
+		//[ . . . . . . . .]    [ . . . . . . O O]
+		//[ H E L L O # # #]    [ . . . . . . L W]
+		//[ # # # W O R L D]    [ . . . . . . L #]
+		//[ . . . . . . . .]    [ . . . . . . E #]
+		//[ . . . . . . . .]    [ . . . . . . H #]
+		//             (1,1)                 (1,1)
+
+		//// To perform UV transformation on a point v:
+
+		//// rotated case
+		////   dst.x =  ((v.y - srcMin.y)/srcHeight)*dstWidth + dstMin.x
+		////         =  v.y * S.y + T.y  ...   S.y = dstWidth/srcHeight, T.y = dstMin.x - srcMin.y * S.y
+		////   dst.y =  (1.0 - ((v.x - srcMin.x)/srcWidth))*dstHeight + dstMin.y
+		////         =  v.x * S.x + dstHeight + dstMin.y - srcMin.x * S.x  ...  S.x = -dstHeight/srcWidth
+		////         =  v.x * S.x + T.x  ...  S.x = -dstHeight/srcWidth, T.x = dstHeight + dstMin.y - srcMin.x * S.x
+
+		//// non-rotated case
+		////   dst.x = (( (v.x - srcMin.x) / srcWidth ) * dstWidth) + dstMin.x ...
+		////         = (v.x * S.x)  +  (dstMin.x - (srcMin.x * S.x)) ... S.x = dstWidth / srcWidth
+		////   dst.y = (v.y * S.y)  +  (dstMin.y - (srcMin.y * S.y)) ... S.y = dstHeight / srcHeight
+
+		//Vector2F srcMin = boundsFrom.min_point, dstMin = boundsTo.min_point;
+		//Vector2F srcSize = boundsFrom.GetSize(), dstSize = boundsTo.GetSize();
+		//float srcWidth = srcSize.x, srcHeight = srcSize.y, dstWidth = dstSize.x, dstHeight = dstSize.y;
+		//this->rotate = (rotate? 1:0);
+		//if( this->rotate )
+		//{
+		//	this->scale = Vector2F( -dstHeight/srcWidth, dstWidth/srcHeight ); // -1.0, 1.0
+		//	this->translate = Vector2F(
+		//		dstHeight + dstMin.y - (srcMin.x * scale.x), // 1.0
+		//		dstMin.x - (srcMin.y * scale.y) ); // 0.25
+		//	// Transform() -> return Vector2F( translate.y + (v.y*scale.y), translate.x + (v.x*scale.x) )
+		//	// [0.0,0.50] -> [0.75, 1.00] 
+		//	// [1.0,0.75] -> [1.00, 0.00]
+		//}
+		//else
+		//{
+		//	// scalar is (layerSize/atlasSize) and offset is atlasPos+(-scalar*(layerPos+atlasPos)) ...
+		//	this->scale = Vector2F( dstWidth/srcWidth, dstHeight/srcHeight );
+		//	this->translate = Vector2F(
+		//		dstMin.x + (-scale.x*(srcMin.x)),
+		//		dstMin.y + (-scale.y*(srcMin.y)) );
+		//}
+    }
 
 	//----------------------------------------------------------------------------------------
-	Vector2F boundingBox::TopLeftPoint() { return Points[0]; }
+	void xformUV::InvertTransform()
+	{
+		mat.Invert();
 
-	//----------------------------------------------------------------------------------------
-	Vector2F boundingBox::TopRightPoint() { return Points[1]; }
+		// TODO: fails with rotate=true, transform won't produce meaning results after inversion
 
-	//----------------------------------------------------------------------------------------
-	Vector2F boundingBox::BottomRightPoint() { return Points[2]; }
-
-	//----------------------------------------------------------------------------------------
-	Vector2F boundingBox::BottomLeftPoint() { return Points[3]; }
+		//// Example, scale [2.0,2.0] transform [+1.0,+1.0] -> scale [0.5,0.5] transform [-0.5,-0.5]
+		//translate.x = -translate.x/scale.x;
+		//translate.y = -translate.y/scale.y;
+		//scale.x = 1.0f/scale.x;
+		//scale.y = 1.0f/scale.y;
+	}
 
 #pragma endregion
 
 #pragma region CALCUL BOUNDS
 
 	//----------------------------------------------------------------------------------------
-	void boundingBox::GenerateBoundingBox(std::vector<Vector2F*> const& pathPoints)
+	void boundsUV::Init( const boundsPixels& inset, int imageWidth, int imageHeight )
 	{
-		Vector2F min = Vector2F(1.0f, 1.0f);
-		Vector2F max = Vector2F(0.0f, 0.0f);
-
-		for (int i = -0; i < pathPoints.size(); i++)
-		{
-			min.x = std::min(min.x, pathPoints[i]->x);
-			min.y = std::min(min.y, pathPoints[i]->y);
-			max.x = std::max(max.x, pathPoints[i]->x);
-			max.y = std::max(max.y, pathPoints[i]->y);
-		}
-
-		this->Points[0] = Vector2F(min.x, max.y); // top left;
-		this->Points[1] = Vector2F(max.x, max.y); // top right;
-		this->Points[2] = Vector2F(max.x, min.y); // bottom right;
-		this->Points[3] = Vector2F(min.x, min.y); // bottom left;
+		boundsPixels boundsFrame( 0,0, imageWidth,imageHeight );
+		GenerateBoundingBox( inset, boundsFrame );
 	}
 
 	//----------------------------------------------------------------------------------------
-	void boundingBox::DisplayBoundingBox() const
+	void boundsUV::GenerateBoundingBox(float u, float v, float width, float height)
+	{
+		this->min_point = Vector2F( u, v );
+		this->max_point = Vector2F( u+width, v+height );
+	}
+
+	void boundsUV::GenerateBoundingBox(const boundsPixels& inset, const boundsPixels& frame)
+	{
+		float uOffset = inset.XPixels() / (float)(frame.WidthPixels());
+		float vOffset = inset.YPixels() / (float)(frame.HeightPixels());
+		float uScale  = inset.WidthPixels() / (float)(frame.WidthPixels());
+		float vScale  = inset.HeightPixels() / (float)(frame.HeightPixels());
+		GenerateBoundingBox( uOffset, vOffset, uScale, vScale );
+	}
+
+	//----------------------------------------------------------------------------------------
+	void boundsUV::GenerateBoundingBox(std::vector<Vector2F*> const& pathPoints)
+	{
+		Vector2F min_point = Vector2F( 2.0f,  2.0f);
+		Vector2F max_point = Vector2F(-1.0f, -1.0f);
+
+		for (int i = -0; i < pathPoints.size(); i++)
+		{
+			min_point.x = std::min(min_point.x, pathPoints[i]->x);
+			min_point.y = std::min(min_point.y, pathPoints[i]->y);
+			max_point.x = std::max(max_point.x, pathPoints[i]->x);
+			max_point.y = std::max(max_point.y, pathPoints[i]->y);
+		}
+
+		this->min_point = min_point;
+		this->max_point = max_point;
+	}
+
+
+	//----------------------------------------------------------------------------------------
+	void boundsUV::DisplayBoundingBox() const
 	{
 		std::string boxValue = "BoundingBox\n";
-		boxValue.append("Point 1: ");
-		boxValue.append(Points[0].ToMString());
-		boxValue.append(";\nPoint 2: ");
-		boxValue.append(Points[1].ToMString());
-		boxValue.append(";\nPoint 3: ");
-		boxValue.append(Points[2].ToMString());
-		boxValue.append(";\nPoint 4: ");
-		boxValue.append(Points[3].ToMString());
+		boxValue.append("Min Point: ");
+		boxValue.append(this->min_point.ToMString());
+		boxValue.append(";\nMax Point: ");
+		boxValue.append(this->max_point.ToMString());
 		std::cout << boxValue << std::endl;;
 	}
 
@@ -82,100 +195,48 @@ namespace mesh_generator
 #pragma region ORIENTED BOUNDING BOX FROM OPEN VECTOR
 
 	//----------------------------------------------------------------------------------------------
-	void boundingBox::GetDirection(std::vector<PathPoints*> const& refPoint)
+	void boundsUV::Expand(boundsUV bounds)
 	{
-		unsigned int size = int(refPoint.size());
-		// Not a path just one isolate point.
-		if (size < 2) return;
-
-		Vector2F* firstPoint = new Vector2F(refPoint[0]->AnchorPoint.x, refPoint[0]->AnchorPoint.y);
-		Vector2F* lastPoint = new Vector2F(refPoint[size - 1]->AnchorPoint.x, refPoint[size - 1]->AnchorPoint.y);
-
-		this->OrientedVector[0] = firstPoint->x < lastPoint->x ? *firstPoint : *lastPoint;
-		this->OrientedVector[1] = firstPoint->x < lastPoint->x ? *lastPoint : *firstPoint;
+		this->min_point.x = MIN( this->min_point.x, bounds.min_point.x );
+		this->min_point.y = MIN( this->min_point.y, bounds.min_point.y );
+		this->max_point.x = MAX( this->max_point.x, bounds.max_point.x );
+		this->max_point.y = MAX( this->max_point.y, bounds.max_point.y );
 	}
 
 	//----------------------------------------------------------------------------------------------
-	void boundingBox::GetDirection(float angle)
+	void boundsUV::Expand( int imageWidth, int imageHeight, int paddingPixels )
 	{
-		this->OrientedVector[0] = Vector2F(0.0, 0.0);
-		this->OrientedVector[1] = Vector2F(std::abs(std::cos(angle)), std::abs(std::sin(angle)));
+		boundsPixels boundsFrame = boundsPixels( 0, 0, imageWidth, imageHeight );
+		boundsPixels boundsRegion; // pixel bounds of mesh
+		boundsRegion.Init( *this,  imageWidth, imageHeight );
+		boundsPixels boundsPadded = boundsPixels(
+			boundsRegion.XPixels()-paddingPixels, boundsRegion.YPixels()-paddingPixels,
+			boundsRegion.WidthPixels()+(2*paddingPixels), boundsRegion.HeightPixels()+(2*paddingPixels) );
+		GenerateBoundingBox( boundsPadded, boundsFrame );
 	}
 
 	//----------------------------------------------------------------------------------------------
-	void boundingBox::SetOrientation(PathRecord const& refPoint)
+	void boundsUV::Clip(boundsUV bounds)
 	{
-		this->GetDirection(refPoint.Points);
+		this->min_point.x = MAX( this->min_point.x, bounds.min_point.x );
+		this->min_point.y = MAX( this->min_point.y, bounds.min_point.y );
+		this->max_point.x = MIN( this->max_point.x, bounds.max_point.x );
+		this->max_point.y = MIN( this->max_point.y, bounds.max_point.y );
 	}
 
-	//----------------------------------------------------------------------------------------------
-	void boundingBox::SetOrientation(float const angle)
-	{
-		this->GetDirection(angle);
-	}
-
-	//----------------------------------------------------------------------------------------------
-	void boundingBox::GenerateOrientedBoundingBox(std::vector<Vector2F*> const& pathPoints)
-	{
-		// determine orientation and find the orthogonal vector
-		Vector2F pointOrthogonal;
-		bool topDirection = this->OrientedVector[0].y < this->OrientedVector[1].y;
-
-		Vector2F vectBase = Vector2F(this->OrientedVector[1].x - this->OrientedVector[0].x, this->OrientedVector[1].y - this->OrientedVector[0].y);
-
-		pointOrthogonal.x = topDirection ? vectBase.y : vectBase.y * -1;
-		pointOrthogonal.y = topDirection ? vectBase.x * -1 : vectBase.x;
-
-		// Get the projection and keep the extreme point
-		float r0 = std::sqrt(std::powf(vectBase.x, 2.0) + std::powf(vectBase.y, 2.0));
-		float r1 = std::sqrt(std::powf(pointOrthogonal.x, 2.0) + std::powf(pointOrthogonal.y, 2.0));
-
-		Vector2F firstNormalizedVector = Vector2F((vectBase.x) / r0, (vectBase.y) / r0);
-		Vector2F SecondeNormalizedVector = Vector2F((pointOrthogonal.x) / r1, (pointOrthogonal.y) / r1);
-
-		//Vector2f MinFirst, MaxFirst, MinSecond, MaxSecond;
-
-		float minDistFirst = 50.f;
-		float minDistSeconde = 50.f;
-		float maxDistFirst = -50.f;
-		float maxDistSeconde = -50.0f;
-		float tmpVal = 0.f;
-
-		for (int i = 0; i < pathPoints.size(); i++)
-		{
-			tmpVal = (firstNormalizedVector.x * pathPoints[i]->x) + (firstNormalizedVector.y * pathPoints[i]->y);
-			minDistFirst = std::min(tmpVal, minDistFirst);
-			maxDistFirst = std::max(tmpVal, maxDistFirst);
-
-			tmpVal = (SecondeNormalizedVector.x * pathPoints[i]->x) + (SecondeNormalizedVector.y * pathPoints[i]->y);
-			minDistSeconde = std::min(tmpVal, minDistSeconde);
-			maxDistSeconde = std::max(tmpVal, maxDistSeconde);
-		}
-
-		// Find the 3 Points reference for the algorithm, get the projection from point with the point.
-
-		// top left
-		Points[0] = (firstNormalizedVector * (topDirection ? maxDistFirst : minDistFirst)) + (SecondeNormalizedVector * (topDirection ? minDistSeconde : maxDistSeconde));
-		// top right
-		Points[1] = (firstNormalizedVector * maxDistFirst) + (SecondeNormalizedVector * maxDistSeconde);
-		// bottom right
-		Points[2] = (firstNormalizedVector * (topDirection ? minDistFirst : maxDistFirst)) + (SecondeNormalizedVector * (topDirection ? maxDistSeconde : minDistSeconde));
-		// bottom left
-		Points[3] = (firstNormalizedVector * minDistFirst) + (SecondeNormalizedVector * minDistSeconde);
-	}
 
 #pragma endregion
 
 #pragma region ORIENTED BOUNDING BOX
 
 	//----------------------------------------------------------------------------------------
-	double boundingBox::Cross(const Vector2F &o, const Vector2F &a, const Vector2F &b)
+	double boundsUV::Cross(const Vector2F &o, const Vector2F &a, const Vector2F &b)
 	{
 		return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
 	}
 
 	//----------------------------------------------------------------------------------------
-	std::vector<Vector2F> boundingBox::ConvexHull(std::vector<Vector2F>& points)
+	std::vector<Vector2F> boundsUV::ConvexHull(std::vector<Vector2F>& points)
 	{
 		int n = int(points.size());
 		int k = 0;
@@ -201,4 +262,86 @@ namespace mesh_generator
 	}
 
 #pragma endregion
+
+#pragma region BOUNDING RECT
+
+	//----------------------------------------------------------------------------------------
+	boundsPixels::boundsPixels( int x, int y, int width, int height )
+	{
+		this->X = x;
+		this->Y = y;
+		this->Width = width;
+		this->Height = height;
+	}
+
+	//----------------------------------------------------------------------------------------
+	void boundsPixels::Init( const boundsUV& bounds, int imageWidth, int imageHeight )
+	{
+		int left = (int)floor( bounds.TopLeftPoint().x * imageWidth );
+		int right = (int)ceil( bounds.BottomRightPoint().x * imageWidth );
+		// Bounds in UV space are inverted vertically from pixel space,
+		// TopLeft is actually BottomLeft and BottomRight is actually TopRight
+		int bottom = (int)floor( bounds.TopLeftPoint().y * imageHeight );
+		int top = (int)ceil( bounds.BottomRightPoint().y * imageHeight );
+		this->X = left;
+		this->Y = top;
+		this->Width = abs(right-left);
+		this->Height = abs(bottom-top);
+	}
+
+	//----------------------------------------------------------------------------------------------
+	void boundsPixels::Expand( int paddingPixels )
+	{
+		this->X -= paddingPixels;
+		this->Y -= paddingPixels;
+		this->Width += (2*paddingPixels);
+		this->Height += (2*paddingPixels);
+	}
+
+	//----------------------------------------------------------------------------------------
+	void boundsPixels::Clip( int imageWidth, int imageHeight )
+	{
+		// slide the rect up, if below the minimums
+		int underscanX = (-this->X);					// positive if underscan
+		int underscanY = (-this->Y);
+		this->X += MAX(0, underscanX);					// if no underscan, do nothing
+		this->Width -= MAX(0, underscanX);
+		this->Y += MAX(0, underscanY);
+		this->Height -= MAX(0, underscanY);
+		// slide the rect down, if above the maximums
+		int overscanX = (this->X - imageWidth);			// positive if overscan
+		int overscanY = (this->Y - imageHeight);
+		this->X -= MAX(0, overscanX);					// if no overscan, do nothing
+		this->Width += MAX(0, overscanX);
+		this->Y -= MAX(0, overscanY);
+		this->Height += MAX(0, overscanY);
+		// resize the rect up, if if below the minimum
+		this->Width = MAX(0, this->Width);
+		this->Height = MAX(0, this->Height);
+		// resize the rect down, if above the maximums
+		this->Width = MIN((imageWidth-this->X), this->Width);
+		this->Height = MIN((imageHeight-this->Y), this->Height);
+	}
+
+	//----------------------------------------------------------------------------------------
+	bool boundsPixels::Contains( int x, int y ) const
+	{
+		if( (x<this->X) || (y<this->Y) || (x>=(this->X + this->Width)) || (y>=(this->Y + this->Height)) )
+			return false;
+		return true;
+	}
+
+	//----------------------------------------------------------------------------------------
+	bool boundsPixels::IsRotatedRelativeTo( boundsPixels bounds )
+	{
+		float this_aspect = 2.0f;
+		float that_aspect = 2.0f;
+		if( this->Height>0 ) this_aspect = (float)this->Width / (float)this->Height;
+		if( bounds.Height>0 ) that_aspect = (float)bounds.Width / (float)bounds.Height;
+		return ( ((this_aspect>1.0f) && (that_aspect<1.0f)) || ((this_aspect<1.0f) && (that_aspect>1.0f)) );
+	}
+
+
+#pragma endregion
+
 }

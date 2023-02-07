@@ -18,10 +18,11 @@
 #define CURVE_MESH_GENERATOR_H
 
 #include "util/math_2D.h"
-#include <vector>
+#include "util/progressJob.h"
 #include "curve.h"
 #include "curveData.h"
 #include "../dataMesh.h"
+#include <vector>
 
 using namespace util;
 
@@ -29,14 +30,19 @@ namespace mesh_generator
 {
 	struct CurveParameters
 	{
-		float MergeVertexDistance = 0.01f;
+		bool MergeVertexEnabled = true;
+		float MergeVertexDistance = 0.001f;
+
+		bool operator==(const CurveParameters& that) const { return (this->MergeVertexEnabled==that.MergeVertexEnabled) && (this->MergeVertexDistance==that.MergeVertexDistance); }
+		bool operator!=(const CurveParameters& that) const { return !(this->operator==(that)); }
 	};
 
 	//----------------------------------------------------------------------------------------------
 	class CurveMeshGenerator
 	{
 	public:
-		static DataMesh GenerateMesh(std::vector<Curve> curves, std::string const& name, CurveParameters const& params);
+		static DataMesh GenerateMesh(std::vector<Curve> curves, std::string const& name, CurveParameters const& params,
+			int width, int height, ProgressTask& progressTask);
 
 	private:
 		static bool SortNodesBasedOnX(Node* a, Node* b) { return a->GetVertex().x < b->GetVertex().x; }

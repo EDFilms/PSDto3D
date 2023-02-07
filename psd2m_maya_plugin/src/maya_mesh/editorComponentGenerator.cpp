@@ -15,102 +15,166 @@
 //----------------------------------------------------------------------------------------------
 
 #include "editorComponentGenerator.h"
+#if defined PSDTO3D_MAYA_VERSION
+#include <maya/MGlobal.h>
 #include <maya/MFnTransform.h>
 #include <maya/MFnSet.h>
 #include <maya/MPlug.h>
 #include <maya/MPlugArray.h>
 #include <maya/MSelectionList.h>
 #include <maya/MDagModifier.h>
+#else
+#include "mayaStub.h"
+#endif
 #include "mayaMeshConvertor.h"
 
 namespace maya_plugin
 {
 #pragma region EDITOR OPERATION
 
+	const char* EditorComponentGenerator::meshNamePostfix = ""; // Mesh is the most user-visible, has privilige of no postfix
+	const char* EditorComponentGenerator::materialNamePostfix = "_Lb"; // stands for Lambert
+	const char* EditorComponentGenerator::textureNamePostfix = "_PNG";
+	const char* EditorComponentGenerator::shaderGroupNamePostfix = "_SG";
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	MString EditorComponentGenerator::CreateUniqueName(MString const& name)
+	{
+		MString uniqueName = name;
+		bool isUnique = false;
+		for( int i=1; !isUnique; i++ )
+		{
+			MSelectionList list;
+			MStatus status = MGlobal::getSelectionListByName( uniqueName, list );
+			if( list.isEmpty() )
+				isUnique = true;
+			else
+				uniqueName = name + i;
+		}
+		return uniqueName;
+	}
+
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	MObject EditorComponentGenerator::CreateTransformShape(MDagModifier& dag, MString const& name, float const& depth, MObject & parent)
 	{
 		MObject& transform = dag.createNode("transform", parent);
-		dag.renameNode(transform, name);
+		dag.renameNode( transform, name );
 
 		MFnTransform transformFn(transform);
 		transformFn.setTranslation(MVector(0, 0, depth), MSpace::kTransform);
-		dag.doIt();
+		dag.doIt(); // TODO: maybe disable this, will happen later anyway
 		return transform;
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	MString EditorComponentGenerator::CreateMaterialNode(MFnLambertShader& fnLambert, MDagModifier& dag, MString const& name)
+	MObject EditorComponentGenerator::CreateMaterialNode(MDagModifier& dag, MString const& name)
 	{
-		const MObject lambert = fnLambert.create(true);
-		return fnLambert.setName(name + "_Lb");
+		MFnLambertShader fnLambert;
+		MObject lambert = fnLambert.create(true);
+		fnLambert.setName( name ); // name is usually postfixed with "_Lb"
+		return lambert;
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void EditorComponentGenerator::CreateGroupShaderNode(MDagModifier& dag, MString const& name, MString const& materialName, MObject & meshObj)
+	void EditorComponentGenerator::CreateShaderGroupNode( MDagModifier& dag, MString const& name, MFnLambertShader const& fnLambert, MObject & meshObj )
 	{
-		// MStatus status;
-		const MString nameSG(name + "_SG");
-
 		MFnSet fnSet;
 		MSelectionList selList;
 
+		MString materialName = fnLambert.name();
 		MObject shadingGroup = fnSet.create(selList, MFnSet::kRenderableOnly, false);
-		MString resNameSg = fnSet.setName(nameSG);
+		MString resNameSg = fnSet.setName( name );
 		fnSet.addMember(meshObj);
 
 		dag.commandToExecute("connectAttr -f " + materialName + ".outColor " + resNameSg + ".surfaceShader;");
 		dag.commandToExecute("setAttr \"" + materialName + ".ambientColor\" - type double3 1 1 1;");
+		dag.doIt(); // execute the script
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void EditorComponentGenerator::CreatePlaced2DTexture(MDagModifier& dag, MString const& name, MString const& materialName)
+	void EditorComponentGenerator::UpdateShaderGroupNode( MDagModifier& dag, MString const& name, MFnLambertShader const& fnLambert, MObject & meshObj )
+	{
+		bool found = false;
+
+		// Get Output plug
+		MPlug fnLambertOutplug = fnLambert.findPlug("outColor",false);
+
+		// Get connection from lambert to get the output plug
+		MPlugArray nodeplugs;
+		bool res = fnLambertOutplug.connectedTo(nodeplugs, false, true);
+		if (res)
+		{
+			MObject outNode = nodeplugs[0].node();
+			if( outNode.hasFn(MFn::kSet) )
+			{
+				MFnSet fnSet(outNode);
+				fnSet.addMember(meshObj);
+				found = true;
+			}
+		}
+
+		if( !found )
+		{
+			CreateShaderGroupNode( dag, name, fnLambert, meshObj );
+		}
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	void EditorComponentGenerator::CreatePlaced2DTextureNode( MDagModifier& dag, MString const& name, MFnLambertShader const& fnLambert )
 	{
 		// hack "mel scripting", C++ class not found yet.
-		dag.commandToExecute("shadingNode - asTexture - isColorManaged -name " + name + "_file file;");
+		MString materialName = fnLambert.name();
+		dag.commandToExecute("shadingNode - asTexture - isColorManaged -name " + name + " file;");
 		dag.commandToExecute("shadingNode - asUtility -name " + name + "_place2dTexture place2dTexture;");
 		   
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.coverage " + name + "_file.coverage;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.translateFrame " + name + "_file.translateFrame;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.rotateFrame " + name + "_file.rotateFrame;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.mirrorU " + name + "_file.mirrorU;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.mirrorV " + name + "_file.mirrorV;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.stagger " + name + "_file.stagger;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.wrapU " + name + "_file.wrapU;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.wrapV " + name + "_file.wrapV;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.repeatUV " + name + "_file.repeatUV;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.offset " + name + "_file.offset;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.rotateUV " + name + "_file.rotateUV;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.noiseUV " + name + "_file.noiseUV;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.vertexUvOne " + name + "_file.vertexUvOne;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.vertexUvTwo " + name + "_file.vertexUvTwo;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.vertexUvThree " + name + "_file.vertexUvThree;");
-		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.vertexCameraOne " + name + "_file.vertexCameraOne;");
-		dag.commandToExecute("connectAttr " + name + "_place2dTexture.outUV " + name + "_file.uv;");
-		dag.commandToExecute("connectAttr " + name + "_place2dTexture.outUvFilterSize " + name + "_file.uvFilterSize;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.coverage " + name + ".coverage;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.translateFrame " + name + ".translateFrame;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.rotateFrame " + name + ".rotateFrame;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.mirrorU " + name + ".mirrorU;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.mirrorV " + name + ".mirrorV;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.stagger " + name + ".stagger;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.wrapU " + name + ".wrapU;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.wrapV " + name + ".wrapV;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.repeatUV " + name + ".repeatUV;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.offset " + name + ".offset;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.rotateUV " + name + ".rotateUV;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.noiseUV " + name + ".noiseUV;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.vertexUvOne " + name + ".vertexUvOne;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.vertexUvTwo " + name + ".vertexUvTwo;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.vertexUvThree " + name + ".vertexUvThree;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.vertexCameraOne " + name + ".vertexCameraOne;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.outUV " + name + ".uv;");
+		dag.commandToExecute("connectAttr - f " + name + "_place2dTexture.outUvFilterSize " + name + ".uvFilterSize;");
 
-		dag.commandToExecute("connectAttr - f " + name + "_file.outColor " + materialName + ".color;");
-		dag.commandToExecute("connectAttr - f " + name + "_file.outTransparency " + materialName + ".transparency;");
+		dag.commandToExecute("connectAttr - f " + name + ".outColor " + materialName + ".color;");
+		dag.commandToExecute("connectAttr - f " + name + ".outTransparency " + materialName + ".transparency;");
+		dag.doIt(); // execute the script
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void EditorComponentGenerator::SetTexture(MString const& name, MString const& pathTexture, MFnLambertShader const& lambertMat)
+	void EditorComponentGenerator::UpdateTextureNode( MDagModifier& dag, MString const& name,
+		MFnLambertShader const& fnLambert, MString const& textureFilepath )
 	{
+		dag; // unused
+
+		MStatus status;
 		// Get Color plug
-		MPlug fnLambertColorplug = lambertMat.findPlug("color");
+		MPlug fnLambertColorplug = fnLambert.findPlug("color",false,&status);
 
 		// Get connection from lambert to get the file texture name plug
 		MPlugArray nodeplugs;
 		bool res = fnLambertColorplug.connectedTo(nodeplugs, true, false);
-		if (!res) return; // TODO: error to catch.
+		if( res ) // TODO: error to catch.
+		{
+			MObject textureNode = nodeplugs[0].node();
+			MFnDependencyNode depNode(textureNode);
+			MPlug plugFileTextureName = depNode.findPlug("fileTextureName",false,&status);
 
-		MObject textureNode = nodeplugs[0].node();
-		MFnDependencyNode depNode(textureNode);
-		MPlug plugFileTextureName = depNode.findPlug("fileTextureName");
-
-		// Set value to fileTextureName.
-		const MString imageLocation(pathTexture + "\\" + name + ".png");
-		plugFileTextureName.setValue(imageLocation);
+			// Set value to fileTextureName.
+			const MString imageLocation(textureFilepath); //pathTexture + "\\" + name + ".png"
+			plugFileTextureName.setValue(imageLocation);
+			depNode.setName(name);
+		}
 	}
 
 #pragma endregion

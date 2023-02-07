@@ -29,9 +29,6 @@ namespace util
 		Vector2F AnchorPoint;
 		Vector2F SegIn;
 		Vector2F SegOut;
-
-		PathPoints(){};
-		~PathPoints() {};
 	};
 
 	//----------------------------------------------------------------------------------------------
@@ -39,9 +36,6 @@ namespace util
 	{
 		bool IsClosedPath = false;
 		std::vector<PathPoints*> Points;
-
-		PathRecord() {};
-		~PathRecord() {};
 	};
 }
 

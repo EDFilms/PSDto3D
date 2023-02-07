@@ -15,6 +15,7 @@
 //----------------------------------------------------------------------------------------------
 
 #include "bezierCurve.h"
+#include "util/helpers.h"
 
 namespace mesh_generator
 {
@@ -26,27 +27,64 @@ namespace mesh_generator
 	//----------------------------------------------------------------------------------------
 	BezierCurve::~BezierCurve()
 	{
-		if (this->Curves.empty()) return;
+		Free();
+	}
 
-		for (auto& Curve : this->Curves)
+	//----------------------------------------------------------------------------------------
+	void BezierCurve::Free()
+	{
+		if( (!this->Curves.empty()) )
 		{
-			delete Curve;
+			for( Vector2F* point : this->Curves)
+			{
+				delete point;
+			}
 		}
+		this->Paths.clear();
 		this->Curves.clear();
 	}
 
 	//----------------------------------------------------------------------------------------
-	void BezierCurve::GenerateBezierCurve(PathRecord const& refPoint)
+	void BezierCurve::CloneFrom( const BezierCurve& that )
+	{
+		Free();
+		this->Paths = that.Paths;	// std::vector<PathPoints> Paths // original low-resolution control points
+		for( Vector2F* point : that.Curves )
+		{
+			if( point==nullptr )
+				this->Curves.push_back(nullptr);
+			else
+				this->Curves.push_back( new Vector2F(*point) ); // std::vector<Vector2F*> Curves // generated high-resolution points on curve
+		}
+	}
+
+	//----------------------------------------------------------------------------------------
+	void BezierCurve::GenerateBezierCurve(PathRecord const& refPoint, Vector2F clampMin, Vector2F clampMax, bool createCurves )
 	{
 		if (!Curves.empty()) Curves.clear();
 
-		if (refPoint.IsClosedPath && refPoint.Points.size() > 2)
+		if (refPoint.IsClosedPath && refPoint.Points.size() >= 2)
 		{
-			GenerateBezierClosedCurve(refPoint.Points);
+			GenerateBezierClosedCurve(refPoint.Points,createCurves);
 		}
 		else
 		{
-			GenerateBezierOpenCurve(refPoint.Points);
+			GenerateBezierOpenCurve(refPoint.Points,createCurves);
+		}
+
+		if( clampMin!=clampMax )
+		{
+			ClampCurvePoints( clampMin, clampMax );
+		}
+	}
+
+	//----------------------------------------------------------------------------------------
+	void BezierCurve::ClampCurvePoints( Vector2F min, Vector2F max )
+	{
+		for( Vector2F* point : this->Curves)
+		{
+			point->x = CLAMP( point->x, min.x, max.x );
+			point->y = CLAMP( point->y, min.y, max.y );
 		}
 	}
 
@@ -55,36 +93,44 @@ namespace mesh_generator
 #pragma region PRIVATE GENERATION
 
 	//----------------------------------------------------------------------------------------
-	void BezierCurve::GenerateBezierClosedCurve(std::vector<PathPoints*> const& refPoint)
+	void BezierCurve::GenerateBezierClosedCurve(std::vector<PathPoints*> const& refPoint, bool createCurves)
 	{
 		unsigned int size = int(refPoint.size());
-		GenerateBezierOpenCurve(refPoint);
+		GenerateBezierOpenCurve(refPoint, createCurves);
 
-		// Connect the last point and the first point
-		for (float t = 0.0f; t <= 1.0f; )
+		if( createCurves )
 		{
-			Vector2F* pointCurve = BezierCurve::CalculateBezierPoint(t, *refPoint[size - 1], *refPoint[0]);
-			this->Curves.push_back(pointCurve);
-			t += 0.001f;
+			// Connect the last point and the first point
+			for (float t = 0.0f; t <= 1.0f; )
+			{
+				Vector2F* pointCurve = BezierCurve::CalculateBezierPoint(t, *refPoint[size - 1], *refPoint[0]);
+				this->Curves.push_back(pointCurve);
+				t += 0.001f;
+			}
 		}
+		this->Paths.push_back( *refPoint[size-1] );
 	}
 
 	//----------------------------------------------------------------------------------------
-	void BezierCurve::GenerateBezierOpenCurve(std::vector<PathPoints*> const& refPoint)
+	void BezierCurve::GenerateBezierOpenCurve(std::vector<PathPoints*> const& refPoint, bool createCurves)
 	{
 		unsigned int size = int(refPoint.size());
 		// Not a path just one isolate point.
-		if (size <= 2) return;
+		if (size < 2) return;
 
 		// All the Points
 		for (unsigned int i = 0; i < size - 1; ++i)
 		{
-			for (float t = 0.0f; t <= 1.0f; )
+			if( createCurves )
 			{
-				Vector2F* pointCurve = BezierCurve::CalculateBezierPoint(t, *refPoint[i], *refPoint[i + 1]);
-				this->Curves.push_back(pointCurve);
-				t += 0.005f;
+				for (float t = 0.0f; t <= 1.0f; )
+				{
+					Vector2F* pointCurve = BezierCurve::CalculateBezierPoint(t, *refPoint[i], *refPoint[i + 1]);
+					this->Curves.push_back(pointCurve);
+					t += 0.005f;
+				}
 			}
+			this->Paths.push_back( *refPoint[i] );
 		}
 	}
 

@@ -187,8 +187,8 @@ function onClickButtonRun(ppid, action) {
         evalScript(jsfl);    } 
     else {
         var valueExpand = document.getElementById("field_pixel").value;
-        var valueExportPng = document.getElementById("checkbox_export_png").checked;
-    	var extScript = "$._ext_" + ppid + "." + action + "(" + valueExpand + "," + valueExportPng +")";
+        var valueVisibleOnly = document.getElementById("checkbox_visible_only").checked;
+    	var extScript = "$._ext_" + ppid + "." + action + "(" + valueExpand + "," + valueVisibleOnly +")";
 		evalScript(extScript);
 	}
 }

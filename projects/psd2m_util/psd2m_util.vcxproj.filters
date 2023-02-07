@@ -1,25 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="$(ProjectDir)/../../psd2m_util/src\util\math_2D.cpp" />
+    <ClCompile Include="..\..\psd2m_util\src\util\math_2D.cpp" />
+    <ClCompile Include="..\..\psd2m_util\src\util\threadpool.cpp" />
+    <ClCompile Include="..\..\psd2m_util\src\util\bounds_2D.cpp" />
+    <ClCompile Include="..\..\psd2m_util\src\util\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ProjectDir)/../../psd2m_util/src\util\math_2D.h" />
-    <ClInclude Include="$(ProjectDir)/../../psd2m_util/src\util\utils.h" />
-    <ClInclude Include="$(ProjectDir)/../../psd2m_util/src\util\vectorialPath.h" />
+    <ClInclude Include="..\..\psd2m_util\src\util\math_2D.h" />
+    <ClInclude Include="..\..\psd2m_util\src\util\utils.h" />
+    <ClInclude Include="..\..\psd2m_util\src\util\vectorialPath.h" />
+    <ClInclude Include="..\..\psd2m_util\src\util\helpers.h" />
+    <ClInclude Include="..\..\psd2m_util\src\util\readerWriterLock.h" />
+    <ClInclude Include="..\..\psd2m_util\src\util\threadpool.h" />
+    <ClInclude Include="..\..\psd2m_util\src\util\progressJob.h" />
+    <ClInclude Include="..\..\psd2m_util\src\util\bounds_2D.h" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{38E4BC12-A71D-38FA-BC95-37C4C35C9F36}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\utils">
-      <UniqueIdentifier>{C21CF268-9AE5-32EF-BCD2-4D3A7046B9FE}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{A8CCDE29-4562-311F-8950-3DE5537A79B6}</UniqueIdentifier>
+      <UniqueIdentifier>{86DE522D-CF5F-39F8-92ED-853C3F603767}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{E6B33AE8-A839-3E91-B87C-7EA31CC9C9B9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\utils">
-      <UniqueIdentifier>{202449FB-2C63-324F-B223-38A2A6BE4E36}</UniqueIdentifier>
+      <UniqueIdentifier>{A339DA3F-BE2A-3D96-839A-CC6AA6C13B60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{FB1A10AA-84F6-3A33-9971-31F59D3C1A0E}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
