@@ -44,6 +44,8 @@ const util::StringTable::StringTableItem stringTableItems_english[] =
 	{ IDS_LAYER_LIST_GROUP_NONE, "None" },
 	{ IDS_LAYER_LIST_ATLAS, "Atlas: " },
 	{ IDS_LAYER_LIST_ATLAS_OVERSIZE, "oversize - remove layers" },
+	{ IDS_LAYER_LIST_ATLAS_SCALE, "scale" },
+	{ IDS_LAYER_LIST_ATLAS_PADDING, "padding" },
 	{ IDS_LAYER_LIST_INFLUENCE, "Influence: " },
 	{ IDS_LAYER_LIST_INFLUENCE_NOT_AVAILABLE, "Not available" },
 	{ IDS_LAYER_LIST_INFLUENCE_ACTIVE, "Active" },

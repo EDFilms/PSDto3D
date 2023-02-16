@@ -182,7 +182,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Load PSD file from disk</string>
+          <string/>
          </property>
          <property name="text">
           <string>Export path and name:</string>
@@ -219,7 +219,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>PSD file disk location</string>
+          <string>Export file disk location</string>
          </property>
         </widget>
        </item>
@@ -254,6 +254,9 @@
            <kerning>false</kerning>
           </font>
          </property>
+         <property name="toolTip">
+          <string>Export file name prefix</string>
+         </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
          </property>
@@ -277,7 +280,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Load PSD file from disk</string>
+          <string>Select the folder location for exported FBX files</string>
          </property>
          <property name="text">
           <string>Browse for path...</string>

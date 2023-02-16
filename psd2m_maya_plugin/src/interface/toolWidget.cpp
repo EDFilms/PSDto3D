@@ -1969,14 +1969,18 @@ namespace psd_to_3d
 						if( customSize < fitSize )
 						{
 							int downscalePercent = (int)round(100.0f * (customSize/(float)fitSize));
-							atlasSize.append(", <font color='#f48c42'>scale "); // TODO: Localize this
+							atlasSize.append(", <font color='#f48c42'> ");
+							atlasSize.append( util::LocalizeString( IDC_MAIN, IDS_LAYER_LIST_ATLAS_SCALE ) ); // "scale"
+							atlasSize.append( " " );
 							atlasSize.append( std::to_string(downscalePercent).c_str() );
 							atlasSize.append("%</font>");
 						}
 						else if( customSize > fitSize )
 						{
 							int paddingPixels = customSize - fitSize;
-							atlasSize.append(", <font color='#f48c42'>padding "); // TODO: Localize this
+							atlasSize.append(", <font color='#f48c42'> ");
+							atlasSize.append( util::LocalizeString( IDC_MAIN, IDS_LAYER_LIST_ATLAS_PADDING ) ); // "padding"
+							atlasSize.append( " " );
 							atlasSize.append( std::to_string(paddingPixels).c_str() );
 							atlasSize.append("</font>");
 						}
@@ -2069,7 +2073,11 @@ namespace psd_to_3d
 			Ui->psdImportBtn->setToolTip( util::LocalizeString( IDC_MAIN, IDS_PSD_IMPORT_TOOLTIP ) );
 			Ui->psdReloadBtn->setText( util::LocalizeString( IDC_MAIN, IDS_PSD_RELOAD_BTN ) );
 			Ui->psdReloadBtn->setToolTip( util::LocalizeString( IDC_MAIN, IDS_PSD_RELOAD_TOOLTIP ) );
+			Ui->psdExportPathLabel->setText( util::LocalizeString( IDC_MAIN, IDS_PSD_EXPORT_PATH_LABEL ) );
+			Ui->psdExportPathLineEdit->setToolTip( util::LocalizeString( IDC_MAIN, IDS_PSD_EXPORT_PATH_TOOLTIP ) );
 			Ui->psdExportNameLineEdit->setToolTip( util::LocalizeString( IDC_MAIN, IDS_PSD_EXPORT_NAME_TOOLTIP ) );
+			Ui->psdExportPathBtn->setText( util::LocalizeString( IDC_MAIN, IDS_PSD_EXPORT_PATH_BTN ) );
+			Ui->psdExportPathBtn->setToolTip( util::LocalizeString( IDC_MAIN, IDS_PSD_EXPORT_PATH_BTN_TOOLTIP ) );
 			Ui->selectedPsdSizeLabel->setText( util::LocalizeString( IDC_MAIN, IDS_SELECTED_PSD_SIZE_LABEL ) );
 			Ui->selectedPsdSizeLabel->setToolTip( util::LocalizeString( IDC_MAIN, IDS_SELECTED_PSD_SIZE_TOOLTIP ) );
 			Ui->selectedPsdSizeValue->setToolTip( util::LocalizeString( IDC_MAIN, IDS_SELECTED_PSD_SIZE_TOOLTIP ) );
@@ -2208,6 +2216,7 @@ namespace psd_to_3d
 			Ui->writeLayoutComboBox->setItemText(2, util::LocalizeString(IDC_MAIN, IDS_WRITE_LAYOUT_MULTI_LAYER));
 			Ui->writeLayoutComboBox->setToolTip(util::LocalizeString(IDC_MAIN, IDS_WRITE_LAYOUT_TOOLTIP));
 
+			Ui->generateActionLabel->setText( util::LocalizeString( IDC_MAIN, IDS_GENERATE_ACTION_LABEL ) );
 			Ui->generateMeshBtn->setText( util::LocalizeString( IDC_MAIN, IDS_GENERATE_MESH_BTN ) );
 			Ui->generatePngBtn->setText( util::LocalizeString( IDC_MAIN, IDS_GENERATE_PNG_BTN ) );
 			Ui->generateBothBtn->setText( util::LocalizeString( IDC_MAIN, IDS_GENERATE_BOTH_BTN ) );

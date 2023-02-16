@@ -192,6 +192,7 @@
       <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Unreal|x64'">true</IntrinsicFunctions>
       <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Unreal|x64'">Speed</FavorSizeOrSpeed>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">Disabled</Optimization>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Unreal|x64'">..\..\Builds\lib\$(Configuration)\$(Platform)\$(ProjectName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;CMAKE_INTDIR=\"$(ConfigurationShortName)\";PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -216,7 +217,7 @@
       <AdditionalOptions Condition="'$(MayaVer)'!='standalone'">%(AdditionalOptions) /machine:x64 /export:initializePlugin /export:uninitializePlugin</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>./psd2m_maya_plugin/$(ConfigurationShortName)_$(MayaVer)/psd2m_maya_plugin_$(MayaVer).lib</ImportLibrary>
+      <ImportLibrary>../../Builds/lib/$(Configuration)/$(Platform)/$(ProjectName).lib</ImportLibrary>
       <ProgramDataBaseFile>
       </ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
