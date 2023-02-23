@@ -92,6 +92,7 @@
     <ClInclude Include="..\..\psd2m_maya_plugin\src\scene_controller\meshGeneratorController.h" />
     <ClInclude Include="..\..\psd2m_maya_plugin\src\scene_controller\sceneController.h" />
     <ClInclude Include="..\..\psd2m_maya_plugin\src\scene_controller\sceneControllerCache.h" />
+    <ClInclude Include="..\..\psd2m_maya_plugin\src\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files\texture_exporter">
@@ -143,5 +144,8 @@
     </CustomBuild>
     <CustomBuild Include="..\..\psd2m_maya_plugin\src\interface\moc_toolWidget.h_to_cpp_custom_build" />
     <CustomBuild Include="..\..\psd2m_maya_plugin\src\interface\moc_licensingWidget.h_to_cpp_custom_build" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc" />
   </ItemGroup>
 </Project>

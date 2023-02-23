@@ -17,16 +17,16 @@
  
 char * find_match(const char *buf, const char * buf_end, const char *pat, size_t len)
 {
-	ptrdiff_t i;
-	char *start = buf;
-	while (start + len < buf_end) {
-		for (i = 0; i < len; i++)
-			if (start[i] != pat[i]) break;
+    ptrdiff_t i;
+    const char *start = buf;
+    while (start + len < buf_end) {
+        for (i = 0; i < len; i++)
+            if (start[i] != pat[i]) break;
  
-		if (i == len) return (char *)start;
-		start++;
-	}
-	return 0;
+        if (i == len) return (char *)start;
+        start++;
+    }
+    return 0;
 }
  
 int replace(const char *from, const char *to, const char *in_fname, const char *out_fname)
@@ -37,53 +37,56 @@ int replace(const char *from, const char *to, const char *in_fname, const char *
     printf( "Output file [%s] \n", out_fname );
     printf( "Replacing [%s] with [%s] \n", from, to );
 
-	struct stat st;
-	int ret = 0;
-	char *buf = 0, *start, *end;
-	size_t len = strlen(from), nlen = strlen(to);
-	int in_fd = open(in_fname, O_RDONLY|O_BINARY);
-	int out_fd = open(out_fname, O_CREAT|O_TRUNC|O_WRONLY|O_BINARY);
- 
-	if (in_fd == -1) bail("Can't open input file",in_fname);
-	if (out_fd == -1) bail("Can't open output file",out_fname);
-	if (fstat(in_fd, &st) == -1) bail("Can't stat",in_fname);
-	if (!(buf = malloc(st.st_size))) bail("Can't alloc",in_fname);
+    struct stat st;
+    int ret = 0;
+    char *buf = 0, *start, *end;
+    size_t len = strlen(from), nlen = strlen(to);
+
+    int in_fd = open(in_fname, O_RDONLY|O_BINARY);
+    if (in_fd == -1) bail("Can't open input file",in_fname);
+    if (fstat(in_fd, &st) == -1) bail("Can't stat",in_fname);
+    if (!(buf = malloc(st.st_size))) bail("Can't alloc",in_fname);
     int file_size = st.st_size;
     int read_size = read(in_fd, buf, st.st_size);
-    //printf( "File size: %i, Read size: %i \n", file_size, read_size );
-	if (read_size != file_size) bail("Bad read",in_fname);
- 
+    if (read_size != file_size) bail("Bad read",in_fname);
+    if (in_fd != -1) close(in_fd);
+    
+    int out_fd = open(out_fname, O_CREAT|O_TRUNC|O_WRONLY|O_BINARY, S_IREAD|S_IWRITE);
+    if (out_fd == -1) bail("Can't open output file",out_fname);
+
     int count = 0;
-	start = buf;
-	end = find_match(start, buf + st.st_size, from, len);
-	if (!end) goto done; // no match found, don't change file
+    start = buf;
+    end = find_match(start, buf + st.st_size, from, len);
+    if (!end) { // no match found, write file unchanged and stop
+      write(out_fd, start, buf + st.st_size - start);
+      goto done;
+    }
  
-	//ftruncate(out_fd, 0);
-	lseek(out_fd, 0, 0);
-	do {
+    //ftruncate(out_fd, 0);
+    lseek(out_fd, 0, 0);
+    do {
         count++;
         //printf( "No match between %i-%i \n", (int)(start-buf), (int)(end-buf) );
-		int n = (end-start);
-        if( n>0 ) write(out_fd, start, end - start);	// write content before match
+        int n = (end-start);
+        if( n>0 ) write(out_fd, start, end - start);    // write content before match
         //printf( "wrote %i before match, should be %i \n", n, (int)(end - start) );
         //printf( "Match at %i, length %i \n", (int)(end-buf), (int)(nlen) );
-		n = write(out_fd, to, nlen);		// write replacement of match
+        n = write(out_fd, to, nlen);        // write replacement of match
         //printf( "wrote %i after match, should be %i, to:%s \n", n, (int)nlen, to );
-		start = end + len;		// skip to end of match
-						// find match again
-		end = find_match(start, buf + st.st_size, from, len);
-	} while (end);
+        start = end + len;        // skip to end of match
+                        // find match again
+        end = find_match(start, buf + st.st_size, from, len);
+    } while (end);
  
-	// write leftover after last match
-	if (start < buf + st.st_size)
-		write(out_fd, start, buf + st.st_size - start);
+    // write leftover after last match
+    if (start < buf + st.st_size)
+        write(out_fd, start, buf + st.st_size - start);
  
 done:
     printf( "Matches found: %i \n", count );
-	if (in_fd != -1) close(in_fd);
-	if (out_fd != -1) close(out_fd);
-	if (buf) free(buf);
-	return ret;
+    if (out_fd != -1) close(out_fd);
+    if (buf) free(buf);
+    return ret;
 }
  
 int main( int argc, char** argv )
@@ -97,5 +100,5 @@ int main( int argc, char** argv )
         replace(from, to, argv[3], argv[4]);
     }
  
-	return 0;
+    return 0;
 }

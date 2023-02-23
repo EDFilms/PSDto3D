@@ -132,11 +132,13 @@ namespace psd_to_3d
 	// Displays the file save dialog
 	int GetFileExportPath( PluginController* controller, IPluginOutput* output ) // TODO: Should be member method of PluginController?
 	{
+		bool retval = true;
 		SceneController& scene = controller->GetScene();
 		GlobalParameters& globalParams = scene.GetGlobalParameters();
 #if (defined PSDTO3D_UNREAL_VERSION) || (defined PSDTO3D_MAYA_VERSION)
 		QString exportDir = globalParams.FileImportPath + "/" + globalParams.PsdName + "/";
 		globalParams.FileExportPath = exportDir;
+		retval = (!globalParams.FileExportPath.isEmpty()) && (!globalParams.FileExportName.isEmpty());
 #elif defined PSDTO3D_FBX_VERSION
 		// get the file extension from the output module
 		OPENFILENAMEW ofnw;
@@ -144,8 +146,13 @@ namespace psd_to_3d
 		output->GetSaveDialogParams( &ofnw, pluginOutputParams );
 		// ofnw.lpstrDefExt points to a static buffer, owned by the output module
 		globalParams.FileExportExt = QString::fromWCharArray( ofnw.lpstrDefExt, (int)wcslen(ofnw.lpstrDefExt) );
+		if( globalParams.FileExportPath.isEmpty() || globalParams.FileExportName.isEmpty() )
+		{
+			ToolWidget* toolWidget = controller->GetContext().GetToolWidget();
+			retval = toolWidget->ExportFilenameSelector();
+		}
 #endif
-		return 1;
+		return (retval? 1:0);
 	}
 
 
@@ -241,6 +248,7 @@ namespace psd_to_3d
 		ProgressAgent* progressImport = &(toolWidget->GetProgress());
 		QFileInfo fileInfo( pathStr.toUtf8().data() );
 		QFileInfo folderInfo( fileInfo.path() + "/" + fileInfo.baseName() ); // new folder adjacent to PSD file
+		QString prevFileImportFilepath = globalParams.FileImportFilepath();
 
 		if( !(fileInfo.exists()) )
 			return; // should never happen
@@ -271,6 +279,8 @@ namespace psd_to_3d
 			globalParams.PsdName = fileInfo.completeBaseName();
 			globalParams.FileImportFilename = fileInfo.fileName();
 			globalParams.FileImportPath = fileInfo.path();
+			bool isReload = (prevFileImportFilepath==globalParams.FileImportFilepath());
+
 			// Calculate export path from filename
 			QString exportDir = fileInfo.path() + "/" + fileInfo.baseName() + "/";
 			globalParams.FileExportPath = exportDir;
@@ -302,6 +312,14 @@ namespace psd_to_3d
 			GetScene().Init(); // initialize scene with the new psdData
 
 			toolWidget->SetPsdData(GetPsdData()); // initial UI
+
+			if( IsFbxVersion && !isReload )
+			{
+				// FBX version forces these blank, as users assume export should prompt for save location;
+				// system will prompt with file save dialog at first export
+				globalParams.FileExportPath = "";
+				globalParams.FileExportName = "";
+			}
 		}
 
 		progressImport->EndProgressBar(false); // don't keep progress dialog open
@@ -391,7 +409,7 @@ namespace psd_to_3d
 					{
 						std::string pathname_utf8 = path.toUtf8();
 						int pathCreated = _wmkdir( util::to_utf16(pathname_utf8).c_str() ); // 0 if created, EEXIST if already exists, ENOENT if not found
-#ifdef PSDTO3D_FBX_VERSION
+#if defined PSDTO3D_FBX_VERSION
 						// TODO: centralize calculation of output filename,
 						// currently smeared between ExportTexture(), ExportAtlas(), CreateTreeStructure() and IPluginOutput methods
 						QString pngNameFile = QString(path + "/" + globalParams.FileExportName + "_" + layer.LayerName.c_str() + ".png");
@@ -561,7 +579,7 @@ namespace psd_to_3d
 					}
 				}
 
-#ifdef PSDTO3D_FBX_VERSION
+#if defined PSDTO3D_FBX_VERSION
 				// TODO: centralize calculation of output filename,
 				// currently smeared between ExportTexture(), ExportAtlas(), CreateTreeStructure() and IPluginOutput methods
 				QString binFilename = QString(path + "/" + globalParams.FileExportName + "_TextureAtlas_" + atlasNameNoSpace + ".png");
@@ -747,7 +765,7 @@ namespace psd_to_3d
 		if( exportPNG ) taskCount += (activeCount); // atlasCount + activeNoAtlasCount
 		if( exportMesh ) taskCount += 2; // additional tasks mesh generation, and for finalizing (writing file)
 		ProgressAgent& progressExport = context->GetToolWidget()->GetProgress();
-#ifdef PSDTO3D_FBX_VERSION
+#if defined PSDTO3D_FBX_VERSION
 		progressExport.BeginProgressBar( "Exporting FBX...", taskCount, true ); // param cancelButton->true
 #else
 		progressExport.BeginProgressBar( "Exporting Mesh...", taskCount, true ); // param cancelButton->true
@@ -760,7 +778,7 @@ namespace psd_to_3d
 	void PluginController::EndProgressExport()
 	{
 		ProgressAgent& progressExport = context->GetToolWidget()->GetProgress();
-#ifdef PSDTO3D_FBX_VERSION
+#if defined PSDTO3D_FBX_VERSION
 		progressExport.EndProgressBar(true); // do keep progress dialog open after export, in standalone version
 #else
 		progressExport.EndProgressBar(false); // don't keep progress dialog open, by default

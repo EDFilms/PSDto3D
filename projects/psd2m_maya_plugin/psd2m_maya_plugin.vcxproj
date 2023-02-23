@@ -157,10 +157,10 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions Condition="'$(Configuration)'=='RelWithDebInfo_FBX'">PSDTO3D_FBX_VERSION;PSDTO3D_FULL_VERSION;PSDTO3D_ATLAS_VERSION;WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;CMAKE_INTDIR="$(ConfigurationShortName)";PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)'=='RelUnoptimized_FBX'">PSDTO3D_FBX_VERSION;PSDTO3D_FULL_VERSION;PSDTO3D_ATLAS_VERSION;WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;CMAKE_INTDIR="$(ConfigurationShortName)";PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">PSDTO3D_UNREAL_VERSION;PSDTO3D_FULL_VERSION;PSDTO3D_ATLAS_VERSION;WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;CMAKE_INTDIR="$(ConfigurationShortName)";PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(MayaVer)'!='standalone'">PSDTO3D_MAYA_VERSION="$(MayaVer)";PSDTO3D_FULL_VERSION;PSDTO3D_ATLAS_VERSION;WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;QT_COMPILING_QSTRING_COMPAT_CPP;CMAKE_INTDIR="$(ConfigurationShortName)";PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)'=='RelWithDebInfo_FBX'">PSDTO3D_FBX_VERSION;PSDTO3D_FULL_VERSION;PSDTO3D_ATLAS_VERSION;WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)'=='RelUnoptimized_FBX'">PSDTO3D_FBX_VERSION;PSDTO3D_FULL_VERSION;PSDTO3D_ATLAS_VERSION;WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">PSDTO3D_UNREAL_VERSION;PSDTO3D_FULL_VERSION;PSDTO3D_ATLAS_VERSION;WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(MayaVer)'!='standalone'">PSDTO3D_MAYA_VERSION="$(MayaVer)";PSDTO3D_FULL_VERSION;PSDTO3D_ATLAS_VERSION;WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;QT_COMPILING_QSTRING_COMPAT_CPP;PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <OmitFramePointers>false</OmitFramePointers>
       <ConformanceMode>false</ConformanceMode>
@@ -168,7 +168,7 @@
       <SDLCheck>
       </SDLCheck>
       <SuppressStartupBanner>false</SuppressStartupBanner>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Maya2022|x64'">PSDTO3D_MAYA_VERSION;PSDTO3D_FULL_VERSION;PSDTO3D_ATLAS_VERSION;WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;CMAKE_INTDIR="$(ConfigurationShortName)";PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Maya2022|x64'">PSDTO3D_MAYA_VERSION;PSDTO3D_FULL_VERSION;PSDTO3D_ATLAS_VERSION;WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">..\..\Builds\lib\$(Configuration)\$(Platform)\$(ProjectName).pdb</ProgramDataBaseFileName>
       <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_FBX|x64'">..\..\Builds\lib\$(Configuration)\$(Platform)\$(ProjectName).pdb</ProgramDataBaseFileName>
       <ProgramDataBaseFileName Condition="'$(MayaVer)'!='standalone'">..\..\Builds\lib\$(Configuration)\$(Platform)\$(ProjectName).pdb</ProgramDataBaseFileName>
@@ -195,7 +195,7 @@
       <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Unreal|x64'">..\..\Builds\lib\$(Configuration)\$(Platform)\$(ProjectName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;CMAKE_INTDIR=\"$(ConfigurationShortName)\";PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\psd2m_maya_plugin\src;..\..\psd2m_maya_plugin\include;..\..\psd2m_mesh_generator\src;..\..\psd2m_util\src;$(MayaDir)\include;..\..\psd2m_psd_reader\src;$(QtDir)\include;$(QtDir)\include\QtWidgets;$(QtDir)\include\QtGui;$(QtDir)\include\QtCore;$(QtDir)\mkspecs\win32-msvc2015;.\psd2m_maya_plugin\psd2m_maya_plugin_autogen\include_$(ConfigurationShortName);$(IntDir)\psd2m_maya_plugin_autogen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -309,6 +309,7 @@ xcopy /Y /E /I ..\..\psd2m_maya_plugin\icons\*.* $(UnrealEngine)\Plugins\Editor\
     <ClInclude Include="..\..\psd2m_maya_plugin\src\scene_controller\meshGeneratorController.h" />
     <ClInclude Include="..\..\psd2m_maya_plugin\src\scene_controller\sceneController.h" />
     <ClInclude Include="..\..\psd2m_maya_plugin\src\scene_controller\sceneControllerCache.h" />
+    <ClInclude Include="..\..\psd2m_maya_plugin\src\resource.h" />
     <CustomBuild Include="..\..\psd2m_maya_plugin\src\interface\moc_toolWidget.h_to_cpp_custom_build">
       <FileType>Document</FileType>
       <Command>$(QtDir)\bin\moc -I$(QtDir)/include -I..\..\psd2m_maya_plugin/src -I. -DWIN32 -o $(IntDir)\psd2m_maya_plugin_autogen\moc_toolWidget.cpp ..\..\psd2m_maya_plugin/src/interface/toolWidget.h </Command>
@@ -379,6 +380,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Project>{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}</Project>
       <Name>psd2m_util</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

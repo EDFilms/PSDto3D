@@ -1,8 +1,16 @@
 echo %date%  - %time%
 
-set PLUGIN_VER=1.6.3
-set PLUGIN_VER_SHORT=163
-set BUILD_VER=069
+set BUILD_VER=071
+set BUILD_DATE=%date%
+set PLUGIN_VER=1.6.4.%BUILD_VER%
+set PLUGIN_VER_SHORT=164
+set PLUGIN_YEAR=2023
+
+@echo Updating file property resources ...
+copy ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc.BACKUP
+findreplace PLUGIN_DESC_TOKEN "PSDto3D Version %PLUGIN_VER%, Build%BUILD_VER%, Date %BUILD_DATE%" ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
+findreplace PLUGIN_YEAR_TOKEN %PLUGIN_YEAR% ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
+findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
 
 @echo Building Photoshop CC extension ...
 pushd ..\psd2m_extension\PsdExporterCC\
@@ -25,10 +33,10 @@ mkdir ..\builds\installer\stage_full\fbx\imageformats
 mkdir ..\builds\installer\stage_full\fbx\icons\
 mkdir ..\builds\installer\stage_full\docs\
 
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_FBX /project psd2m_maya_plugin
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_FBX /project psd2m_fbx
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_FBX /project psd2m_maya_plugin
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_FBX /project psd2m_fbx
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_FBX /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_FBX /project psd2m_fbx
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_FBX /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_FBX /project psd2m_fbx
 copy ..\builds\plugin\RelWithDebInfo_Standalone\PSDto3D_FBX_dev.exe ..\builds\installer\stage_full\fbx\PSDtoFBX_edfilms_%PLUGIN_VER%.exe
 copy ..\builds\plugin\RelWithDebInfo_Standalone\PSDto3D_Standalone_dev.dll ..\builds\installer\stage_full\fbx\PSDto3D_Standalone_%PLUGIN_VER%.dll
 
@@ -64,6 +72,9 @@ findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ./psd2fbx_full.iss ./TEMP_psd2fbx_full
 .\InnoSetup602\compil32.exe /cc ./TEMP_psd2fbx_full_%PLUGIN_VER%.iss
 move .\Output\setup.exe ..\builds\installer\installers\Build%BUILD_VER%-V%PLUGIN_VER_SHORT%_PSD_to_FBX_setup.exe
 
+@echo Deleting temp files ...
+del ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
+move ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc.BACKUP ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
 del ..\builds\installer\Build%BUILD_VER%-V%PLUGIN_VER_SHORT%_PSD_to_FBX_bin_password_edfilms.7z
 "C:\Program Files\7-zip\7z.exe" a -pedfilms -r ..\builds\installer\Build%BUILD_VER%-V%PLUGIN_VER_SHORT%_PSD_to_FBX_bin_password_edfilms.7z ..\builds\installer\stage* ..\builds\installer\installer*
 

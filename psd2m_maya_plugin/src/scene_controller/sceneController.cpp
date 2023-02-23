@@ -725,7 +725,7 @@ namespace psd_to_3d
 		{
 			globalParams.FileExportName = QString::fromWCharArray(root[L"ExportName"]->AsString().c_str());
 		}
-		if( root.count(L"FileOutputPath")>0 )
+		if( root.count(L"FileOutputPath")>0 ) // alias for ExportPath
 		{
 			globalParams.FileExportPath = QString::fromWCharArray(root[L"FileOutputPath"]->AsString().c_str());
 		}

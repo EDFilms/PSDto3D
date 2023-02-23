@@ -68,8 +68,8 @@ const util::StringTable::StringTableItem stringTableItems_english[] =
 	{ IDS_PSD_LOAD_FILE_DIALOG_PATTERN, "psd file (*.psd)" },
 
 	{ IDS_FBX_SAVE_FILE_DIALOG, "Save Fbx" },
-	{ IDS_FBX_SAVE_FILE_DIALOG_PATTERN_ASCII, "FBX binary (*.fbx)" },
-	{ IDS_FBX_SAVE_FILE_DIALOG_PATTERN_BINARY, "FBX ascii (*.fbx)" },
+	{ IDS_FBX_SAVE_FILE_DIALOG_PATTERN_ASCII, "FBX ascii (*.fbx)" },
+	{ IDS_FBX_SAVE_FILE_DIALOG_PATTERN_BINARY, "FBX binary (*.fbx)" },
 
 	{ IDS_FBX_SAVE_PATH_DIALOG, "Export Path" },
 

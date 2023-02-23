@@ -76,6 +76,8 @@ namespace psd_to_3d
 
 		void NotifyCommand();
 
+		bool ExportFilenameSelector(); // prompts for filename, sets global FileExportPath and FileExportName
+
 		// Requests, handled in main thread, if called from another thread
 		void RequestRepaint( bool updateDescriptions );
 

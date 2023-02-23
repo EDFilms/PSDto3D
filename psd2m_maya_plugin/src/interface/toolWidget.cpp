@@ -792,15 +792,17 @@ namespace psd_to_3d
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void ToolWidget::ExportPathSelector(bool b)
+	void ToolWidget::ExportPathSelector(bool)
 	{
 		IPluginOutput& output = GetOutput();
 
+		// get the file extension from the output module
 		OPENFILENAMEW ofnw;
 		memset(&ofnw, 0, sizeof(OPENFILENAMEW));
 		ofnw.lStructSize = sizeof(OPENFILENAMEW);
 		PluginOutputParameters pluginOutputParams(this->GetParameters());
 		output.GetSaveDialogParams(&ofnw, pluginOutputParams);
+		this->GetParameters().FileExportExt = QString::fromWCharArray( ofnw.lpstrDefExt, (int)wcslen(ofnw.lpstrDefExt) );
 
 		QString qstrCaption(util::LocalizeString(IDC_MAIN, IDS_FBX_SAVE_PATH_DIALOG));
 		QString qstrInitialDir( this->GetParameters().Prefs.FileExportPath );
@@ -1617,6 +1619,58 @@ namespace psd_to_3d
 			controller->NotifyCommand();
 			SilenceUi--;
 		}
+	}
+
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	bool ToolWidget::ExportFilenameSelector()
+	{
+		bool retval = false;
+		IPluginOutput& output = GetOutput();
+
+		// Get the output file extension from the output module (for example ".fbx")
+		OPENFILENAMEW ofnw;
+		memset(&ofnw, 0, sizeof(OPENFILENAMEW));
+		ofnw.lStructSize = sizeof(OPENFILENAMEW);
+		PluginOutputParameters pluginOutputParams(this->GetParameters());
+		output.GetSaveDialogParams(&ofnw, pluginOutputParams);
+		// Set the file output file extension to the global params
+		this->GetParameters().FileExportExt = QString::fromWCharArray( ofnw.lpstrDefExt, (int)wcslen(ofnw.lpstrDefExt) );
+
+		// Get the initial directory and filename to display for the file save dialog,
+		// use the export directory if set, otherwise the psd import directory
+		QString qstrInitialDir( this->GetParameters().FileExportPath );
+		if( qstrInitialDir.isEmpty() )
+		{
+			qstrInitialDir = this->GetParameters().FileImportPath;
+		}
+		qstrInitialDir += "/" + this->GetParameters().PsdName + "." + this->GetParameters().FileExportExt; // default filename
+
+		// Get the filename filter (for example "*.fbx")
+		int filterStrID = IDS_FBX_SAVE_FILE_DIALOG_PATTERN_ASCII;
+		if( this->GetParameters().FileWriteMode==GlobalParameters::FileWriteMode::BINARY )
+		{
+			filterStrID = IDS_FBX_SAVE_FILE_DIALOG_PATTERN_BINARY;
+		}
+		QString qstrFilter(util::LocalizeString(IDC_MAIN, filterStrID));
+
+		// Display the file save dialog
+		QString qstrCaption(util::LocalizeString(IDC_MAIN, IDS_FBX_SAVE_FILE_DIALOG));
+		QString qstrExportFile = QFileDialog::getSaveFileName( this, qstrCaption, qstrInitialDir, qstrFilter );
+
+		// Unless the user cancelled, store the path and filename to the global params
+		if( !qstrExportFile.isEmpty() )
+		{
+			QFileInfo fileInfo( qstrExportFile );
+			this->GetParameters().FileExportPath = fileInfo.path();
+			this->GetParameters().FileExportName = fileInfo.baseName();
+			this->GetParameters().Prefs.FileExportPath = fileInfo.path();
+
+			this->GetScene().SaveValuesToJson();// write user settings to disk
+			UpdateFields();
+			retval = true;
+		}
+		return retval;
 	}
 
 

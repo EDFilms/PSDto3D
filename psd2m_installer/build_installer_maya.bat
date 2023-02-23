@@ -1,8 +1,16 @@
 echo %date%  - %time%
 
-set PLUGIN_VER=1.6.3
-set PLUGIN_VER_SHORT=163
-set BUILD_VER=069
+set BUILD_DATE=%date%
+set BUILD_VER=071
+set PLUGIN_VER=1.6.4.%BUILD_VER%
+set PLUGIN_VER_SHORT=164
+set PLUGIN_YEAR=2023
+
+@echo Updating file property resources ...
+copy ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc.BACKUP
+findreplace PLUGIN_DESC_TOKEN "PSDto3D Version %PLUGIN_VER%, Build%BUILD_VER%, Date %BUILD_DATE%" ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
+findreplace PLUGIN_YEAR_TOKEN %PLUGIN_YEAR% ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
+findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
 
 @echo Building Photoshop CC extension ...
 pushd ..\psd2m_extension\PsdExporterCC\
@@ -20,38 +28,38 @@ SET _CL_=/DPSDTO3D_FULL_VERSION /O2 /Ob2 /Ot
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2023_Full
 mkdir ..\builds\installer\stage_full\maya\2023\
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_Maya2023 /project psd2m_maya_plugin
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_Maya2023 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2023 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2023 /project psd2m_maya_plugin
 copy ..\builds\plugin\RelWithDebInfo_Maya2023\PSDto3D_Maya2023_dev.mll ..\builds\installer\stage_full\maya\2023\PSDto3D_Maya2023_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2022_Full
 mkdir ..\builds\installer\stage_full\maya\2022\
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_Maya2022 /project psd2m_maya_plugin
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_Maya2022 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2022 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2022 /project psd2m_maya_plugin
 copy ..\builds\plugin\RelWithDebInfo_Maya2022\PSDto3D_Maya2022_dev.mll ..\builds\installer\stage_full\maya\2022\PSDto3D_Maya2022_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2020_Full
 mkdir ..\builds\installer\stage_full\maya\2020\
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_Maya2020 /project psd2m_maya_plugin
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_Maya2020 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2020 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2020 /project psd2m_maya_plugin
 copy ..\builds\plugin\RelWithDebInfo_Maya2020\PSDto3D_Maya2020_dev.mll ..\builds\installer\stage_full\maya\2020\PSDto3D_Maya2020_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2019_Full
 mkdir ..\builds\installer\stage_full\maya\2019\
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_Maya2019 /project psd2m_maya_plugin
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_Maya2019 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2019 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2019 /project psd2m_maya_plugin
 copy ..\builds\plugin\RelWithDebInfo_Maya2019\PSDto3D_Maya2019_dev.mll ..\builds\installer\stage_full\maya\2019\PSDto3D_Maya2019_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2018_Full
 mkdir ..\builds\installer\stage_full\maya\2018\
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_Maya2018 /project psd2m_maya_plugin
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_Maya2018 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2018 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2018 /project psd2m_maya_plugin
 copy ..\builds\plugin\RelWithDebInfo_Maya2018\PSDto3D_Maya2018_dev.mll ..\builds\installer\stage_full\maya\2018\PSDto3D_Maya2018_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2017_Full
 @rem mkdir ..\builds\installer\stage_full\maya\2017\
-@rem devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_Maya2017 /project psd2m_maya_plugin
-@rem devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_Maya2017 /project psd2m_maya_plugin
+@rem devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2017 /project psd2m_maya_plugin
+@rem devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2017 /project psd2m_maya_plugin
 @rem copy ..\builds\plugin\RelWithDebInfo_Maya2017\PSDto3D_Maya2017_dev.mll ..\builds\installer\stage_full\maya\2017\PSDto3D_Maya2017_%PLUGIN_VER%.mll
 
 @echo Staging files, Pro version ...
@@ -81,38 +89,38 @@ SET _CL_=/UPSDTO3D_FULL_VERSION /O2 /Ob2 /Ot
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2023_Lite
 mkdir ..\builds\installer\stage_lite\maya\2023\
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_Maya2023 /project psd2m_maya_plugin
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_Maya2023 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2023 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2023 /project psd2m_maya_plugin
 copy ..\builds\plugin\RelWithDebInfo_Maya2023\PSDto3D_Maya2023_dev.mll ..\builds\installer\stage_lite\maya\2023\PSDto3D_Maya2023_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2022_Lite
 mkdir ..\builds\installer\stage_lite\maya\2022\
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_Maya2022 /project psd2m_maya_plugin
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_Maya2022 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2022 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2022 /project psd2m_maya_plugin
 copy ..\builds\plugin\RelWithDebInfo_Maya2022\PSDto3D_Maya2022_dev.mll ..\builds\installer\stage_lite\maya\2022\PSDto3D_Maya2022_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2020_Lite
 mkdir ..\builds\installer\stage_lite\maya\2020\
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_Maya2020 /project psd2m_maya_plugin
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_Maya2020 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2020 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2020 /project psd2m_maya_plugin
 copy ..\builds\plugin\RelWithDebInfo_Maya2020\PSDto3D_Maya2020_dev.mll ..\builds\installer\stage_lite\maya\2020\PSDto3D_Maya2020_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2019_Lite
 mkdir ..\builds\installer\stage_lite\maya\2019\
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_Maya2019 /project psd2m_maya_plugin
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_Maya2019 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2019 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2019 /project psd2m_maya_plugin
 copy ..\builds\plugin\RelWithDebInfo_Maya2019\PSDto3D_Maya2019_dev.mll ..\builds\installer\stage_lite\maya\2019\PSDto3D_Maya2019_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2018_Lite
 mkdir ..\builds\installer\stage_lite\maya\2018\
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_Maya2018 /project psd2m_maya_plugin
-devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_Maya2018 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2018 /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2018 /project psd2m_maya_plugin
 copy ..\builds\plugin\RelWithDebInfo_Maya2018\PSDto3D_Maya2018_dev.mll ..\builds\installer\stage_lite\maya\2018\PSDto3D_Maya2018_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2017_Lite
 @rem mkdir ..\builds\installer\stage_lite\maya\2017\
-@rem devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /clean RelWithDebInfo_Maya2017 /project psd2m_maya_plugin
-@rem devenv ..\psd2m_maya_plugin\projects\PSD23D.sln /rebuild RelWithDebInfo_Maya2017 /project psd2m_maya_plugin
+@rem devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2017 /project psd2m_maya_plugin
+@rem devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2017 /project psd2m_maya_plugin
 @rem copy ..\builds\plugin\RelWithDebInfo_Maya2017\PSDto3D_Maya2017_dev.mll ..\builds\installer\stage_lite\maya\2017\PSDto3D_Maya2017_%PLUGIN_VER%.mll
 
 @echo Staging files, Lite version ...
@@ -149,6 +157,9 @@ findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ./psd2m_lite.iss ./TEMP_psd2m_lite_%PL
 .\InnoSetup602\compil32.exe /cc ./TEMP_psd2m_lite_%PLUGIN_VER%.iss
 move .\Output\setup.exe ..\builds\installer\installers\Build%BUILD_VER%-V%PLUGIN_VER_SHORT%_PSD_to_Maya_lite_setup.exe
 
+@echo Deleting temp files ...
+del ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
+move ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc.BACKUP ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
 del ..\builds\installer\Build%BUILD_VER%-V%PLUGIN_VER_SHORT%_PSD_to_3D_bin_password_edfilms.7z
 "C:\Program Files\7-zip\7z.exe" a -pedfilms -r ..\builds\installer\Build%BUILD_VER%-V%PLUGIN_VER_SHORT%_PSD_to_Maya_bin_password_edfilms.7z ..\builds\installer\stage* ..\builds\installer\installer*
 
