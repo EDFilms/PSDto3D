@@ -478,7 +478,7 @@ UMaterial* PsdToUnrealPluginOutput::CreateMaterial( const char* textureFilepath,
 void PsdToUnrealPluginOutput::BeginSession( const IPluginOutputParameters& params )
 {
 	int bufCount = sizeof(session_psdFileName)/sizeof(session_psdFileName[0]);
-	strcpy_s( session_psdFileName, bufCount, params.PsdName().c_str() );
+	strcpy_s( session_psdFileName, bufCount, params.PsdName() );
 }
 
 void PsdToUnrealPluginOutput::OutputMesh( const PsdData& psdData, const IPluginOutputParameters& params, const DataSurface& dataSurface, int layerIndex )

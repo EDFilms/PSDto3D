@@ -27,7 +27,7 @@ SetupIconFile=TEMP_PSDto3D_INSTALLER.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl";
-;Name: "french"; MessagesFile: "compiler:Languages\French.isl";
+Name: "french"; MessagesFile: "compiler:Languages\French.isl";
 
 [Types]
 Name: "full";     Description:Full Installation;
@@ -42,7 +42,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\Builds\installer\stage_full\fbx\conf\english\language.ini"; DestDir: "{userappdata}\EDFilms"; Flags: ignoreversion recursesubdirs createallsubdirs; Languages: english;
-;Source: "..\Builds\installer\stage_full\fbx\conf\french\language.ini"; DestDir: "{userappdata}\EDFilms"; Flags: ignoreversion recursesubdirs createallsubdirs; Languages: french;
+Source: "..\Builds\installer\stage_full\fbx\conf\french\language.ini"; DestDir: "{userappdata}\EDFilms"; Flags: ignoreversion recursesubdirs createallsubdirs; Languages: french;
 Source: "..\Builds\installer\stage_full\photoshop\cc\Extension\*"; DestDir: "{commoncf32}\Adobe\CEP\extensions\com.EDFilms.PsdExporter"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: extCC;
 Source: "..\Builds\installer\stage_full\photoshop\*"; DestDir: "{app}\photoshop"; Flags: ignoreversion recursesubdirs createallsubdirs;
 Source: "..\Builds\installer\stage_full\fbx\PSDtoFBX_edfilms_PLUGIN_VER_TOKEN.exe"; DestDir: "{app}\fbx"; Flags: ignoreversion recursesubdirs createallsubdirs;
@@ -69,12 +69,12 @@ Name: "{commondesktop}\PSDtoFBX"; Filename: "{app}\fbx\PSDtoFBX_edfilms_PLUGIN_V
 
 [CustomMessages]
 english.HelpAndSupport=Help & Support
-;french.HelpAndSupport=Aide et support technique
+french.HelpAndSupport=Aide et support technique
 english.HelpAndSupportEx=
-;french.HelpAndSupportEx=
+french.HelpAndSupportEx=
 ; these are in RTF format, edit by saving a RTF file to disk then open as plain text to copy the contents
 english.HelpMsg={\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang13322{\fonttbl{\f0\fnil\fcharset0 Tahoma;}}{\colortbl ;\red0\green0\blue255;}{\*\generator Riched20 10.0.19041}\viewkind4\uc1 \pard\f0\fs16 Thank you for purchasing PSD to FBX!\par\par\par For documentation and tutorials, please visit our website.\par\par{{\field{\*\fldinst{HYPERLINK https://edfilms.notion.site/PSD-to-3D-user-manual-6221458afd534a5aa14a46b77048a396 }}{\fldrslt{Online Documentation}}}}\f0\fs16\par\par\par If you are experiencing difficulties with installation or licensing, please visit our online troubleshooting guide.\par\par{{\field{\*\fldinst{HYPERLINK https://edfilms.notion.site/Troubleshooting-1b487fa562be4d8aa10f0d0fb5d3a1fe }}{\fldrslt{Troubleshooting Guide}}}}\f0\fs22\par}
-;french.HelpMsg={\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang13322{\fonttbl{\f0\fnil\fcharset0 Tahoma;}}{\colortbl ;\red0\green0\blue255;}{\*\generator Riched20 10.0.19041}\viewkind4\uc1 \pard\f0\fs16 Merci d\rquote avoir achet\'e9 PSD to FBX!\par\par\par Pour obtenir la documentation et les tutoriels, n\rquote h\'e9sitez pas \'e0 visiter notre site web.\par\par{{\field{\*\fldinst{HYPERLINK https://edfilms.notion.site/PSD-to-3D-user-manual-6221458afd534a5aa14a46b77048a396 }}{\fldrslt{Documentation en ligne}}}\f0\fs16\par\par\par Si vous \'e9prouvez des difficult\'e9s avec l'assistant d'installation ou avec l'enregistrement de votre licence, veuillez vous r\'e9f\'e9rer \'e0 notre guide de d\'e9pannage en ligne.\par\par{{\field{\*\fldinst{HYPERLINK https://edfilms.net/en/psd-to-fbx-troubleshooting-guide/ }}{\fldrslt{Guide de d\'e9pannage}}}}\f0\fs22\par}
+french.HelpMsg={\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang13322{\fonttbl{\f0\fnil\fcharset0 Tahoma;}}{\colortbl ;\red0\green0\blue255;}{\*\generator Riched20 10.0.19041}\viewkind4\uc1 \pard\f0\fs16 Merci d\rquote avoir achet\'e9 PSD to FBX!\par\par\par Pour obtenir la documentation et les tutoriels, n\rquote h\'e9sitez pas \'e0 visiter notre site web.\par\par{{\field{\*\fldinst{HYPERLINK https://edfilms.notion.site/PSD-to-3D-user-manual-6221458afd534a5aa14a46b77048a396 }}{\fldrslt{Documentation en ligne}}}}\f0\fs16\par\par\par Si vous \'e9prouvez des difficult\'e9s avec l'assistant d'installation ou avec l'enregistrement de votre licence, veuillez vous r\'e9f\'e9rer \'e0 notre guide de d\'e9pannage en ligne.\par\par{{\field{\*\fldinst{HYPERLINK https://edfilms.notion.site/Troubleshooting-1b487fa562be4d8aa10f0d0fb5d3a1fe }}{\fldrslt{Guide de d\'e9pannage}}}}\f0\fs22\par}
 
 [Code]
 var

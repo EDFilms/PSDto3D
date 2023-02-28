@@ -266,16 +266,22 @@ namespace psd_to_3d
 	{
 	public:
 		PluginOutputParameters( const GlobalParameters& params ) : params(params) {}
-		int FileWriteMode() const					{ return params.FileWriteMode; }
-		int FileWriteLayout() const					{ return params.FileWriteLayout; }
-		std::string FileImportPath() const			{ return params.FileImportPath.toUtf8().toStdString(); }
-		std::string PsdName() const					{ return params.PsdName.toUtf8().toStdString(); }
-		std::string FileExportPath() const			{ return params.FileExportPath.toUtf8().toStdString(); }
-		std::string FileExportName() const			{ return params.FileExportName.toUtf8().toStdString(); }
-		std::string FileExportExt() const			{ return params.FileExportExt.toUtf8().toStdString(); }
-		std::string AliasPsdName() const			{ return params.AliasPsdName.toUtf8().toStdString(); }
+		int FileWriteMode() const			{ return params.FileWriteMode; }
+		int FileWriteLayout() const			{ return params.FileWriteLayout; }
+		const char* FileImportPath() const	{ fileImportPath = params.FileImportPath.toUtf8().toStdString(); return fileImportPath.c_str(); }
+		const char* PsdName() const			{ psdName = params.PsdName.toUtf8().toStdString();				 return psdName.c_str();        }
+		const char* FileExportPath() const	{ fileExportPath = params.FileExportPath.toUtf8().toStdString(); return fileExportPath.c_str(); }
+		const char* FileExportName() const	{ fileExportName = params.FileExportName.toUtf8().toStdString(); return fileExportName.c_str(); }
+		const char* FileExportExt() const	{ fileExportExt = params.FileExportExt.toUtf8().toStdString();   return fileExportExt.c_str();  }
+		const char* AliasPsdName() const	{ aliasPsdName = params.AliasPsdName.toUtf8().toStdString();     return aliasPsdName.c_str();   }
 	protected:
 		const GlobalParameters& params;
+		mutable std::string fileImportPath;
+		mutable std::string psdName;
+		mutable std::string fileExportPath;
+		mutable std::string fileExportName;
+		mutable std::string fileExportExt;
+		mutable std::string aliasPsdName;
 	};
 
 

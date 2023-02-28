@@ -2,13 +2,14 @@ echo %date%  - %time%
 
 set BUILD_VER=071
 set BUILD_DATE=%date%
-set PLUGIN_VER=1.6.4.%BUILD_VER%
 set PLUGIN_VER_SHORT=164
+set PLUGIN_VER_BASE=1.6.4
+set PLUGIN_VER=%PLUGIN_VER_BASE%.%BUILD_VER%
 set PLUGIN_YEAR=2023
 
 @echo Updating file property resources ...
 copy ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc.BACKUP
-findreplace PLUGIN_DESC_TOKEN "PSDto3D Version %PLUGIN_VER%, Build%BUILD_VER%, Date %BUILD_DATE%" ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
+findreplace PLUGIN_DESC_TOKEN "PSDto3D Version %PLUGIN_VER_BASE%, Build%BUILD_VER%, Date %BUILD_DATE%" ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
 findreplace PLUGIN_YEAR_TOKEN %PLUGIN_YEAR% ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
 findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc
 

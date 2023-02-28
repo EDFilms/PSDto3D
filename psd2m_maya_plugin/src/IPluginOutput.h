@@ -43,12 +43,12 @@ namespace psd_to_3d
 		}; // rename to ExportWriteLayout?
 		virtual int FileWriteMode() const = 0;
 		virtual int FileWriteLayout() const = 0;
-		virtual std::string FileImportPath() const = 0;
-		virtual std::string PsdName() const = 0;
-		virtual std::string FileExportPath() const = 0;
-		virtual std::string FileExportName() const = 0;
-		virtual std::string FileExportExt() const = 0;
-		virtual std::string AliasPsdName() const = 0;
+		virtual const char* FileImportPath() const = 0;
+		virtual const char* PsdName() const = 0;
+		virtual const char* FileExportPath() const = 0;
+		virtual const char* FileExportName() const = 0;
+		virtual const char* FileExportExt() const = 0;
+		virtual const char* AliasPsdName() const = 0;
 	};
 
 	// Communication class to connect domain-specific exporters with the main export engine.
