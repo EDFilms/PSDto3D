@@ -249,6 +249,8 @@ namespace psd_to_3d
 		QFileInfo fileInfo( pathStr.toUtf8().data() );
 		QFileInfo folderInfo( fileInfo.path() + "/" + fileInfo.baseName() ); // new folder adjacent to PSD file
 		QString prevFileImportFilepath = globalParams.FileImportFilepath();
+		QString prevFileExportPath = globalParams.FileExportPath;
+		QString prevFileExportName = globalParams.FileExportName;
 
 		if( !(fileInfo.exists()) )
 			return; // should never happen
@@ -279,7 +281,7 @@ namespace psd_to_3d
 			globalParams.PsdName = fileInfo.completeBaseName();
 			globalParams.FileImportFilename = fileInfo.fileName();
 			globalParams.FileImportPath = fileInfo.path();
-			bool isReload = (prevFileImportFilepath==globalParams.FileImportFilepath());
+			bool isNewFile = (prevFileImportFilepath!=globalParams.FileImportFilepath()); // not a reload
 
 			// Calculate export path from filename
 			QString exportDir = fileInfo.path() + "/" + fileInfo.baseName() + "/";
@@ -311,15 +313,17 @@ namespace psd_to_3d
 
 			GetScene().Init(); // initialize scene with the new psdData
 
-			toolWidget->SetPsdData(GetPsdData()); // initial UI
-
-			if( IsFbxVersion && !isReload )
+			if( IsFbxVersion )
 			{
-				// FBX version forces these blank, as users assume export should prompt for save location;
+				// FBX version forces these blank during regular load, or keeps them blank if not already set during reload;
 				// system will prompt with file save dialog at first export
-				globalParams.FileExportPath = "";
-				globalParams.FileExportName = "";
+				if( isNewFile || (prevFileExportPath.isEmpty()) ) 
+					globalParams.FileExportPath = "";
+				if( isNewFile || (prevFileExportName.isEmpty()) )
+					globalParams.FileExportName = "";
 			}
+
+			toolWidget->SetPsdData(GetPsdData()); // initial UI
 		}
 
 		progressImport->EndProgressBar(false); // don't keep progress dialog open

@@ -116,8 +116,8 @@ namespace psd_to_3d
 		connect(Ui->actionFile_Reload, SIGNAL(triggered()), this, SLOT(OnReloadPSD()));
 		if( IsFbxVersion )
 		{
-			// filename allows alphanumeric, plus underscore, hyphen, dot, and space
-			QRegExp rx_filename("^[\\w\\-. ]+$"); // "^[\w\-. ]+$" where \w is equivalent of [0-9a-zA-Z_]
+			// filename allows zero or more alphanumeric, plus underscore, hyphen, dot, and space
+			QRegExp rx_filename("^[\\w\\-. ]*$"); // "^[\w\-. ]*$" where \w is equivalent of [0-9a-zA-Z_]
 			QValidator *validator = new QRegExpValidator(rx_filename, this);
 			Ui->psdExportNameLineEdit->setValidator(validator);
 			connect(Ui->psdExportNameLineEdit, SIGNAL(editingFinished()), this, SLOT(OnSetExportName()));
@@ -405,8 +405,11 @@ namespace psd_to_3d
 		this->Ui->actionGenerate_GenerateBoth->setEnabled(true);
 
 		this->Ui->psdSelectorLineEdit->setText( this->GetParameters().FileImportFilepath() );
-		this->Ui->psdExportPathLineEdit->setText( this->GetParameters().FileExportPath );
-		this->Ui->psdExportNameLineEdit->setText( this->GetParameters().FileExportName );
+		if( !IsFbxVersion )
+		{
+			this->Ui->psdExportPathLineEdit->setText( this->GetParameters().FileExportPath );
+			this->Ui->psdExportNameLineEdit->setText( this->GetParameters().FileExportName );
+		}
 
 		UpdateUi();
 	}
@@ -2480,8 +2483,10 @@ namespace psd_to_3d
 	{
 		if( IsFbxVersion )
 		{
-			Ui->psdExportPathLineEdit->setText(this->GetParameters().FileExportPath);
-			Ui->psdExportNameLineEdit->setText(this->GetParameters().FileExportName);
+			if( !Ui->psdExportPathLineEdit->hasFocus() ) // don't change value while user is editing
+				Ui->psdExportPathLineEdit->setText(this->GetParameters().FileExportPath);
+			if( !Ui->psdExportNameLineEdit->hasFocus() ) // don't change value while user is editing
+				Ui->psdExportNameLineEdit->setText(this->GetParameters().FileExportName);
 		}
 
 		Ui->customGroupNameLineEdit->setText(this->GetParameters().AliasPsdName);
