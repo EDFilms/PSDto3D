@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.645
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32901.82
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "psd2m_unreal_plugin", "psd2m_unreal_plugin\psd2m_unreal_plugin.vcxproj", "{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -27,6 +27,7 @@ Global
 		MinSizeRel|x64 = MinSizeRel|x64
 		Release|x64 = Release|x64
 		RelUnoptimized_FBX|x64 = RelUnoptimized_FBX|x64
+		RelUnoptimized_Unreal|x64 = RelUnoptimized_Unreal|x64
 		RelUnoptimized|x64 = RelUnoptimized|x64
 		RelWithDebInfo_FBX|x64 = RelWithDebInfo_FBX|x64
 		RelWithDebInfo_Maya2017|x64 = RelWithDebInfo_Maya2017|x64
@@ -47,6 +48,8 @@ Global
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.Release|x64.Build.0 = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelUnoptimized_FBX|x64.ActiveCfg = RelUnoptimized|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelUnoptimized_FBX|x64.Build.0 = RelUnoptimized|x64
+		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelUnoptimized_Unreal|x64.ActiveCfg = RelUnoptimized|x64
+		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelUnoptimized_Unreal|x64.Build.0 = RelUnoptimized|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelUnoptimized|x64.ActiveCfg = RelUnoptimized|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelUnoptimized|x64.Build.0 = RelUnoptimized|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelWithDebInfo_FBX|x64.ActiveCfg = RelWithDebInfo|x64
@@ -75,6 +78,8 @@ Global
 		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.Release|x64.Build.0 = Release|x64
 		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelUnoptimized_FBX|x64.ActiveCfg = RelUnoptimized|x64
 		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelUnoptimized_FBX|x64.Build.0 = RelUnoptimized|x64
+		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelUnoptimized_Unreal|x64.ActiveCfg = RelWithDebInfo|x64
+		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelUnoptimized_Unreal|x64.Build.0 = RelWithDebInfo|x64
 		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelUnoptimized|x64.ActiveCfg = RelUnoptimized|x64
 		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelUnoptimized|x64.Build.0 = RelUnoptimized|x64
 		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelWithDebInfo_FBX|x64.ActiveCfg = RelWithDebInfo|x64
@@ -103,6 +108,8 @@ Global
 		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.Release|x64.Build.0 = Release|x64
 		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelUnoptimized_FBX|x64.ActiveCfg = RelUnoptimized|x64
 		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelUnoptimized_FBX|x64.Build.0 = RelUnoptimized|x64
+		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelUnoptimized_Unreal|x64.ActiveCfg = RelWithDebInfo|x64
+		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelUnoptimized_Unreal|x64.Build.0 = RelWithDebInfo|x64
 		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelUnoptimized|x64.ActiveCfg = RelUnoptimized|x64
 		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelUnoptimized|x64.Build.0 = RelUnoptimized|x64
 		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelWithDebInfo_FBX|x64.ActiveCfg = RelWithDebInfo|x64
@@ -131,6 +138,8 @@ Global
 		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.Release|x64.Build.0 = RelWithDebInfo|x64
 		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelUnoptimized_FBX|x64.ActiveCfg = RelUnoptimized|x64
 		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelUnoptimized_FBX|x64.Build.0 = RelUnoptimized|x64
+		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelUnoptimized_Unreal|x64.ActiveCfg = RelWithDebInfo|x64
+		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelUnoptimized_Unreal|x64.Build.0 = RelWithDebInfo|x64
 		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelUnoptimized|x64.ActiveCfg = RelUnoptimized|x64
 		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelUnoptimized|x64.Build.0 = RelUnoptimized|x64
 		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelWithDebInfo_FBX|x64.ActiveCfg = RelWithDebInfo|x64
@@ -159,6 +168,8 @@ Global
 		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.Release|x64.Build.0 = RelWithDebInfo_Unreal|x64
 		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelUnoptimized_FBX|x64.ActiveCfg = RelUnoptimized_FBX|x64
 		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelUnoptimized_FBX|x64.Build.0 = RelUnoptimized_FBX|x64
+		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelUnoptimized_Unreal|x64.ActiveCfg = RelUnoptimized_Unreal|x64
+		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelUnoptimized_Unreal|x64.Build.0 = RelUnoptimized_Unreal|x64
 		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelUnoptimized|x64.ActiveCfg = RelUnoptimized_FBX|x64
 		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelUnoptimized|x64.Build.0 = RelUnoptimized_FBX|x64
 		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelWithDebInfo_FBX|x64.ActiveCfg = RelWithDebInfo_FBX|x64
@@ -187,6 +198,8 @@ Global
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.Release|x64.Build.0 = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelUnoptimized_FBX|x64.ActiveCfg = RelUnoptimized|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelUnoptimized_FBX|x64.Build.0 = RelUnoptimized|x64
+		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelUnoptimized_Unreal|x64.ActiveCfg = RelWithDebInfo|x64
+		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelUnoptimized_Unreal|x64.Build.0 = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelUnoptimized|x64.ActiveCfg = RelUnoptimized|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelUnoptimized|x64.Build.0 = RelUnoptimized|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelWithDebInfo_FBX|x64.ActiveCfg = RelWithDebInfo|x64

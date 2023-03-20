@@ -241,8 +241,10 @@ public:
 		//saveDialogPath[0] = '\0';
 	}
 
-	virtual void BeginSession( const IPluginOutputParameters& params ) override
+	virtual void BeginSession( const PsdData& psdData, const IPluginOutputParameters& params ) override
 	{
+		psdData; // unused
+
 		this->psdPath = params.FileImportPath();
 		this->psdName = params.PsdName();
 		this->exportPath = params.FileExportPath();
@@ -327,6 +329,15 @@ public:
 			}
 			OutputMeshes( psdData, params, "", graphLayerList ); // no prefix
 		}
+	}
+
+	virtual void OutputTexture( const PsdData& psdData, const IPluginOutputParameters& params, const char* textureFilepath, const char* textureName )
+	{
+		psdData; // unused
+		params; // unused
+		textureFilepath; // unused
+		textureName; // unused
+		// TODO: Not yet implemented
 	}
 
 	virtual bool OutputMeshes( const PsdData& psdData, const IPluginOutputParameters& params, const std::string& exportPostfix, const GraphLayerList& graphLayerList )

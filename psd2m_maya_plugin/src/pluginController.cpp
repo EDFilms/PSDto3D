@@ -195,7 +195,7 @@ namespace psd_to_3d
 			else
 			{
 				// Notify plugin of initial params
-				output->BeginSession( pluginOutputParams );
+				output->BeginSession( GetPsdData(), pluginOutputParams );
 			}
 		}
 
@@ -444,10 +444,15 @@ namespace psd_to_3d
 						perf_log_b_total += time_diff_b.count();
 						perf_log_b_count++;
 
-						// Not implemented
-						//IPluginOutput* output = this->context->GetPluginOutput();
-						//if( output!=nullptr )
-						//	output->OutputTexture( GetPsdData(), pngNameFileStr_utf8.c_str(), layerIndex, paddedBounds.WidthPixels(), paddedBounds.HeightPixels() );
+						// notify output plugin of the texture file (for FBX or Unreal)
+						std::string textureFilepath = pngNameFileStr_utf8;
+						std::string textureName = layer.LayerName;
+						IPluginOutput* output = this->context->GetPluginOutput();
+						if( output!=nullptr )
+						{
+							PluginOutputParameters pluginOutputParams(globalParams);
+							output->OutputTexture( GetPsdData(), pluginOutputParams, textureFilepath.c_str(), textureName.c_str() );
+						}
 					}
 				}
 			}
@@ -611,6 +616,17 @@ namespace psd_to_3d
 					std::chrono::duration<float> time_diff_b = time_now-time_start_b;
 					perf_log_b_total += time_diff_b.count();
 					perf_log_b_count++;
+
+					// notify output plugin of the texture file (for FBX or Unreal)
+					std::string textureFilepath = binFilename.toUtf8();
+					std::string textureName = std::string("TextureAtlas_") + std::string( atlasNameNoSpace.toUtf8().data() );
+					IPluginOutput* output = this->context->GetPluginOutput();
+					if( output!=nullptr )
+					{
+						PluginOutputParameters pluginOutputParams(globalParams);
+						output->OutputTexture( GetPsdData(), pluginOutputParams, textureFilepath.c_str(), textureName.c_str() );
+					}
+
 				}
 			}
 		}

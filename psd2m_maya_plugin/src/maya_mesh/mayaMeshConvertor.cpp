@@ -589,7 +589,7 @@ namespace maya_plugin
 	};
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void MayaPluginOutput::BeginSession( const IPluginOutputParameters& params )
+	void MayaPluginOutput::BeginSession( const PsdData& psdData, const IPluginOutputParameters& params )
 	{
 		// Check if this PSD is the same one we've been using recently ...
 		// if not, clear out the cache of shader names, which means we'll be creating new materials,
@@ -618,6 +618,13 @@ namespace maya_plugin
 	{
 		// Maya editor node component creation
 		CreateEditorMayaComponents(tree); //progress, 
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	void MayaPluginOutput::OutputTexture( const PsdData& psdData, const IPluginOutputParameters& params, const char* textureFilepath, const char* textureName )
+	{
+		// Not implemented
+		// Maya Plugin requires no special handling
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------

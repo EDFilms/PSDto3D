@@ -136,10 +136,11 @@ namespace maya_plugin
 		typedef psd_to_3d::GraphLayerGroup GraphLayerGroup;
 		typedef psd_to_3d::GlobalParameters GlobalParameters;
 
-		void BeginSession( const IPluginOutputParameters& params );
-		void OutputMesh( const PsdData& psdData, const IPluginOutputParameters& params, const DataSurface& dataSurface, int layerIndex );
-		void OutputTree( const PsdData& psdData, const IPluginOutputParameters& params, const GroupByNameMap& tree );
-		void EndSession( const PsdData& data, const IPluginOutputParameters& params ); // TODO: avoid need to pass PsdData and GlobalParameters
+		void BeginSession(  const PsdData& psdData, const IPluginOutputParameters& params );
+		void OutputMesh(    const PsdData& psdData, const IPluginOutputParameters& params, const DataSurface& dataSurface, int layerIndex );
+		void OutputTree(    const PsdData& psdData, const IPluginOutputParameters& params, const GroupByNameMap& tree );
+		void OutputTexture( const PsdData& psdData, const IPluginOutputParameters& params, const char* textureFilepath, const char* textureName );
+		void EndSession(    const PsdData& data, const IPluginOutputParameters& params ); // TODO: avoid need to pass PsdData and GlobalParameters
 		void CancelSession( const PsdData& psdData, const IPluginOutputParameters& params );
 		void GetSaveDialogParams( void*, const IPluginOutputParameters& ) {} // not used for plugin, only for standalone
 

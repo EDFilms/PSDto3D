@@ -68,16 +68,13 @@ namespace psd_to_3d
 		virtual ~IPluginOutput() = default;
 
 		// TODO: Add concept of sessionId, returned by BeginSession() and passing into other methods, instead of assuming singleton session
-		virtual void BeginSession( const IPluginOutputParameters& params ) = 0;
-
+		virtual void BeginSession(  const PsdData& psdData, const IPluginOutputParameters& params ) = 0;
 		virtual void OutputMesh(    const PsdData& psdData, const IPluginOutputParameters& params, const DataSurface& dataSurface, int layerIndex ) = 0;
 		virtual void OutputTree(    const PsdData& psdData, const IPluginOutputParameters& params, const GroupByNameMap& tree ) = 0;
+		virtual void OutputTexture( const PsdData& psdData, const IPluginOutputParameters& params, const char* textureFilepath, const char* textureName ) = 0;
 		virtual void EndSession(    const PsdData& psdData, const IPluginOutputParameters& params ) = 0;
 		virtual void CancelSession( const PsdData& psdData, const IPluginOutputParameters& params ) = 0;
 		virtual void GetSaveDialogParams( void* ofnw, const IPluginOutputParameters& params ) = 0; // OPENFILENAMEW& ofn // TODO: use real type here
-
-		// Not implemented.
-		//virtual void OutputTexture( const PsdData& psdData, const char* textureFilename, int layerIndex, int textureWidth, int textureHeight ) = 0;
 	};
 
 }

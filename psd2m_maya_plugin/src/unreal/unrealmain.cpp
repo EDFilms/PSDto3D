@@ -23,20 +23,33 @@
 // Header file list, 12 May 2022
 // Unreal version 4.27.2
 
-#include "CanvasTypes.h" // for FImageUtils
+#include "Interfaces/IPluginManager.h" // for IPluginManager
+
+#include "Utils.h"
 #include "ImageUtils.h"
+#include "CanvasTypes.h" // for FImageUtils
 
 #include "PackageTools.h" // for UPackageTools
 
 #include "AssetRegistry/AssetRegistryModule.h" // for FAssetRegistryModule
 
+#include "AssetToolsModule.h" // for AssetToolsModule
+
 #include "Editor.h" // for GEditor
 
 #include "UObject/SavePackage.h" // for FSavePackageArgs
 
+#include "UObject/ConstructorHelpers.h" // for FObjectFinder
+
 #include "Factories/MaterialFactoryNew.h" // for UMaterialFactoryNew
 
+#include "Factories/MaterialInstanceConstantFactoryNew.h" // for UMaterialInstanceConstantFactoryNew
+
 #include "Materials/Material.h" // for UMaterial
+
+#include "Materials/MaterialInstanceConstant.h" // for UMaterialInstanceConstant
+
+#include "Materials/MaterialInstanceDynamic.h" // for UMaterialInstanceDynamic
 
 #include "StaticMeshAttributes.h" // for FStaticMeshAttributes
 
@@ -56,6 +69,10 @@
 #include "Widgets/SCompoundWidget.h"
 
 #include "Modules/ModuleManager.h" // for FModuleManager
+
+#include "Factories/ReimportTextureFactory.h"
+
+#include "EditorReimportHandler.h" // for FReimportManager
 
 // Include after Unreal headers, because they separately declare many windows values
 #include <Windows.h> // for LoadLibrary() and GetProcAddress(); how to support this cross-platform?
@@ -112,35 +129,46 @@ void OnPluginButtonClicked()
 
 void PsdToUnrealPluginOutput::OutputLayers( OutputLayersTask task )
 {
+	std::map< std::string, UMaterialInterface* > materialLookup;
+
+	const char* packageName = task.parent->GetPackageName();
+	// System seems to prefer if the "Content" folder name is omitted, but actual file path is:
+	// IPluginManager::Get().FindPlugin("PsdToUnreal")->GetBaseDir() + /PSDtoUnreal/Content/Assets/Materials/PsdMaster/M_PsdMaster.uasset
+	const char* masterAssetPath = "/PSDtoUnreal/Assets/Materials/PsdMaster/M_PsdMaster.M_PsdMaster";
+
 	// Iterate through all groups in the Photoshop file ...
-	psd_to_3d::GroupByNameMap::const_iterator iter;
-
-	std::map< std::string, UMaterial* > materialLookup;
-
-	std::string basePackageName = std::string("/Game/Textures/") + std::string(task.psdFileName) + std::string("/");
-
-	for( iter = task.tree.begin(); iter!=task.tree.end(); iter++ )
+	psd_to_3d::GroupByNameMap::const_iterator graphIter;
+	for( graphIter = task.tree.begin(); graphIter!=task.tree.end(); graphIter++ )
 	{
 		// Iterate through all layers in the current group ...
-		const psd_to_3d::GraphLayerGroup& graphLayerGroup = iter->second;
+		const psd_to_3d::GraphLayerGroup& graphLayerGroup = graphIter->second;
 
 		for( int graphLayerIndex = 0; graphLayerIndex<graphLayerGroup.GetLayerCount(); graphLayerIndex++ )
 		{
 			const psd_to_3d::GraphLayer* graphLayerPtr = graphLayerGroup[graphLayerIndex];
 			if( graphLayerPtr==nullptr ) continue;
 
+			const char* textureFilepath = graphLayerPtr->TextureFilepath.c_str();
+			const char* assetName = graphLayerPtr->TextureName.c_str();
+
 			// create material if not already in lookup
 			if( materialLookup.find( graphLayerPtr->TextureFilepath ) == materialLookup.end() )
 			{
-				UMaterial* material = CreateMaterial(
-					graphLayerPtr->TextureFilepath.c_str(), graphLayerPtr->TextureName.c_str(), basePackageName.c_str() );
+				bool isNewMaterial = !(CheckMaterial( assetName, packageName )); // true if material does not already exist in scene
+
+				// created it if necessary
+				UMaterialInterface* material = ObtainCustomMaterial( masterAssetPath, assetName, packageName );
+				if( isNewMaterial )
+				{
+					UTexture2D* diffuseTexture = ObtainTexture( textureFilepath, assetName, packageName );
+					SetupCustomMaterial( material, diffuseTexture );
+					task.parent->session_texturesCreated.insert( assetName );
+				}
+
 				materialLookup[ graphLayerPtr->TextureFilepath ] = material;
 			}
 
-			OutputLayerTask subtask( *graphLayerPtr );
-			subtask.psdFileName = task.psdFileName;
-			subtask.psdSceneWidth = task.psdSceneWidth;
-			subtask.psdSceneHeight = task.psdSceneHeight;
+			OutputLayerTask subtask( task.parent, *graphLayerPtr );
 			subtask.material = materialLookup[ graphLayerPtr->TextureFilepath ]; // lookup material
 			OutputLayer( subtask );
 		}
@@ -167,14 +195,14 @@ void PsdToUnrealPluginOutput::OutputLayer( OutputLayerTask task )
 		return; // need a DataMesh to proceed, no support for DataSpline
 
 	FString layerName = FString( task.graphLayer.LayerName.c_str() );
-	FString basePackageName = FString("/Game/Textures/") + FString(task.psdFileName) + FString("/");
+	FString basePackageName = FString( task.parent->GetPackageName() );
 
 	util::boundsUV layerRegion = task.graphLayer.LayerRegion; // relative to scene, range [0-1]
 	int layerIndex = task.graphLayer.LayerIndex;
 	float layerScale = task.graphLayer.Scale;
 	float layerDepth = task.graphLayer.Depth;
 
-	float aspectRatio = (float)task.psdSceneWidth / (float)task.psdSceneHeight;
+	float aspectRatio = (float)task.parent->session_psdSceneWidth / (float)task.parent->session_psdSceneHeight;
 	float layoutWidth = 1000.0f;
 	float layoutHeight = 1000.0f / aspectRatio;
 
@@ -306,7 +334,7 @@ void PsdToUnrealPluginOutput::OutputLayer( OutputLayerTask task )
 
 	FRotator meshRot(0,0,0);
 
-	FVector meshSceneScale(1,1,1);
+	FVector meshSceneScale(layerScale,layerScale,layerScale);
 
 	FActorSpawnParameters meshParams;
 	meshParams.Name = *layerName;
@@ -315,7 +343,7 @@ void PsdToUnrealPluginOutput::OutputLayer( OutputLayerTask task )
 	AStaticMeshActor* meshActor = world->SpawnActor<AStaticMeshActor>(meshPos, meshRot, meshParams);
 	if( meshActor!=nullptr )
 	{
-		FString folderPath = FString("/") + FString(task.psdFileName);
+		FString folderPath = FString("/") + FString(task.parent->session_psdFileName);
 		meshActor->SetFolderPath( *folderPath );
 		meshActor->SetActorLabel( layerName ); // TODO: Works in development builds only?
 		meshActor->GetStaticMeshComponent()->SetStaticMesh( mesh );
@@ -325,94 +353,194 @@ void PsdToUnrealPluginOutput::OutputLayer( OutputLayerTask task )
 	}
 }
 
-UMaterial* PsdToUnrealPluginOutput::CreateMaterial( const char* textureFilepath, const char* assetName, const char* packageName )
+void PsdToUnrealPluginOutput::OutputTextures( OutputTexturesTask task )
 {
-	UTexture2D* textureOriginal = FImageUtils::ImportFileAsTexture2D( textureFilepath );
-	if( (textureOriginal==nullptr) || (textureOriginal->GetPlatformData()==nullptr) || (textureOriginal->GetPlatformData()->Mips.Num()<=0) )
-		return nullptr; // need a texture to work from
+	// Reimport any textures which already existed in the scene
 
+	// convert from std::set or texture names to TArray of texture objects,
+	// also check 
+	TArray<UObject*> texturesToUpdate;
+	std::set<std::string>::iterator iter = task.parent->session_texturesOutput.begin();
+	for( ; iter!=task.parent->session_texturesOutput.end(); iter++ )
+	{
+		// check if the texture was created as new scene entities during this session, if so, don't update ...
+		bool wasCreated = (task.parent->session_texturesCreated.find(*iter) != task.parent->session_texturesCreated.end());
+		if( !wasCreated )
+		{
+			const char* textureName = iter->c_str();
+			const char* packageName = task.parent->GetPackageName();
+			if( CheckMaterial( textureName, packageName ) ) // true if material exists in scene
+			{
+				texturesToUpdate.Add( task.parent->ObtainTexture( nullptr, textureName, packageName ) );
+			}
+		}
+	}
 
+	if( !texturesToUpdate.IsEmpty() )
+	{
+		// compile errors when instantiating UReimportTextureFactory, but FReimportManager seems to work
+		bool showNotification = false;
+		const int32 sourceFileIndex = INDEX_NONE;
+		bool forceNewFile = false;
+		bool automated = true;
+		FReimportManager::Instance()->ValidateAllSourceFileAndReimport( texturesToUpdate, showNotification, sourceFileIndex, forceNewFile, automated );
+	}
+
+	task.running = 0; // allow UI thread to continue;
+}
+
+UTexture2D* PsdToUnrealPluginOutput::ObtainTexture( const char* textureFilepath, const char* assetName, const char* packageName )
+{
 	//-------------------- ------------------------------------------------------------------------------------------------------------------
-	// Create texture asset
+	// Create or find texture package
 
-	int textureHeight = textureOriginal->GetSizeY(); // texture file width
-	int textureWidth  = textureOriginal->GetSizeX(); // texture file height
-
-	FTexture2DMipMap& mip = textureOriginal->GetPlatformData()->Mips[0];
-
+	FString textureAssetPath = FString(textureFilepath);
 	FString textureAssetName = FString(assetName) + FString("_png");
-	FString texturePackageName = FString(packageName) + FString(textureAssetName);
+	FString texturePackageName = FString(packageName) + FString(textureAssetName); // assumes packageName ends in '/'
 	texturePackageName = UPackageTools::SanitizePackageName(texturePackageName);
 
 	UPackage* texturePackage = CreatePackage(*texturePackageName); // v4.26.2
 	//UPackage* texturePackage = CreatePackage(nullptr,*texturePackageName); // v4.24
-
-	FCreateTexture2DParameters params;
-	params.bUseAlpha = textureOriginal->HasAlphaChannel();
-
-	TArray<FColor> bulkDataOutput;
-	int bulkDataSize = mip.BulkData.GetBulkDataSize();
-	int bulkDataEntries = bulkDataSize / 4;
-	bulkDataOutput.Init( FColor(64,128,192,255), bulkDataEntries );
-
-	void* bulkDataInput = mip.BulkData.Lock(LOCK_READ_WRITE);
-	FMemory::Memcpy(bulkDataOutput.GetData(), bulkDataInput, bulkDataSize );
-	mip.BulkData.Unlock();
-	UTexture2D* texture =
-		FImageUtils::CreateTexture2D( textureWidth, textureHeight, bulkDataOutput,
-			texturePackage, textureAssetName, RF_Public | RF_Standalone, params );
-
-	texture->LODGroup = TEXTUREGROUP_Cinematic;
-	FAssetRegistryModule::AssetCreated(texture);
 	texturePackage->FullyLoad();
-	texturePackage->Modify();
 
-	texture->PostEditChange();
-	texture->MarkPackageDirty();
-
-	FString texturePackageFilename = FPackageName::LongPackageNameToFilename(texturePackageName, FPackageName::GetAssetPackageExtension());
-	try
+	// Check if package was pre-existing and already has a texture
+	UObject* asset = texturePackage->FindAssetInPackage();
+	UTexture2D* texture = nullptr;
+	if( asset!=nullptr )
 	{
-		// texturePackage,				// UPackage* InOuter
-		// texture,						// UObject* Base
-		// RF_Public | RF_Standalone,	// EObjectFlags TopLevelFlags
-		// *texturePackageFilename,		// const TCHAR* Filename
-		// GError,						// FOutputDevice* Error = GError
-		// nullptr,						// FLinkerNull* Conform = nullptr
-		// false,						// bool bForceByteSwapping = false
-		// true,						// bool bWarnOfLongFilename = true
-		// SAVE_None					// uint32 SaveFlags = SAVE_None
-
-		// const ITargetPlatform* TargetPlatform = nullptr,
-		// const FDateTime& FinalTimeStamp = FDateTime::MinValue(),
-		// bool bSlowTask = true
-
-		FSavePackageArgs args(
-			nullptr, // const ITargetPlatform* InTargetPlatform
-			nullptr, // FArchiveCookData* InArchiveCookData (?)
-			RF_Public | RF_Standalone, // EObjectFlags InTopLevelFlags
-			SAVE_None, // uint32 InSaveFlags
-			false, // bool bInForceByteSwapping
-			true, // bool bInWarnOfLongFilename
-			true, // bool bInSlowTask (?)
-			FDateTime::MinValue(), // FDateTime InFinalTimeStamp
-			GError, // FOutputDevice* InError
-			nullptr // FSavePackageContext* InSavePackageContext = nullptr
-		);
-		if( GEditor->SavePackage(texturePackage, texture, *texturePackageFilename, args) )
-		{
-			texturePackage->PostEditChange();
-		}
+		texture = CastChecked<UTexture2D>(asset);
+		texturePackage->SetDirtyFlag(true);
 	}
-	catch (...)
+	else if( textureFilepath!=nullptr )
 	{
-		UE_LOG(LogTemp, Error, TEXT("Error saving %s"), *texturePackageFilename);
+		//-------------------- ------------------------------------------------------------------------------------------------------------------
+		// Create texture asset
+
+		texturePackage->Modify();
+
+		texture = ImportObject<UTexture2D>(texturePackage, *textureAssetName, RF_Public, *textureAssetPath, nullptr, nullptr, TEXT("NOMIPMAPS=0 NOCOMPRESSION=1"));
+
+		texture->PostEditChange();
+		texture->MarkPackageDirty();
+
+		try
+		{
+			FSavePackageArgs args(
+				nullptr, // const ITargetPlatform* InTargetPlatform
+				nullptr, // FArchiveCookData* InArchiveCookData (?)
+				RF_Public | RF_Standalone, // EObjectFlags InTopLevelFlags
+				SAVE_None, // uint32 InSaveFlags
+				false, // bool bInForceByteSwapping
+				true, // bool bInWarnOfLongFilename
+				true, // bool bInSlowTask (?)
+				FDateTime::MinValue(), // FDateTime InFinalTimeStamp
+				GError, // FOutputDevice* InError
+				nullptr // FSavePackageContext* InSavePackageContext = nullptr
+			);
+			if( GEditor->SavePackage(texturePackage, texture, *texturePackageName, args) )
+			{
+				FAssetRegistryModule::AssetCreated(texture);
+				texturePackage->FullyLoad();
+				texturePackage->SetDirtyFlag(true);
+				texturePackage->PostEditChange();
+			}
+		}
+		catch (...)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Error saving %s"), *texturePackageName);
+		}
+
 	}
 
 	// TODO: See BaseDeviceProfiles.ini, to control the texture detauls->Level of Detail->Texture Group settings
 	// For example, see \Projects\SunTemple\Config\DefaultDeviceProfiles.ini to control per-platform detail settings
 	// Note that MIP generation may produce non-desirable results in the Alpha channel, controlled on a per-texture basis,
 	// not controlled through ini file. See texture details->Level of Detail->Mip Gen Settings
+
+	return texture;
+}
+
+bool PsdToUnrealPluginOutput::CheckMaterial( const char* assetName, const char* packageName )
+{
+	FString materialAssetName = FString(assetName) + FString("_material");
+	FString materialPackageName = FString(packageName) + FString(materialAssetName);
+	materialPackageName = UPackageTools::SanitizePackageName(materialPackageName);
+
+	return (FindPackage(nullptr,*materialPackageName) != nullptr );
+}
+
+
+UMaterialInterface* PsdToUnrealPluginOutput::ObtainCustomMaterial( const char* masterAssetPath, const char* assetName, const char* packageName )
+{
+	//-------------------- ------------------------------------------------------------------------------------------------------------------
+	// Create or find material package
+
+	FString materialAssetName = FString(assetName) + FString("_material");
+	FString materialPackageName = FString(packageName) + FString(materialAssetName);
+	materialPackageName = UPackageTools::SanitizePackageName(materialPackageName);
+
+	UPackage* materialPackage = CreatePackage(*materialPackageName);
+	materialPackage->FullyLoad();
+
+	// Check if package was pre-existing and already has a texture
+	UObject* asset = materialPackage->FindAssetInPackage();
+	UMaterialInterface* materialInstance = nullptr;
+	if( asset!=nullptr )
+	{
+		materialInstance = CastChecked<UMaterialInterface>(asset);
+		materialPackage->SetDirtyFlag(true);
+	}
+	else
+	{
+		//-------------------- ------------------------------------------------------------------------------------------------------------------
+		// Create material asset
+
+		materialPackage->Modify();
+
+		FString path = masterAssetPath;
+		UClass* Class = UMaterialInterface::StaticClass();
+		Class->GetDefaultObject(); // force the CDO to be created if it hasn't already
+		UMaterialInterface* materialMaster = LoadObject<UMaterialInterface>(NULL, *path, nullptr, LOAD_None);
+		if( (materialMaster!=nullptr) && (materialMaster->GetMaterial()!=nullptr) )
+		{
+			// Load necessary modules
+			FAssetToolsModule& AssetToolsModule = 
+				FModuleManager::Get().LoadModuleChecked<FAssetToolsModule>("AssetTools");
+
+			UMaterialInstanceConstantFactoryNew* Factory =
+				NewObject<UMaterialInstanceConstantFactoryNew>();
+			Factory->InitialParent = materialMaster;
+
+			UMaterialInstanceConstant* materialInstanceConstant = 
+			  CastChecked<UMaterialInstanceConstant>(
+				AssetToolsModule.Get().CreateAsset( materialAssetName, 
+					FPackageName::GetLongPackagePath(packageName),
+					UMaterialInstanceConstant::StaticClass(), 
+					Factory) );
+			materialInstance = materialInstanceConstant;
+
+			FAssetRegistryModule::AssetCreated(materialInstance);
+
+			materialPackage->FullyLoad();
+			materialPackage->SetDirtyFlag(true);
+			materialPackage->PostEditChange();
+		}
+	}
+
+	return materialInstance;
+}
+
+
+void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material, UTexture2D* diffuseTexture )
+{
+	UMaterialInstanceConstant* materialInstanceConstant = 
+		CastChecked<UMaterialInstanceConstant>(material);
+	materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("BaseColor")), diffuseTexture);
+}
+
+
+UMaterial* PsdToUnrealPluginOutput::ObtainStandardMaterial(const char* assetName, const char* packageName )
+{
 
 	//-------------------- ------------------------------------------------------------------------------------------------------------------
 	// Create material
@@ -422,6 +550,7 @@ UMaterial* PsdToUnrealPluginOutput::CreateMaterial( const char* textureFilepath,
 	materialPackageName = UPackageTools::SanitizePackageName(materialPackageName);
 	UPackage* materialPackage = CreatePackage(*materialPackageName); // v4.26.2
 	//UPackage* materialPackage = CreatePackage(NULL, *materialPackageName); // v4.24
+	materialPackage->FullyLoad();
 
 	auto materialFactory = NewObject<UMaterialFactoryNew>();
 	UMaterial* material = (UMaterial*)materialFactory->FactoryCreateNew(UMaterial::StaticClass(), materialPackage, *materialAssetName, RF_Standalone | RF_Public, NULL, GWarn);
@@ -434,51 +563,57 @@ UMaterial* PsdToUnrealPluginOutput::CreateMaterial( const char* textureFilepath,
 	//// material, and will use the new FMaterialResource created when we make a new UMaterial in place
 	//FGlobalComponentReregisterContext RecreateComponents;
 
+	return material;
+}
 
+void PsdToUnrealPluginOutput::SetupStandardMaterial( UMaterial* material, UTexture2D* diffuseTexture )
+{
 	//-------------------- ------------------------------------------------------------------------------------------------------------------
 	// Create texture map connected to material
 
 	material->PreEditChange(NULL);
-	if( texture )
-	{
-		// set diffuse texture sampler
-		UMaterialExpressionTextureSample* textureDiffuse = NewObject<UMaterialExpressionTextureSample>(material);
-		textureDiffuse->Texture = texture;
-		textureDiffuse->SamplerType = SAMPLERTYPE_Color;
 
-		UMaterialEditorOnlyData* materialData = material->GetEditorOnlyData();
+	// set diffuse texture sampler
+	UMaterialExpressionTextureSample* diffuseTextureSample = NewObject<UMaterialExpressionTextureSample>(material);
+	diffuseTextureSample->Texture = diffuseTexture;
+	diffuseTextureSample->SamplerType = SAMPLERTYPE_Color;
 
-		material->GetExpressionCollection().AddExpression(textureDiffuse);
-		materialData->BaseColor.Expression = textureDiffuse;
-		materialData->BaseColor.MaskR = 1;
-		materialData->BaseColor.MaskG = 1;
-		materialData->BaseColor.MaskB = 1;
-		materialData->BaseColor.MaskA = 0;
+	UMaterialEditorOnlyData* materialData = material->GetEditorOnlyData();
 
-		// set opacity texture sampler
-		materialData->OpacityMask.Expression = textureDiffuse;
-		materialData->OpacityMask.MaskR = 0;
-		materialData->OpacityMask.MaskG = 0;
-		materialData->OpacityMask.MaskB = 0;
-		materialData->OpacityMask.MaskA = 1;
-		materialData->OpacityMask.Mask = 1;
+	material->GetExpressionCollection().AddExpression( diffuseTextureSample );
+	materialData->BaseColor.Expression = diffuseTextureSample;
+	materialData->BaseColor.MaskR = 1;
+	materialData->BaseColor.MaskG = 1;
+	materialData->BaseColor.MaskB = 1;
+	materialData->BaseColor.MaskA = 0;
 
-		// set blend mode
-		material->BlendMode = BLEND_Masked;
+	// set opacity texture sampler
+	materialData->OpacityMask.Expression = diffuseTextureSample;
+	materialData->OpacityMask.MaskR = 0;
+	materialData->OpacityMask.MaskG = 0;
+	materialData->OpacityMask.MaskB = 0;
+	materialData->OpacityMask.MaskA = 1;
+	materialData->OpacityMask.Mask = 1;
 
-		// Tiling
-		//textureExpression->Coordinates.Expression = Multiply;
-	}
+	// set blend mode
+	material->BlendMode = BLEND_Masked;
+
+	// Tiling
+	//textureExpression->Coordinates.Expression = Multiply;
+
 	material->PostEditChange();
-
-	return material;
 }
 
 
-void PsdToUnrealPluginOutput::BeginSession( const IPluginOutputParameters& params )
+void PsdToUnrealPluginOutput::BeginSession( const PsdData& psdData, const IPluginOutputParameters& params )
 {
 	int bufCount = sizeof(session_psdFileName)/sizeof(session_psdFileName[0]);
 	strcpy_s( session_psdFileName, bufCount, params.PsdName() );
+	session_texturesOutput.clear();
+	session_texturesCreated.clear();
+	session_psdSceneWidth = psdData.HeaderData.Width;
+	session_psdSceneHeight = psdData.HeaderData.Height;
+	session_packageName = std::string("/Game/Textures/") + std::string(session_psdFileName) + std::string("/");
 }
 
 void PsdToUnrealPluginOutput::OutputMesh( const PsdData& psdData, const IPluginOutputParameters& params, const DataSurface& dataSurface, int layerIndex )
@@ -493,10 +628,7 @@ void PsdToUnrealPluginOutput::OutputTree( const PsdData& psdData, const IPluginO
 {
 	int running = 1;
 
-	OutputLayersTask task( tree, running );
-	task.psdFileName = session_psdFileName;
-	task.psdSceneWidth = psdData.HeaderData.Width;
-	task.psdSceneHeight = psdData.HeaderData.Height;
+	OutputLayersTask task( this, tree, running );
 
 	TUniqueFunction<void()> lambda = [task] { OutputLayers(task); };
 	AsyncTask( ENamedThreads::GameThread, MoveTemp(lambda) );
@@ -514,11 +646,37 @@ void PsdToUnrealPluginOutput::OutputTree( const PsdData& psdData, const IPluginO
 	; // for breakpoint
 }
 
+void PsdToUnrealPluginOutput::OutputTexture( const PsdData& psdData, const IPluginOutputParameters& params, const char* textureFilepath, const char* textureName )
+{
+	session_texturesOutput.insert( textureName );
+}
+
 void PsdToUnrealPluginOutput::EndSession( const PsdData& psdData, const IPluginOutputParameters& params )
 {
 	session_psdFileName[0] = '\0'; // reset session variables
 	psdData; // unused
 	params; // unused
+
+	// if any textures output already existed in the scene (weren't just created new), then update them
+	if( session_texturesOutput.size() > session_texturesCreated.size() )
+	{
+		int running = 1;
+
+		OutputTexturesTask task( this, running );
+
+		TUniqueFunction<void()> lambda = [task] { OutputTextures(task); };
+		AsyncTask( ENamedThreads::GameThread, MoveTemp(lambda) );
+
+		// sleep until task.running is no longer true;
+		// ConditionalSleep() waits until the passed lambda "task.running==0" returns true
+		FGenericPlatformProcess::ConditionalSleep(
+			[&running]() // lambda function, no parameters, returns a bool
+				{
+					return (running==0);
+				},
+			0.05
+		);
+	}
 }
 
 void PsdToUnrealPluginOutput::CancelSession( const PsdData& psdData, const IPluginOutputParameters& params )
