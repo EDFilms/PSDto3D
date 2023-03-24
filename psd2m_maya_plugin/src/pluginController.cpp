@@ -138,7 +138,6 @@ namespace psd_to_3d
 #if (defined PSDTO3D_UNREAL_VERSION) || (defined PSDTO3D_MAYA_VERSION)
 		QString exportDir = globalParams.FileImportPath + "/" + globalParams.PsdName + "/";
 		globalParams.FileExportPath = exportDir;
-		retval = (!globalParams.FileExportPath.isEmpty()) && (!globalParams.FileExportName.isEmpty());
 #elif defined PSDTO3D_FBX_VERSION
 		// get the file extension from the output module
 		OPENFILENAMEW ofnw;
@@ -283,11 +282,6 @@ namespace psd_to_3d
 			globalParams.FileImportPath = fileInfo.path();
 			bool isNewFile = (prevFileImportFilepath!=globalParams.FileImportFilepath()); // not a reload
 
-			// Calculate export path from filename
-			QString exportDir = fileInfo.path() + "/" + fileInfo.baseName() + "/";
-			globalParams.FileExportPath = exportDir;
-			globalParams.FileExportName = fileInfo.completeBaseName();
-
 			// Convert special characters in layer names
 			std::vector<LayerData>& layers = GetPsdData().LayerMaskData.Layers;
 			for(std::vector<LayerData>::iterator it = layers.begin(); it!=layers.end(); it++ )
@@ -321,6 +315,13 @@ namespace psd_to_3d
 					globalParams.FileExportPath = "";
 				if( isNewFile || (prevFileExportName.isEmpty()) )
 					globalParams.FileExportName = "";
+			}
+			else
+			{
+				// Calculate export path from filename
+				QString exportDir = fileInfo.path() + "/" + fileInfo.baseName() + "/";
+				globalParams.FileExportPath = exportDir;
+				globalParams.FileExportName = fileInfo.completeBaseName();
 			}
 
 			toolWidget->SetPsdData(GetPsdData()); // initial UI

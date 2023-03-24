@@ -97,7 +97,7 @@
     <ConfigurationLongName Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">RelWithDebInfo_Standalone</ConfigurationLongName>
     <QtDir Condition="'$(MayaVer)'=='standalone'">..\..\..\Qt\src\qtbase</QtDir>
     <QtDir Condition="'$(MayaVer)'!='standalone'">$(MayaDir)</QtDir>
-    <UnrealEngine>..\..\..\Unreal\Engine</UnrealEngine>
+    <UnrealEngine>$(UnrealDir)\Engine</UnrealEngine>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup>
@@ -233,8 +233,8 @@
       </Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Unreal|x64'">echo Copying to Unreal plugin directory ...
 copy /Y $(TargetDir)\$(TargetName)* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
-xcopy /Y /E ..\..\psd2m_maya_plugin\deps\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
-xcopy /Y /E /I ..\..\psd2m_maya_plugin\icons\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64\icons
+xcopy /Y /E /F ..\..\psd2m_maya_plugin\deps\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
+xcopy /Y /E /F /I ..\..\psd2m_maya_plugin\icons\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64\icons
 </Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_Unreal|x64'">echo Copying to Unreal plugin directory ...
 copy /Y $(TargetDir)\$(TargetName)* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64

@@ -1,28 +1,37 @@
 
 PSDtoUnreal Demo
-25 May 2022
+22 Mar 2023
 
-Supports Unreal version 4.27.2 - current release as of this date
+Supports Unreal version 5.1.0 - current release as of this date
 
 Install instructions:
 
-- Ensure you have Unreal 4.26.2 installed
+- Ensure you have Unreal 5.1.0 installed
   If you have a different version:
   From the Epic games launcher -> Library tab -> Yellow "+" button ->
-    Click the dropdown arrow in the icon that appears -> Select 4.27.2 -> Click "Install" in the icon
+    Click the dropdown arrow in the icon that appears -> Select 5.1.0 -> Click "Install" in the icon
 
 - In windows file explorer, from the Unreal Engine install location, open the \Engine\Plugins\Editor folder
-  By default the full path will be: C:\Program Files\Epic Games\UE_4.27\Engine\Plugins\Editor
+  By default the full path will be: C:\Program Files\Epic Games\UE_5.1\Engine\Plugins\Editor
 
 - Unzip the demo to this folder
 
 - Ensure the folder structure is correct
   You should have .dll files locayed in this path:
-    C:\Program Files\Epic Games\UE_4.27\Engine\Plugins\Editor\PSDtoUnreal\Binaries\Win64
+    C:\Program Files\Epic Games\UE_5.1\Engine\Plugins\Editor\PSDtoUnreal\Binaries\Win64
+
+----- ----- ----- ----- ----- ----- ----- -----
+- IMPORTANT: Ensure BuildId is correct
+----- ----- ----- ----- ----- ----- ----- -----
+  Find the correct BuildId number from another plugin, here
+    C:\Program Files\Epic Games\UE_5.1\Engine\Plugins\Editor\PluginBrowser\Binaries\Win64\UnrealEditor.modules
+  Open this file in notepad, and confirm the BuildId value (probably "23058290" for Unreal 5.1.0)
+  Ensure that PSDtoUnreal uses a matching BuildId number, here
+    C:\Program Files\Epic Games\UE_5.1\Engine\Plugins\Editor\PSDtoUnreal\Binaries\Win64\UnrealEditor.modules
 
 - Run the Unreal Engine, and open any existing project
 
-- The PSDtoUnreal button should appear on the main toolbar
+- The PSDtoUnreal windows can be launched from the Window menu -> PSDtoUnreal
 
 Enjoy!
 

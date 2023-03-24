@@ -41,7 +41,7 @@
     <RootNamespace>psd2munrealplugin</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
-    <UnrealEngine>..\..\..\Unreal\Engine</UnrealEngine>
+    <UnrealEngine>$(UnrealDir)\Engine</UnrealEngine>
     <UnrealRuntime>$(UnrealEngine)\Source\Runtime</UnrealRuntime>
     <UnrealIntermediate>$(UnrealEngine)\Intermediate\Build\Win64\UnrealEditor</UnrealIntermediate>
   </PropertyGroup>

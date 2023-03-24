@@ -1,6 +1,6 @@
 echo %date%  - %time%
 
-set BUILD_VER=071
+set BUILD_VER=072
 set BUILD_DATE=%date%
 set PLUGIN_VER_SHORT=164
 set PLUGIN_VER_BASE=1.6.4
