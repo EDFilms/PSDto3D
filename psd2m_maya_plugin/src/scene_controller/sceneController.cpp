@@ -137,17 +137,26 @@ namespace psd_to_3d
 		LoadValuesFromJson();
 
 		// Create a mapping, layer names -> index values
-		std::map<QString, int> nameToLayerIndexMap;
-		for (int itemIndex = 0; itemIndex < this->layerAgents.size(); itemIndex++)
+		NameToNameMap curToJsonLayerMap; // maps layer index in current PSD to layer index in JSON settings
+		for( auto& layer : psdData.LayerMaskData.Layers ) // iterate layers in current PSD
 		{
-			LayerParameters& layerParams = this->layerAgents[itemIndex]->GetLayerParameters();
-			nameToLayerIndexMap.insert( {layerParams.LayerName, itemIndex} );
+			curToJsonLayerMap.InitSrcName( layer.LayerName.c_str() );
+		}
+		for( int layerIndex = 0; layerIndex < this->layerAgents.size(); layerIndex++ ) // iterate layers in JSON settings
+		{
+			LayerParameters& layerParams = this->layerAgents[layerIndex]->GetLayerParameters();
+			curToJsonLayerMap.InitDstName( layerParams.LayerName.toUtf8().data() );
 		}
 		
 		// Clear the parameters list again, making a copy of the stored parameters from disk first
-		LayerAgentList prevLayerParams(this->layerAgents.begin(), this->layerAgents.end());
+		LayerAgentList jsonLayerParams(this->layerAgents.begin(), this->layerAgents.end());
 
 		this->layerAgents.clear(); // don't clear atlas settings, only layer settings, which the incoming file might override
+		for( int atlasIndex = 0; atlasIndex < this->atlasAgents.size(); atlasIndex++ ) // clear atlas layer indices, to patch
+		{
+			AtlasParameters& atlasParams = this->atlasAgents[atlasIndex]->GetAtlasParameters();
+			atlasParams.layerIndices.clear();
+		}
 
 		int depthIndex = 0;
 
@@ -169,9 +178,9 @@ namespace psd_to_3d
 
 				LayerAgent& layerAgent = GetLayerAgent(layerIndex);
 				LayerParameters& layerParams = layerAgent.GetLayerParameters();
-				auto it = nameToLayerIndexMap.find(layerName); // copy params loaded from json, if available
-				if( it != nameToLayerIndexMap.end() )
-					layerParams = prevLayerParams[it->second]->GetLayerParameters();
+				int jsonIndex = curToJsonLayerMap.MapSrcToDst(layerIndex);
+				if( jsonIndex!=-1 )  // copy params loaded from json, if available
+					layerParams = jsonLayerParams[jsonIndex]->GetLayerParameters();
 
 				layerParams.DepthIndex = depthIndex++;
 				layerParams.HasVectorSupport = !layer.PathRecords.empty();
@@ -195,6 +204,9 @@ namespace psd_to_3d
 				if( (!IsLinearModeSupported) && (layerParams.Algo==LayerParameters::LINEAR) )
 					layerParams.Algo = LayerParameters::DELAUNAY; // revert from linear to delaunay if necessary
 
+				AtlasParameters& atlasParams = GetAtlasAgent( layerParams.AtlasIndex ).GetAtlasParameters();
+				atlasParams.layerIndices.insert( layerIndex );
+
 				// Clear widget pointers until UI is rebuilt
 				layerParams.ClearWidgets();
 				layerParams.SetInfluenceLayer(psdData, layer);
@@ -202,7 +214,7 @@ namespace psd_to_3d
 		}
 
 		// Delete old params
-		for (auto item : prevLayerParams)
+		for (auto item : jsonLayerParams)
 		{
 			delete item;
 		}
@@ -713,6 +725,7 @@ namespace psd_to_3d
 		// Helper for Init()
 
 		// Create layer agents and atlas agents from user preferences on disk, and update agent lists
+		// NOTE: layerIndex numbers in JSON may not match PSD; layer->atlas matching should be patched later
 		// Assumes the lists have been cleared via Free()
 		// Mimatches can occur between stored parameters and the PsdData loaded from disk,
 		// so, the two data sets must be merged via layer name matching in Init()
@@ -786,6 +799,10 @@ namespace psd_to_3d
 			QString layerName = QString::fromWCharArray( layerObject[L"Name"]->AsString().c_str() );
 
 			// Add new layer
+			// ---------- ----------
+			// BUG: If the json doesn't match the current PSD due to user iteration and changes,
+			// then the layerIndex here won't match the actual file, causing atlas indices to be garbled
+			// ---------- ----------
 			this->AddLayer( layerName, layerIndex );
 			LayerAgent& layerAgent = GetLayerAgent(layerIndex); 
 			LayerParameters& layerParams = layerAgent.GetLayerParameters();
@@ -844,6 +861,7 @@ namespace psd_to_3d
 			// update atlas
 			AtlasParameters& atlasParams = GetAtlasAgent( layerParams.AtlasIndex ).GetAtlasParameters();
 			atlasParams.layerIndices.insert( layerIndex );
+			// NOTE: layerIndex numbers in JSON may not match PSD; layer->atlas matching should be patched later
 		}
 	}
 

@@ -19,6 +19,9 @@
 
 #include <string>
 
+#define SafeDelete(p)       { if((p)!=nullptr) delete (p);   (p)=nullptr; }
+#define SafeDeleteArray(p)  { if((p)!=nullptr) delete[] (p); (p)=nullptr; }
+
 namespace util
 {
 	void DebugPrint(char* lpszFormat, ...);
@@ -32,6 +35,7 @@ namespace util
 	//----------------------------------------------------------------------------------------
 	// String helpers
 
+	// StringTable looks up translated strings based on id number
 	class StringTable
 	{
 	public:
@@ -42,7 +46,8 @@ namespace util
 			const char* str; // UTF8
 		};
 
-		StringTable() : stringTableMap(nullptr) {}
+		StringTable();
+		~StringTable();
 		bool IsEnglish();
 
 		void AddStrings( int context, const StringTableItem* items, bool isEnglish ); // last item should be bookend with id of -1
@@ -52,6 +57,25 @@ namespace util
 		StringTableMap* stringTableMap;
 	};
 
+	// NameToNameMap maps one sequential list of names to another
+	// The first occurrance of a name in src list maps to its first occurrance in dst list, etc;  duplicates are allowed and mapped in order
+	class NameToNameMap
+	{
+	public:
+		class NameTableMap; // forward declaration
+
+		NameToNameMap();
+		~NameToNameMap();
+
+		void InitSrcName( const char* str ); // should be use repeatedly to add all source items, in sequential order
+		void InitDstName( const char* str ); // should be use repeatedly to add all destination items, in sequential order
+		int MapSrcToDst( int index ); // for source item of the given index, find correspinding destination index, or -1
+		int MapDstToSrc( int index ); // for destination item of the given index, find correspinding source index, or -1
+
+	protected:
+		NameTableMap *srcNameMap, *dstNameMap;
+	};
+	
 	// Language translation
 	bool IsLocalizationEnglish();
 	StringTable* GetLocalizationStringTable();
