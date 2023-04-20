@@ -87,7 +87,7 @@ namespace psd_to_3d
 	ToolWidget::ToolWidget(QMainWindow *parent, IPluginController* controller) 
 		: QMainWindow(parent), Ui(new Ui::DockWidget), EventFilter(new ToolWidgetEventFilter(this)), SilenceUi(0)
 	{
-		this->Controllers.push_back(controller);
+		this->Controller = controller;
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 		qInstallMessageHandler(MessageRelay);
@@ -350,8 +350,11 @@ namespace psd_to_3d
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void ToolWidget::SetPsdData(psd_reader::PsdData & psdData)
+	void ToolWidget::Init( IPluginController* controller )
 	{
+		this->Controller = controller;
+		const PsdData& psdData = this->GetScene().GetPsdData();
+
 		QString sstr;
 		sstr.append(std::to_string(psdData.HeaderData.Width).c_str());
 		sstr.append(" x ");
@@ -370,9 +373,10 @@ namespace psd_to_3d
 
 		for (int layerIndex = 0; layerIndex < psdData.LayerMaskData.LayerCount(); layerIndex++)
 		{
-			psd_reader::LayerData& layer = psdData.LayerMaskData.Layers[layerIndex];
+			LayerAgent& layerAgent = GetScene().GetLayerAgent(layerIndex);
 			// folder or endfolder separator
-			if (layer.Type > psd_reader::TEXTURE_LAYER) continue;
+			if( !(layerAgent.IsImageLayer()) )
+				continue;
 
 			QListWidgetItem* widgetItem = new QListWidgetItem();
 			this->WidgetMap.try_emplace(widgetItem, layerIndex);
@@ -382,7 +386,7 @@ namespace psd_to_3d
 			frame->setFrameShape(QFrame::WinPanel);
 			frame->setFrameShadow(QFrame::Raised);
 
-			ApplyLayerDescription(frame, psdData, layerIndex);
+			ApplyLayerDescription(frame, layerIndex);
 
 			widgetItem->setSizeHint(frame->sizeHint());
 			Ui->layerList->setItemWidget(widgetItem, frame);
@@ -423,31 +427,25 @@ namespace psd_to_3d
 	{
 		// Support for only one controller, currently
 		// Support for many controllers would require refactor
-		return this->Controllers[0]->GetOutput();
+		return Controller->GetOutput();
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	SceneController& ToolWidget::GetScene()
 	{
-		// Support for only one controller, currently
-		// Support for many controllers would require refactor
-		return this->Controllers[0]->GetScene();
+		return Controller->GetScene();
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	GlobalParameters& ToolWidget::GetParameters()
 	{
-		// Support for only one controller, currently
-		// Support for many controllers would require refactor
-		return this->Controllers[0]->GetScene().GetGlobalParameters();
+		return GetScene().GetGlobalParameters();
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	IPluginController::NotifyStatus& ToolWidget::GetNotifyStatus()
 	{
-		// Support for only one controller, currently
-		// Support for many controllers would require refactor
-		return this->Controllers[0]->GetNotifyStatus();
+		return this->Controller->GetNotifyStatus();
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
@@ -1615,13 +1613,9 @@ namespace psd_to_3d
 	// Called when button is pressed, Export Mesh or Export PNG
 	void ToolWidget::NotifyCommand()
 	{
-		if (this->Controllers.empty()) return;
-		for (auto controller : Controllers)
-		{
-			SilenceUi++; // disregard UI event signals caused by update
-			controller->NotifyCommand();
-			SilenceUi--;
-		}
+		SilenceUi++; // disregard UI event signals caused by update
+		this->Controller->NotifyCommand();
+		SilenceUi--;
 	}
 
 
@@ -1717,27 +1711,6 @@ namespace psd_to_3d
 		QApplication::closeAllWindows();
 	}
 
-	//--------------------------------------------------------------------------------------------------------------------------------------
-	// Usually one controller, Psd23DPlugin
-	void ToolWidget::AddController(IPluginController* controller)
-	{
-		for (auto it : Controllers)
-		{
-			if (it == controller) return;
-		}
-		this->Controllers.push_back(controller);
-		this->UpdateUi();
-	}
-
-	//--------------------------------------------------------------------------------------------------------------------------------------
-	void ToolWidget::RemoveController(IPluginController* controller)
-	{
-		for (auto it = Controllers.cbegin(); it != Controllers.cend(); ++it)
-		{
-			if ((*it) == controller) this->Controllers.erase(it);
-		}
-	}
-
 #pragma endregion
 
 #pragma region PRIVATE
@@ -1798,9 +1771,10 @@ namespace psd_to_3d
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void ToolWidget::ApplyLayerDescription(ListFrame* frame, psd_reader::PsdData& psdData, int layerIndex)
+	void ToolWidget::ApplyLayerDescription(ListFrame* frame, int layerIndex)
 	{
-		psd_reader::LayerData& layer = psdData.LayerMaskData.Layers[layerIndex];
+		const PsdData& psdData = this->GetScene().GetPsdData();
+		const psd_reader::LayerData& layer = psdData.LayerMaskData.Layers[layerIndex];
 		LayerAgent& layerAgent = this->GetScene().GetLayerAgent(layerIndex);
 		LayerParameters& layerParams = layerAgent.GetLayerParameters();
 
@@ -1883,6 +1857,10 @@ namespace psd_to_3d
 			layerParams.LabelInfluence->setIndent(15);
 			layerParams.LabelInfluence->setTextInteractionFlags( Qt::NoTextInteraction );
 			layout->addWidget(layerParams.LabelInfluence);
+		}
+		else
+		{
+			layerParams.LabelInfluence = nullptr;
 		}
 
 		layerParams.LabelDescription = new QLabel();
@@ -2053,7 +2031,7 @@ namespace psd_to_3d
 		{
 			QString Influence;
 			Influence.append( util::LocalizeString( IDC_MAIN, IDS_LAYER_LIST_INFLUENCE ) ); // "Influence: "
-			if (layerParams.HasInfluenceLayer)
+			if (scene.GetCompLayerIndex(layerIndex,INFLUENCE_LAYER)>=0)
 			{
 				Influence.append( "<b>" );
 				Influence.append( util::LocalizeString( IDC_MAIN, // "Active"  or "Inactive"

@@ -65,6 +65,6 @@ const int IsDelaunayModeSupported = 1;
 const int IsDelaunayModeSupported = 0;
 #endif
 
-const int IsInfluenceSupported = 0; // current disabled in all versions
+const int IsInfluenceSupported = 0; // currently disabled in all versions
 
 #endif // UI_WRAPPER_H

@@ -17,6 +17,7 @@
 #ifndef TEXTUREEXPORTER_H
 #define TEXTUREEXPORTER_H
 #include <vector>
+#include <string>
 #if defined PSDTO3D_MAYA_VERSION
 #include <maya/MString.h>
 
@@ -45,6 +46,7 @@ namespace psd_to_3d
 	class TextureMap
 	{
 	public:
+		TextureMap() : width(0), height(0) {}
 		virtual ~TextureMap() {}
 		void Init( int width, int height ); // assume output is rgba 1 byte per channel
 
@@ -72,9 +74,9 @@ namespace psd_to_3d
 			int srcBitDepth, const boundsPixels bounds ); // padding and scaling defined and handled by TextureConverter as appropriate
 		static void ConvertToMask(TextureMap& destTex, const psd_reader::LayerData& srcLayer, int width, int height, int srcBitDepth);
 		static boundsPixels GetContentRegion( const psd_reader::LayerData& layer, int width, int height, int depth, int alphaThresh );
-		static void Defringe(TextureMap& tex, int radius, ProgressTask& progressTask);
-		static void SaveToDiskLibpng(QString path, std::vector<unsigned char>& srcTexture, int width, int height, ProgressTask& progressTask );
-		static void SaveToDiskMTexture(QString path, std::vector<unsigned char>& srcTexture, int width, int height);
+		static void Defringe(TextureMap& tex, int radius);
+		static void SaveToDiskLibpng(const std::string filepath, std::vector<unsigned char>& srcTexture, int width, int height, ProgressTask& progressTask );
+		static void SaveToDiskMTexture(const std::string filepath, std::vector<unsigned char>& srcTexture, int width, int height);
 	};
 }
 #endif // TEXTUREEXPORTER_H

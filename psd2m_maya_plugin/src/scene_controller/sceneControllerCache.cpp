@@ -97,6 +97,7 @@ namespace psd_to_3d
 		{	// enter scope for lock guard
 			LockWriteGuard lockGuard( this->lock );
 			this->layerEntries.clear(); // delete cache entries; cache thread should handle this safely
+			this->atlasEntries.clear();
 			this->isEvalEnabled = false; // pause cache evaluation
 		}
 		for( bool isEvalRunning=true; isEvalRunning; ) // wait until cache evaluation is paused

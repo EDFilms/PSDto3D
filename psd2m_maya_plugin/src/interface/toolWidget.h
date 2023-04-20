@@ -65,14 +65,12 @@ namespace psd_to_3d
 		ToolWidget(QMainWindow* parent = nullptr, IPluginController* controller = nullptr);
 		~ToolWidget();
 
-		void SetPsdData(psd_reader::PsdData& psdData);
+		void Init( IPluginController* controller );
 		IPluginOutput& GetOutput();
 		SceneController& GetScene();
 		GlobalParameters& GetParameters();
 		NotifyStatus& GetNotifyStatus();
 		ProgressAgent& GetProgress();
-		void AddController(IPluginController* controller);
-		void RemoveController(IPluginController* controller);
 
 		void NotifyCommand();
 
@@ -184,15 +182,16 @@ namespace psd_to_3d
 
 	private:
 		// TODO: GlobalParameters should be member of class PluginController
+		IPluginController* Controller;
 		ProgressAgent Progress;
 		Ui::DockWidget *Ui;
-		std::vector<IPluginController*> Controllers;
+		//std::vector<IPluginController*> Controllers;
 		std::map<QListWidgetItem*, int> WidgetMap; // widget to layer index
 		ToolWidgetEventFilter* EventFilter;
 		int SilenceUi;
 
 		void UpdateLayers(bool allWidgets, bool updateAtlas);
-		void ApplyLayerDescription(ListFrame* frame, psd_reader::PsdData& psdData, int layerIndex);
+		void ApplyLayerDescription(ListFrame* frame, int layerIndex);
 		void UpdateLayerDescription(int layerIndex);
 		int GetTextureProxyUi();
 		float GetMeshScaleUi();

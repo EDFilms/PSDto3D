@@ -205,7 +205,7 @@ namespace psd_to_3d
 			BeginProgressExport( filter, notifyStatus.ExportPng, notifyStatus.ExportMesh, notifyStatus.ExportAll );
 
 			// mesh preparation task; advance progress bar
-			UpdateProgressExport( "Calculating meshes..." ); // TODO: localize this
+			UpdateProgressExport( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_CALCULATING_MESHES ) ); // "Calculating meshes..."
 			scene->PrepareMeshes( filter, GetProgressExport().GetTask() );
 
 			// Export PNG
@@ -258,7 +258,8 @@ namespace psd_to_3d
 		globalParams.Prefs.FileImportPath = fileInfo.path();
 		globalParams.Prefs.Store();
 
-		progressImport->BeginProgressBar( "Loading PSD file...", 1, true ); // PSD reader will update number of steps later
+		// Init progress bar; init to 1 task only, PSD reader will update number of steps later
+		progressImport->BeginProgressBar( util::LocalizeString( IDC_MAIN, IDS_IMPORTING_PSD ), 1, true ); // "Loading PSD file..." 
 
 		// Create folder before the Parse starts
 		std::string newFolderName_utf8 = folderInfo.absoluteFilePath().toUtf8();
@@ -324,7 +325,7 @@ namespace psd_to_3d
 				globalParams.FileExportName = fileInfo.completeBaseName();
 			}
 
-			toolWidget->SetPsdData(GetPsdData()); // initial UI
+			toolWidget->Init( this ); // initial UI
 		}
 
 		progressImport->EndProgressBar(false); // don't keep progress dialog open
@@ -371,89 +372,39 @@ namespace psd_to_3d
 				{
 					// texture export task; advance progress bar
 					// update progress for each active layer WITHOUT atlas
-					this->UpdateProgressExport("Exporting textures...", true); // TODO: localize this
+					ProgressTask& progressTask = GetProgressExport().GetTask();
+					std::string baseFilepath("");
+					bool writeOK = false;
 
-					// Generate the layer bounds; requires mesh evaluation, and waits until evaluation is finished
-					boundsPixels layerBounds;
-					layerAgent.GenerateLayerBounds( layerBounds );
-
-					//std::vector<unsigned char> tmptexture;
-					TextureMap tmptexture;
-
-					if( layerParams.EnableTextureCrop )
+					// Passes for each layer component type, RoughnessMap, WpoMaskMap, etc
+					for( int compLayerType=-1; compLayerType<COMP_LAYER_COUNT; compLayerType++ )
 					{
-						//void Init( int width, int height, int bitDepth, int channels=4, int padding=0, int widthScaled=-1, int heightScaled=-1 );
-						tmptexture.Init( layerBounds.WidthPixels(), layerBounds.HeightPixels() );
+						if( (compLayerType<0) || (layerParams.CompLayerIndex[compLayerType]>=0) )
+						{
+							this->UpdateProgressExport( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_PNG_TEXTURES ), true); // "Exporting textures..."
+							std::string filepath;
+							TextureMap tmptexture;
 
-						TextureExporter::ConvertIffFormat( tmptexture, layer, psdData.HeaderData.BitsPerPixel, layerBounds );
-
-						tmptexture.ApplyPadding( globalParams.Padding );
-					}
-					else
-					{
-						boundsPixels fullBounds = boundsPixels( 0, 0, psdData.HeaderData.Width, psdData.HeaderData.Height );
-
-						tmptexture.Init( psdData.HeaderData.Width, psdData.HeaderData.Height );
-
-						TextureExporter::ConvertIffFormat( tmptexture, layer, psdData.HeaderData.BitsPerPixel, fullBounds);
-					}
-
-					if( tmptexture.Empty() ) continue; // error handling
-					if( GetProgressExport().IsCancelled() ) break; // cancel handling
-
-					bool hasAlpha = (layer.NbrChannel==4);
-					if( hasAlpha && (!tmptexture.Empty()) ) // cannot defringe transparent pixels if no alpha channel
-					{
-						TextureExporter::Defringe( tmptexture, globalParams.Defringe, GetProgressExport().GetTask() );
+							// generate filename, based on original layer index plus postfix
+							GetScene().GenerateTextureFilepath(filepath, path.toUtf8().data(), layerIndex, compLayerType );
+							if( baseFilepath.empty() ) baseFilepath = filepath;
+							// generate texture map and copy pixels, based on comp layer data
+							GetScene().GenerateTextureMap( tmptexture, layerIndex, compLayerType, progressTask );
+							if( GetProgressExport().IsCancelled() ) break; // cancel handling
+							// write the file
+							writeOK = GetScene().WriteTextureMap( filepath, tmptexture, progressTask ) || writeOK;
+						}
 					}
 
 					if( GetProgressExport().IsCancelled() ) break; // cancel handling
 
-					// Verify the conversion from PSD to PNG succeeded
-					if( !tmptexture.Empty() )
+					// notify output plugin of the texture file (for FBX or Unreal);
+					IPluginOutput* output = this->context->GetPluginOutput();
+					std::string textureName = layer.LayerName;
+					if( (output!=nullptr) && writeOK )
 					{
-						std::string pathname_utf8 = path.toUtf8();
-						int pathCreated = _wmkdir( util::to_utf16(pathname_utf8).c_str() ); // 0 if created, EEXIST if already exists, ENOENT if not found
-#if defined PSDTO3D_FBX_VERSION
-						// TODO: centralize calculation of output filename,
-						// currently smeared between ExportTexture(), ExportAtlas(), CreateTreeStructure() and IPluginOutput methods
-						QString pngNameFile = QString(path + "/" + globalParams.FileExportName + "_" + layer.LayerName.c_str() + ".png");
-#else
-						QString pngNameFile = QString(path + "/" + layer.LayerName.c_str() + ".png");
-#endif
-						std::string pngNameFileStr_utf8 = pngNameFile.toUtf8();
-						std::string psdNameFileStr_utf8 = globalParams.PsdName.toUtf8();
-						std::string psdLayerNameStr = layer.LayerName;
-						int textureWidth = layerBounds.WidthPixels();
-						int textureHeight = layerBounds.HeightPixels();
-
-						// apply proxy scaling if appropriate
-						if( globalParams.TextureProxy!=1 )
-						{
-							int texWidth = tmptexture.Width() / globalParams.TextureProxy;
-							int texHeight = tmptexture.Height() / globalParams.TextureProxy;
-							tmptexture.ApplyScaling( texWidth, texHeight ); // rescale source bitmap, changes size and reallocates data
-						}
-
-						time_point time_start_b = std::chrono::high_resolution_clock::now();
-
-						TextureExporter::SaveToDiskLibpng( pngNameFile, tmptexture.Buffer(),
-							tmptexture.Width(), tmptexture.Height(), GetProgressExport().GetTask() );
-
-						time_point time_now = std::chrono::high_resolution_clock::now();
-						std::chrono::duration<float> time_diff_b = time_now-time_start_b;
-						perf_log_b_total += time_diff_b.count();
-						perf_log_b_count++;
-
-						// notify output plugin of the texture file (for FBX or Unreal)
-						std::string textureFilepath = pngNameFileStr_utf8;
-						std::string textureName = layer.LayerName;
-						IPluginOutput* output = this->context->GetPluginOutput();
-						if( output!=nullptr )
-						{
-							PluginOutputParameters pluginOutputParams(globalParams);
-							output->OutputTexture( GetPsdData(), pluginOutputParams, textureFilepath.c_str(), textureName.c_str() );
-						}
+						PluginOutputParameters pluginOutputParams(globalParams);
+						output->OutputTexture( GetPsdData(), pluginOutputParams, baseFilepath.c_str(), textureName.c_str() );
 					}
 				}
 			}
@@ -485,15 +436,7 @@ namespace psd_to_3d
 
 			const AtlasAgent atlasAgent = *atlasAgentPtr;
 			const AtlasParameters& atlasParams = atlasAgent.GetAtlasParameters();
-
-			// Generate the layer bounds; requires mesh evaluation, and waits until evaluation is finished
-			boundsPixels atlasBounds;
-			BoundsByLayerIndexMap dstLayerBounds;
-			atlasAgent.GenerateAtlasBounds( atlasBounds, dstLayerBounds );
-
-			int atlasWidth = atlasBounds.WidthPixels();
-			int atlasHeight = atlasBounds.WidthPixels();
-			const QString atlasNameNoSpace = atlasParams.atlasName.simplified().replace( " ", "_" );
+			const std::string atlasNameNoSpace = atlasParams.atlasName.simplified().replace( " ", "_" ).toUtf8().data();
 
 			bool anyActive = false;
 			for( const LayerAgent* const& layerAgentPtr : layerAgents )
@@ -510,124 +453,60 @@ namespace psd_to_3d
 				}
 			}
 
-			if( anyActive && (atlasWidth>0) && (atlasHeight>0) )
+			if( anyActive ) // NOTE: should safely handle case where (atlasWidth<=0) || (atlasHeight<=0)
 			{
-				TextureMap atlasTexture;
-				atlasTexture.Init( atlasWidth, atlasHeight );
+				// atlas export task; advance progress bar
+				// update progress for each active layer WITH and atlas
+				UpdateProgressExport( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_PNG_ATLASES ), false ); // "Exporting atlases..."
+				ProgressTask& progressTask = GetProgressExport().GetTask();
+				std::string baseFilepath("");
+				bool writeOK = false;
 
-				for( const LayerAgent* const& layerAgentPtr : layerAgents )
+				// Passes for each layer component type, RoughnessMap, WpoMaskMap, etc;  base layer pass is -1
+				for( int compLayerType=-1; compLayerType<COMP_LAYER_COUNT; compLayerType++ )
 				{
-					int layerIndex = iter_index( layerAgentPtr, layerAgents );
-					if( layerAgentPtr==nullptr ) continue; // should never happen
+					std::string filepath;
+					TextureMap atlasTexture;
+					int islandCount = 0;
 
-					if( GetProgressExport().IsCancelled() ) continue; // cancel handling
-
-					const LayerAgent& layerAgent = *layerAgentPtr;
-					const LayerParameters& layerParams = layerAgent.GetLayerParameters();
-
-					// ignore the filter; include all layers using this atlas
-
-					if( layerParams.AtlasIndex == atlasIndex )
+					// generate filename, based on original layer index plus postfix
+					GetScene().GenerateAtlasFilepath(filepath, path.toUtf8().data(), atlasIndex, compLayerType );
+					if( baseFilepath.empty() ) baseFilepath = filepath;
+					// generate and output the texture map, based on comp layer data
+					for( const LayerAgent* const& layerAgentPtr : layerAgents )
 					{
-						// atlas export task; advance progress bar
-						// update progress for each active layer WITH and atlas
-						UpdateProgressExport( "Exporting atlases...", true ); // TODO: localize this
-
-						const PsdData& psdData = GetPsdData();
-						const LayerData& layer = psdData.LayerMaskData.Layers[layerIndex];
-
-						// Generate the layer bounds; requires mesh evaluation, and waits until evaluation is finished
-						boundsPixels srcLayerBounds;
-						layerAgent.GenerateLayerBounds( srcLayerBounds );
-
-						// sizes of entire src and dst images, not bounding boxes, for traversal
-						int dstImageWidth = atlasWidth;
-						int dstImageHeight = atlasHeight;
-					
-						boundsPixels srcBounds = srcLayerBounds;
-						boundsPixels dstBounds = dstLayerBounds[layerIndex]; // bounds includes the padding pixels...
-						// only copy pixels to unpadded area of dstRegion; exclude padding in AtlasRegion
-
-						// TODO: apply downscaling to padding
-						dstBounds.Expand( -globalParams.Padding );
-
-						TextureMap tmptexture;
-						tmptexture.Init( srcBounds.WidthPixels(), srcBounds.HeightPixels() );
-
-						TextureExporter::ConvertIffFormat( tmptexture, layer, psdData.HeaderData.BitsPerPixel, srcBounds );
-
-						bool is_rotated = srcBounds.IsRotatedRelativeTo( dstBounds ); // Rotate texture if packing rotated the layer
-						int copy_width  = MIN(srcBounds.WidthPixels(),   (is_rotated?  dstBounds.HeightPixels() : dstBounds.WidthPixels()) );
-						int copy_height = MIN(srcBounds.HeightPixels(),  (is_rotated?  dstBounds.WidthPixels()  : dstBounds.HeightPixels()) );
-						int pixel_size = 4; // assume output is rgba 1 byte per channel
-
-						if( (tmptexture.Data()==nullptr) || (copy_width<=0) || (copy_height<=0) ) continue;
-
-						tmptexture.ApplyScaling( copy_width, copy_height ); // rescale source bitmap, changes size and reallocates data
-
-						unsigned char* src = tmptexture.Data();
-						unsigned char* dst = atlasTexture.Data();
-
-						for( int i=0; i<copy_height; i++ )
+						int layerIndex = iter_index( layerAgentPtr, layerAgents );
+						if( filter(layerIndex) && (layerAgentPtr!=nullptr) )
 						{
-							int src_offset = (i * copy_width) * pixel_size;
-							if( is_rotated )
+							const LayerAgent& layerAgent = *layerAgentPtr;
+							const LayerParameters& layerParams = layerAgent.GetLayerParameters();
+							bool compLayerValid = ((compLayerType<0) || (layerParams.CompLayerIndex[compLayerType]>=0));
+							if( (layerParams.AtlasIndex == atlasIndex) && compLayerValid )
 							{
-								for( int j=(copy_width-1); j>=0; j--, src_offset+=4 )
-								{
-									int dst_offset = (((j + dstBounds.YPixels()) * dstImageWidth) + (i + dstBounds.XPixels())) * pixel_size;
-									memcpy( dst + dst_offset, src + src_offset, pixel_size );
-								}
-							}
-							else
-							{
-								// Not rotated, more efficient copy
-								int dst_offset = (((i + dstBounds.YPixels()) * dstImageWidth) + dstBounds.XPixels()) * pixel_size;
-								memcpy( dst + dst_offset, src + src_offset, copy_width * pixel_size );
+								islandCount++;
+								// generate texture map and copy pixels, based on comp layer data
+								GetScene().GenerateAtlasMap( atlasTexture, atlasIndex, layerIndex, compLayerType );
+								if( GetProgressExport().IsCancelled() ) break; // cancel handling
 							}
 						}
 					}
+					if( islandCount>0 )
+					{
+						UpdateProgressExport( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_PNG_ATLASES ), true ); // "Exporting atlases..."
+					}
+
+					if( GetProgressExport().IsCancelled() ) break; // cancel handling
+					// write the file
+					writeOK = GetScene().WriteAtlasMap( filepath, atlasTexture, progressTask ) || writeOK;
 				}
 
-#if defined PSDTO3D_FBX_VERSION
-				// TODO: centralize calculation of output filename,
-				// currently smeared between ExportTexture(), ExportAtlas(), CreateTreeStructure() and IPluginOutput methods
-				QString binFilename = QString(path + "/" + globalParams.FileExportName + "_TextureAtlas_" + atlasNameNoSpace + ".png");
-#else
-				QString binFilename = QString(path + "/" + "TextureAtlas_" + atlasNameNoSpace + ".png");
-#endif
-				if( !(GetProgressExport().IsCancelled()) ) // cancel handling
+				// notify output plugin of the texture file (for FBX or Unreal)
+				std::string textureName = std::string("TextureAtlas_") + atlasNameNoSpace;
+				IPluginOutput* output = this->context->GetPluginOutput();
+				if( (output!=nullptr) && writeOK )
 				{
-					TextureExporter::Defringe( atlasTexture, globalParams.Defringe, GetProgressExport().GetTask() );
-
-					// apply proxy scaling if appropriate
-					if( globalParams.TextureProxy!=1 )
-					{
-						atlasWidth /= globalParams.TextureProxy;
-						atlasHeight /= globalParams.TextureProxy;
-						atlasTexture.ApplyScaling( atlasWidth, atlasHeight ); // rescale source bitmap, changes size and reallocates data
-					}
-
-					time_point time_start_b = std::chrono::high_resolution_clock::now();
-
-					TextureExporter::SaveToDiskLibpng( binFilename, atlasTexture.Buffer(),
-						atlasWidth, atlasHeight, GetProgressExport().GetTask() );
-
-					time_point time_now = std::chrono::high_resolution_clock::now();
-					std::chrono::duration<float> time_diff_b = time_now-time_start_b;
-					perf_log_b_total += time_diff_b.count();
-					perf_log_b_count++;
-
-					// notify output plugin of the texture file (for FBX or Unreal)
-					std::string textureFilepath = binFilename.toUtf8();
-					std::string textureName = std::string("TextureAtlas_") + std::string( atlasNameNoSpace.toUtf8().data() );
-					IPluginOutput* output = this->context->GetPluginOutput();
-					if( output!=nullptr )
-					{
-						PluginOutputParameters pluginOutputParams(globalParams);
-						output->OutputTexture( GetPsdData(), pluginOutputParams, textureFilepath.c_str(), textureName.c_str() );
-					}
-
+					PluginOutputParameters pluginOutputParams(globalParams);
+					output->OutputTexture( GetPsdData(), pluginOutputParams, baseFilepath.c_str(), textureName.c_str() );
 				}
 			}
 		}
@@ -648,7 +527,7 @@ namespace psd_to_3d
 		int layerCount = filter.Count();
 
 		// mesh generation task; advance progress bar
-		UpdateProgressExport( "Exporting meshes...", true ); // TODO: localize this
+		UpdateProgressExport( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_MESH_MESHES ), true ); // "Exporting meshes..."
 
 		// STEP 1. Generate all meshes
 		GraphLayerByIndexMap layerOutputs;
@@ -714,7 +593,7 @@ namespace psd_to_3d
 		// STEP 4. Notify the plugin for the hierarchy tree
 
 		// mesh finalizing task; advance progress bar
-		UpdateProgressExport( "Finalizing...", true ); // TODO: localize this
+		UpdateProgressExport( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_FINALIZING ), true ); // "Finalizing..."
 
 		if( (!tree.empty()) && (output!=nullptr) )
 		{
@@ -779,17 +658,19 @@ namespace psd_to_3d
 	{
 		int taskCount = 1; // at least one task for mesh preparation (mesh controller cache coherency)
 		ActiveLayerFilter activeFilter( GetPsdData().LayerMaskData, GetScene(), exportAll );
-		int activeCount = activeFilter.Count(); // one task per layer mesh exported
+		int activeLayerCount = activeFilter.Count(); // one task per layer mesh exported
+		int compTextureCount, compAtlasCount;
+		GetScene().GetCompLayerCount( compTextureCount, compAtlasCount, activeFilter ); // one task per comp layer texture
 		//ActiveNoAtlasLayerFilter activeNoAtlasFilter( GetPsdData().LayerMaskData, GetScene(), exportAll );
 		//int activeNoAtlasCount = activeFilter.Count(); // one task per layer mesh exported
 		//int atlasCount = GetScene().GetAtlasCount(); // one task per atlas exported
-		if( exportPNG ) taskCount += (activeCount); // atlasCount + activeNoAtlasCount
+		if( exportPNG )	taskCount += (activeLayerCount) + (compTextureCount) + (compAtlasCount);
 		if( exportMesh ) taskCount += 2; // additional tasks mesh generation, and for finalizing (writing file)
 		ProgressAgent& progressExport = context->GetToolWidget()->GetProgress();
 #if defined PSDTO3D_FBX_VERSION
-		progressExport.BeginProgressBar( "Exporting FBX...", taskCount, true ); // param cancelButton->true
+		progressExport.BeginProgressBar( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_JOB_FBX ), taskCount, true ); // "Exporting FBX..."
 #else
-		progressExport.BeginProgressBar( "Exporting Mesh...", taskCount, true ); // param cancelButton->true
+		progressExport.BeginProgressBar( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_JOB_MESH ), taskCount, true ); // "Exporting Mesh..."
 #endif
 	}
 

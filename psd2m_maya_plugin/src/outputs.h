@@ -15,6 +15,7 @@
 #ifndef OUTPUTS_H
 #define OUTPUTS_H
 
+#include "compLayers.h"
 #include "mesh_generator/dataMesh.h"
 #include "util/bounds_2D.h"
 
@@ -34,6 +35,7 @@ namespace psd_to_3d
 		GraphLayer( GraphLayer& that ) : // WARNING: Takes ownership of mesh, no reference counting
 			Mesh(that.Mesh), MaterialName(that.MaterialName),
 			TextureName(that.TextureName), TextureFilepath(that.TextureFilepath),
+			CompLayerFilepaths(that.CompLayerFilepaths),
 			LayerName(that.LayerName), LayerIndex(that.LayerIndex), AtlasIndex(that.AtlasIndex),
 			LayerRegion(that.LayerRegion),
 			XFormUV(that.XFormUV), Depth(that.Depth), Scale(that.Scale) {}
@@ -44,6 +46,8 @@ namespace psd_to_3d
 		std::string MaterialName;
 		std::string TextureName;
 		std::string TextureFilepath; // full path and filename
+		// component layer textures, one for each comp layer type, listed in enum order, empty string if none
+		std::vector<std::string> CompLayerFilepaths; // full path and filename of each
 
 		std::string LayerName;
 		int LayerIndex;			// original PSD file layer index

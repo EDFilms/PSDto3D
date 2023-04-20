@@ -17,6 +17,7 @@
 #ifndef PARAMETERS_H
 #define PARAMETERS_H
 
+#include "compLayers.h"
 #include "mesh_generator/curve_mesh/curveMeshGenerator.h"	// for CurveParameters
 #include "mesh_generator/influence_mesh/influenceMesh.h"	// for InfluenceParameters
 #include "mesh_generator/linear_mesh/linearMesh.h"			// for BillboardMeshParameters, LinearMeshParameters
@@ -73,7 +74,10 @@ namespace psd_to_3d
 		QString LayerName; // name of layer in psd file
 		boundsPixels AnchorRegion; // layer anchor, copied from psd file
 		int DepthIndex = 0;
-		bool HasInfluenceLayer = false;
+		int CompLayerIndex[COMP_LAYER_COUNT]; // for base layers, index of each component layer
+		int CompLayerCount = 0;         // number of component layers referring to this layer
+		int CompLayerType = -1;          // for component layers, the component type
+		int CompBaseLayerIndex = -1;     // for component layers, index of the layer this component refers to
 		bool HasVectorSupport = false;   // has vector mask, for vector mode
 		bool HasLinearSupport = false;   // has path object, for linear mode
 		bool HasDelaunaySupport = false; // has path object, for delaunay mode (same as HasLinearSupport)
@@ -100,7 +104,6 @@ namespace psd_to_3d
 		LayerParameters( const LayerParameters& that ) = default;
 		~LayerParameters() = default;
 
-		void SetInfluenceLayer(psd_reader::PsdData const& psdData, psd_reader::LayerData const& layer);
 		void ClearWidgets();
 	};
 

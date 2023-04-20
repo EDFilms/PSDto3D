@@ -15,10 +15,8 @@
 //----------------------------------------------------------------------------------------------
 
 
-#include "unrealMain.h"
+// include before Unreal headers
 #include "unrealEditorPluginFlags.h"
-#include "psd_reader/psdReader.h"
-
 
 // Header file list, 12 May 2022
 // Unreal version 4.27.2
@@ -77,9 +75,18 @@
 // Include after Unreal headers, because they separately declare many windows values
 #include <Windows.h> // for LoadLibrary() and GetProcAddress(); how to support this cross-platform?
 
+// Local includes
+#include "unrealMain.h"
+#include "unrealEditorPluginFlags.h"
+#include "psd_reader/psdReader.h"
+
+
 
 typedef void (*t_vfni)( int );
 typedef void (*t_vfnvp)( void* );
+
+typedef PsdToUnrealPluginOutput::TextureSet TextureSet;
+
 
 PsdToUnrealPluginOutput pluginOutput;
 HMODULE hLibrary = NULL;
@@ -148,28 +155,27 @@ void PsdToUnrealPluginOutput::OutputLayers( OutputLayersTask task )
 			const psd_to_3d::GraphLayer* graphLayerPtr = graphLayerGroup[graphLayerIndex];
 			if( graphLayerPtr==nullptr ) continue;
 
-			const char* textureFilepath = graphLayerPtr->TextureFilepath.c_str();
-			const char* assetName = graphLayerPtr->TextureName.c_str();
+			const psd_to_3d::GraphLayer& graphLayer = *graphLayerPtr;
+			const char* textureFilepath = graphLayer.TextureFilepath.c_str();
+			const char* assetName = graphLayer.TextureName.c_str();
 
-			// create material if not already in lookup
-			if( materialLookup.find( graphLayerPtr->TextureFilepath ) == materialLookup.end() )
+			bool isNewMaterial = !(CheckMaterial( assetName, packageName )); // true if material does not already exist in scene
+
+			// find or create the material
+			UMaterialInterface* material = ObtainCustomMaterial( masterAssetPath, assetName, packageName );
+
+			TextureSet textureSet = ObtainTextureSet( graphLayer, assetName, packageName );
+			SetupCustomMaterial( material, &textureSet );
+
+			if( isNewMaterial )
 			{
-				bool isNewMaterial = !(CheckMaterial( assetName, packageName )); // true if material does not already exist in scene
-
-				// created it if necessary
-				UMaterialInterface* material = ObtainCustomMaterial( masterAssetPath, assetName, packageName );
-				if( isNewMaterial )
-				{
-					UTexture2D* diffuseTexture = ObtainTexture( textureFilepath, assetName, packageName );
-					SetupCustomMaterial( material, diffuseTexture );
-					task.parent->session_texturesCreated.insert( assetName );
-				}
-
-				materialLookup[ graphLayerPtr->TextureFilepath ] = material;
+				task.parent->session_texturesCreated.insert( assetName );
 			}
 
-			OutputLayerTask subtask( task.parent, *graphLayerPtr );
-			subtask.material = materialLookup[ graphLayerPtr->TextureFilepath ]; // lookup material
+			materialLookup[ graphLayer.TextureFilepath ] = material;
+
+			OutputLayerTask subtask( task.parent, graphLayer );
+			subtask.material = materialLookup[ graphLayer.TextureFilepath ]; // lookup material
 			OutputLayer( subtask );
 		}
 	}
@@ -389,6 +395,48 @@ void PsdToUnrealPluginOutput::OutputTextures( OutputTexturesTask task )
 	task.running = 0; // allow UI thread to continue;
 }
 
+TextureSet PsdToUnrealPluginOutput::ObtainTextureSet( const psd_to_3d::GraphLayer& graphLayer, const char* assetName, const char* packageName )
+{
+	TextureSet retval;
+
+	const std::vector<std::string>& compLayerFilepaths = graphLayer.CompLayerFilepaths;
+	int count = compLayerFilepaths.size();
+
+	for( int compLayerType=0; (compLayerType<psd_to_3d::COMP_LAYER_COUNT) && (compLayerType<count); compLayerType++ )
+	{
+		const std::string& filepath = compLayerFilepaths[compLayerType];
+		UTexture2D* texture = nullptr;
+
+		if( filepath.size() > 0 )
+		{
+			FString postfix = FString("_") + FString( psd_to_3d::GetCompLayerTag(compLayerType).c_str() );
+			FString compAssetName = FString(assetName) + postfix;
+			texture = ObtainTexture( filepath.data(), TCHAR_TO_ANSI(*compAssetName), packageName );
+		}
+		
+		switch( compLayerType )
+		{
+		case psd_to_3d::NORMALMAP_LAYER:		retval.normalMapTexture = texture;			break;
+		case psd_to_3d::HEIGHTMAP_LAYER:		retval.heightMapTexture = texture;			break;
+		case psd_to_3d::ROUGHNESS_LAYER:		retval.roughnessTexture = texture;			break;
+		case psd_to_3d::OCCLUSION_LAYER:		retval.occlusionTexture = texture;			break;
+		case psd_to_3d::DETAILCOLOR_LAYER:		retval.detailColorTexture = texture;		break;
+		case psd_to_3d::DETAILNORMALMAP_LAYER:	retval.detailNormalMapTexture = texture;	break;
+		case psd_to_3d::DETAILHEIGHTMAP_LAYER:	retval.detailHeightMapTexture = texture;	break;
+		case psd_to_3d::DETAILROUGHNESS_LAYER:	retval.detailRoughnessTexture = texture;	break;
+		case psd_to_3d::DETAILOCCLUSION_LAYER:	retval.detailOcclusionTexture = texture;	break;
+		case psd_to_3d::WPOWIND_LAYER:			retval.wpoWindTexture = texture;			break;
+		case psd_to_3d::WPONOISE_LAYER:			retval.wpoNoiseTexture = texture;			break;
+		}
+	}
+
+	// base color
+	if( FPaths::FileExists(graphLayer.TextureFilepath.data()) )
+		retval.diffuseTexture = ObtainTexture( graphLayer.TextureFilepath.data(), assetName, packageName );
+
+	return retval;
+}
+
 UTexture2D* PsdToUnrealPluginOutput::ObtainTexture( const char* textureFilepath, const char* assetName, const char* packageName )
 {
 	//-------------------- ------------------------------------------------------------------------------------------------------------------
@@ -531,11 +579,178 @@ UMaterialInterface* PsdToUnrealPluginOutput::ObtainCustomMaterial( const char* m
 }
 
 
-void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material, UTexture2D* diffuseTexture )
+void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material, TextureSet* textureSet )
 {
 	UMaterialInstanceConstant* materialInstanceConstant = 
 		CastChecked<UMaterialInstanceConstant>(material);
-	materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("BaseColor")), diffuseTexture);
+
+	FStaticParameterSet staticParams;
+	materialInstanceConstant->GetStaticParameterValues(staticParams);
+
+	if( textureSet->diffuseTexture!=nullptr )
+	{
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		{
+			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseBaseColorMap"))) )
+			{
+				StaticSwitchParameter.Value = true;
+				StaticSwitchParameter.bOverride = true;
+			}
+		}
+		materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("BaseColor")), textureSet->diffuseTexture);
+	}
+
+	if( textureSet->normalMapTexture!=nullptr )
+	{
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		{
+			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseNormalMap")))    )
+			{
+				StaticSwitchParameter.Value = true;
+				StaticSwitchParameter.bOverride = true;
+			}
+		}
+		materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("Normal")), textureSet->normalMapTexture);
+	}
+
+	if( textureSet->heightMapTexture!=nullptr )
+	{
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		{
+			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseHeightMap")))    )
+			{
+				StaticSwitchParameter.Value = true;
+				StaticSwitchParameter.bOverride = true;
+			}
+		}
+		materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("Height")), textureSet->heightMapTexture);
+	}
+
+	if( textureSet->roughnessTexture!=nullptr )
+	{
+		for ( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		{
+			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseRoughness"))) ||
+				(StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseRoughnessMap")))    )
+			{
+				StaticSwitchParameter.Value = true;
+				StaticSwitchParameter.bOverride = true;
+			}
+		}
+		materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("RoughnessMap")), textureSet->roughnessTexture);
+	}
+
+	if( textureSet->occlusionTexture!=nullptr )
+	{
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		{
+			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseOcclusion"))) ||
+				(StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseOcclusionMap")))    )
+			{
+				StaticSwitchParameter.Value = true;
+				StaticSwitchParameter.bOverride = true;
+			}
+		}
+		materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("OcclusionMap")), textureSet->occlusionTexture);
+	}
+
+	if( textureSet->detailColorTexture!=nullptr )
+	{
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		{
+			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseDetailMap")))    )
+			{
+				StaticSwitchParameter.Value = true;
+				StaticSwitchParameter.bOverride = true;
+			}
+		}
+		materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("DetailBaseColor")), textureSet->detailColorTexture);
+	}
+
+	if( textureSet->detailNormalMapTexture!=nullptr )
+	{
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		{
+			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseDetailMap")))    )
+			{
+				StaticSwitchParameter.Value = true;
+				StaticSwitchParameter.bOverride = true;
+			}
+		}
+		materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("DetailNormal")), textureSet->detailNormalMapTexture);
+	}
+
+	if( textureSet->detailHeightMapTexture!=nullptr )
+	{
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		{
+			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseDetailMap")))    )
+			{
+				StaticSwitchParameter.Value = true;
+				StaticSwitchParameter.bOverride = true;
+			}
+		}
+		materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("DetailHeight")), textureSet->detailHeightMapTexture);
+	}
+
+	if( textureSet->detailRoughnessTexture!=nullptr )
+	{
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		{
+			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseDetailMap")))    )
+			{
+				StaticSwitchParameter.Value = true;
+				StaticSwitchParameter.bOverride = true;
+			}
+		}
+		materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("DetailRoughness")), textureSet->detailRoughnessTexture);
+	}
+
+	if( textureSet->detailOcclusionTexture!=nullptr )
+	{
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		{
+			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseDetailMap")))    )
+			{
+				StaticSwitchParameter.Value = true;
+				StaticSwitchParameter.bOverride = true;
+			}
+		}
+		materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("DetailOcclusion")), textureSet->detailOcclusionTexture);
+	}
+
+	if( textureSet->wpoWindTexture!=nullptr )
+	{
+		for ( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		{
+			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseWpoWind"))) ||
+				(StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseWpoMask"))) ||
+				(StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseWpoMaskMap")))    )
+			{
+				StaticSwitchParameter.Value = true;
+				StaticSwitchParameter.bOverride = true;
+			}
+		}
+		materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("WpoMaskMap")), textureSet->wpoWindTexture);
+	}
+
+	if( textureSet->wpoNoiseTexture!=nullptr )
+	{
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		{
+			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseWpoNoise"))) ||
+				(StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseWpoMask"))) ||
+				(StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseWpoMaskMap")))    )
+			{
+				StaticSwitchParameter.Value = true;
+				StaticSwitchParameter.bOverride = true;
+			}
+		}
+		materialInstanceConstant->SetTextureParameterValueEditorOnly(FName(TEXT("WpoMaskMap")), textureSet->wpoNoiseTexture);
+	}
+
+	materialInstanceConstant->UpdateStaticPermutation(staticParams);
+	materialInstanceConstant->PostEditChange();
 }
 
 

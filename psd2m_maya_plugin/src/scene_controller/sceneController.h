@@ -51,6 +51,7 @@ namespace psd_to_3d
 	class LayerParametersFilter; // forward declaration
 	class PluginOutputParameters; // forward declaration
 	class IPluginController; // forward declaration
+	class TextureMap; // forward declaration
 	using util::ProgressJob;
 	using util::ProgressTask;
 	using mesh_generator::DataSurface;
@@ -146,6 +147,18 @@ namespace psd_to_3d
 		void ApplyInfluenceLayer(GraphLayerByIndexMap& meshes_in_out);
 		void CreateTreeStructure(GroupByNameMap& tree_out, GraphLayerByIndexMap& meshes_in_out, LayerParametersFilter& filter);
 
+		// Output textures
+		void GenerateTextureMap( TextureMap& tmptexture_out, int layerIndex, int compLayerType, ProgressTask& progressTask) const;
+		void GenerateTextureFilepath( std::string& filepath_out, const std::string path, int layerIndex, int compLayerType ) const;
+		bool WriteTextureMap( const std::string filepath, TextureMap& tmptexture, ProgressTask& progressTask ) const;
+		void GenerateAtlasMap( TextureMap& tmptexture_out, int atlasIndex, int layerIndex, int compLayerType ) const;
+		void GenerateAtlasFilepath( std::string& filepath_out, const std::string path, int layerIndex, int compLayerType ) const;
+		bool WriteAtlasMap( const std::string filepath, TextureMap& tmptexture, ProgressTask& progressTask ) const;
+
+		// Component Layers
+		void GetCompLayerCount( int& compLayerCount_out, int& compAtlasCount_out, const LayerParametersFilter& filter ) const; // output texture count
+		int GetCompLayerIndex( int layerIndex, int comp_layer_id ) const;	// index of related component layer of given type, -1 if none
+
 		// Global Parameters
 		GlobalParameters& GetGlobalParameters();
 		const GlobalParameters& GetGlobalParameters() const;
@@ -155,7 +168,7 @@ namespace psd_to_3d
 		LayerAgent& GetLayerAgent(int layerIndex);
 		const LayerAgent& GetLayerAgent(int layerIndex) const;
 		LayerAgentList CollectLayerAgents(bool allLayers) const; // if allLayers is true, returns layers as per UI (no null entries), otherwise as per PSD
-		void AddLayer(const QString& layerName, int layerIndex);
+		void AddLayer(const QString& layerName, int layerIndex, bool isImageLayer);
 
 		// Texture Atlas Management
 		int GetAtlasCount() const;
@@ -172,6 +185,8 @@ namespace psd_to_3d
 
 		// Event handling
 		void Ping(); // called every few milliseconds from the main thread, to synchronize the UI and cache
+
+		// Event handling
 		void NotifyPostExportTexture( LayerParametersFilter& filter ); // reset texture modified flags after an export
 		void NotifyPostExportMesh( LayerParametersFilter& filter ); // reset texture modified flags after an export
 
@@ -218,7 +233,7 @@ namespace psd_to_3d
 		: layerMaskData(layerMaskData), scene(scene), exportAll(exportAll) {}
 
 		int Count();
-		virtual bool operator()( int layerIndex ) = 0; // returns true if the layer is applicable, false if rejected
+		virtual bool operator()( int layerIndex ) const = 0; // returns true if the layer is applicable, false if rejected
 	};
 
 	// select all layers which are active
@@ -227,7 +242,7 @@ namespace psd_to_3d
 	public:
 		AllLayerFilter( const LayerAndMaskData& layerMaskData, const SceneController& scene )
 		: LayerParametersFilter(layerMaskData,scene,true) {}
-		bool operator()( int ) { return true; }
+		bool operator()( int ) const { return true; }
 	};
 
 	// select all layers using the given atlas index
@@ -237,7 +252,7 @@ namespace psd_to_3d
 		int AtlasIndex;
 		AtlasIndexLayerFilter( const LayerAndMaskData& layerMaskData, const SceneController& scene, bool exportAll, int atlasIndex )
 		: LayerParametersFilter(layerMaskData,scene,exportAll), AtlasIndex(atlasIndex) {}
-		bool operator()( int layerIndex ); // returns true if the layer is applicable, false if rejected
+		bool operator()( int layerIndex ) const; // returns true if the layer is applicable, false if rejected
 	};
 
 	// select all layers which are active
@@ -246,7 +261,7 @@ namespace psd_to_3d
 	public:
 		ActiveLayerFilter( const LayerAndMaskData& layerMaskData, const SceneController& scene, bool exportAll )
 		: LayerParametersFilter(layerMaskData,scene,exportAll) {}
-		bool operator()( int layerIndex );
+		bool operator()( int layerIndex ) const;
 	};
 
 	// select all layers which are active AND not using an atlas
@@ -255,7 +270,7 @@ namespace psd_to_3d
 	public:
 		ActiveNoAtlasLayerFilter( const LayerAndMaskData& layerMaskData, const SceneController& scene, bool exportAll )
 		: LayerParametersFilter(layerMaskData,scene,exportAll) {}
-		bool operator()( int layerIndex ); // returns true if the layer is applicable, false if rejected
+		bool operator()( int layerIndex ) const; // returns true if the layer is applicable, false if rejected
 	};
 
 

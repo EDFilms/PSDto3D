@@ -44,8 +44,9 @@ namespace psd_reader
 		OPEN_FOLDER = 1,
 		CLOSED_FOLDER = 2,
 		HIDDEN_DIVIDER = 3,
-		INFLUENCE_LAYER = 4
 	};
+	// Note: Component layer handling (INFLUENCE_LAYER, ROUGHNESS_LAYER, etc) is moved,
+	// now part of scene controller and layer parameters 
 
 	//----------------------------------------------------------------------------------------------
 	// Data class: Photoshop format "Layer and Mask Information" block, Layer data item
@@ -84,7 +85,6 @@ namespace psd_reader
 	struct LayerAndMaskData
 	{
 		std::vector<LayerData> Layers;
-		static const std::string INFLUENCE_LAYER_TAG;
 
 		LayerAndMaskData()
 		{
@@ -99,21 +99,6 @@ namespace psd_reader
 		{
 			return (int)(Layers.size());
 		}
-
-		int GetIndexInfluenceLayer(std::string name) const
-		{
-			for(auto i = 0; i < Layers.size(); i++)
-			{
-				if (Layers[i].Type == INFLUENCE_LAYER &&
-					LayerNameInfluenceAssociated( Layers[i].LayerName) == name)
-				{
-					return i;
-				}
-			}
-			return -1;
-		};
-
-		static std::string LayerNameInfluenceAssociated(std::string const& str);
 	};
 
 #pragma endregion

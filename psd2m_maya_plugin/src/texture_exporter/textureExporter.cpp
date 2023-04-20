@@ -433,9 +433,8 @@ namespace psd_to_3d
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	// Defringe spreads colors from non-transparent pixels into nearby transparent pixels,
 	// to reduce fringing artifacts which can occur when contrasting colors exist in transparent pixels of a texture
-	void TextureExporter::Defringe(TextureMap& tex, int radius, ProgressTask& progressTask)
+	void TextureExporter::Defringe(TextureMap& tex, int radius)
 	{
-		if( progressTask.IsCancelled() ) return; // cancel handling
 		tex.ApplyDefringe(radius);
 	}
 
@@ -451,7 +450,7 @@ namespace psd_to_3d
 
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void TextureExporter::SaveToDiskLibpng(QString path, std::vector<unsigned char>& srcTexture_, int width, int height, ProgressTask& progressTask)
+	void TextureExporter::SaveToDiskLibpng(const std::string filepath, std::vector<unsigned char>& srcTexture_, int width, int height, ProgressTask& progressTask)
 	{
 		if( progressTask.IsCancelled() ) return; // cancel handling
 
@@ -464,13 +463,12 @@ namespace psd_to_3d
 		total_files++;
 		total_pixels += (width*height);
 
-		std::string filename_utf8 = path.toUtf8();
 		png_structp png_ptr;
 		png_infop info_ptr;
 
 		// Open the file
 		FILE *fp = NULL;
-		errno_t err = _wfopen_s(&fp, util::to_utf16(filename_utf8).c_str(), L"wb");
+		errno_t err = _wfopen_s(&fp, util::to_utf16(filepath).c_str(), L"wb");
 		if ((err != 0) || (fp == NULL))
 			return; // ERROR
 
@@ -549,7 +547,7 @@ namespace psd_to_3d
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void TextureExporter::SaveToDiskMTexture(QString path, std::vector<unsigned char>& srcTexture, int width, int height)
+	void TextureExporter::SaveToDiskMTexture(const std::string filepath, std::vector<unsigned char>& srcTexture, int width, int height)
 	{
 		MHWRender::MRenderer* renderer = MHWRender::MRenderer::theRenderer();
 		MHWRender::MTextureManager* textureMgr = renderer ? renderer->getTextureManager() : NULL;
@@ -568,7 +566,7 @@ namespace psd_to_3d
 				desc.fTextureType = MHWRender::kImage2D;
 			}
 			MHWRender::MTexture* ftexture = textureMgr->acquireTexture("tmp_Export_texture_PSD2M", desc, fTextureData);
-			textureMgr->saveTexture(ftexture, path.toUtf8().data());
+			textureMgr->saveTexture(ftexture, filepath.c_str());
 			textureMgr->releaseTexture(ftexture);
 		}
 	}

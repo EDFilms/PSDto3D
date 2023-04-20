@@ -47,12 +47,10 @@ namespace psd_to_3d
 		{
 			Algo = Algorithm::BILLBOARD;
 		}
-	}
-
-	//--------------------------------------------------------------------------------------------------------------------------------------
-	void LayerParameters::SetInfluenceLayer(psd_reader::PsdData const& psdData, psd_reader::LayerData const& layer)
-	{
-		this->HasInfluenceLayer = psdData.LayerMaskData.GetIndexInfluenceLayer(layer.LayerName) != -1;
+		for( int i=0; i<COMP_LAYER_COUNT; i++ )
+		{
+			CompLayerIndex[i] = -1;
+		}
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------

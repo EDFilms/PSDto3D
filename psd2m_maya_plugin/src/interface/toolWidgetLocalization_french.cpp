@@ -53,13 +53,17 @@ const util::StringTable::StringTableItem stringTableItems_french[] =
 
 	{ IDS_IMPORTING_PSD, "Chargement du fichier PSD..." },
 
+	{ IDS_EXPORTING_CALCULATING_MESHES, "Calcul des meshes..." }, // TODO: Review this
 	{ IDS_EXPORTING_PNG_TEXTURES, "Exportation des textures..." },
 	{ IDS_EXPORTING_PNG_ATLASES, "Exportations des atlas..." },
+	{ IDS_EXPORTING_JOB_FBX, "Exportation FBX..." }, /// TODO: Review this
+	{ IDS_EXPORTING_JOB_MESH, "Exportation de la grille..." }, // TODO: Review this
 	{ IDS_EXPORTING_MESH_MESHES, "Exportation des grilles..." },
 	{ IDS_EXPORTING_MESH_SUCCCESS_1, "Exportation réussie pour " },
 	{ IDS_EXPORTING_MESH_SUCCCESS_2, " grille(s), échec pour " },
 	{ IDS_EXPORTING_MESH_SUCCCESS_3, " grille(s)." },
 	{ IDS_EXPORTING_PNG_ERROR_DIALOG, "Message PSD to 3D" },
+	{ IDS_EXPORTING_FINALIZING, "Finalisation..." }, // TODO: Review this
 	{ IDS_EXPORTING_OK, "OK" },
 	{ IDS_EXPORTING_CANCEL, "Annuler" },
 	{ IDS_EXPORTING_DONE, "Réussi!" },

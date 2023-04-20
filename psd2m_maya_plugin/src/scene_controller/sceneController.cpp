@@ -15,6 +15,7 @@
 
 #include "sceneController.h"
 #include "sceneControllerCache.h"
+#include "texture_exporter/textureExporter.h"
 #include "maya_mesh/editorComponentGenerator.h" // TODO: remove, maya-specific, only for EditorComponentGenerator::materialNamePostfix
 #include "interface/ui_wrapper.h" // for version flags, like IsStandaloneVersion
 #include "json/JSON.h"
@@ -47,6 +48,14 @@ std::string WStringToString(const std::wstring& str)
 
 namespace psd_to_3d
 {
+
+//--------------------------------------------------------------------------------------------------------------------------------------
+// Helpers
+int GetCompLayerType( const QString& layerName);
+void InitCompLayerData( const PsdData& psdData, LayerParameters& layerParams );
+void PatchCompLayerData( SceneController& scene );
+void GenerateCompLayerFilepaths( std::vector<std::string>& filepaths_out, const std::string baseFilepath, const LayerParameters& layerParams );
+
 
 #pragma region LAYER AGENT
 
@@ -128,10 +137,10 @@ namespace psd_to_3d
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	void SceneController::Init()
 	{
-		// Create layer agents for each layer in the input PsdData
+		// Creates layer agents for each layer in the input PsdData
 		// Loads stored parameters from disk and applies them to the global and layer parameters
-		// Mimatches can occur between stored parameters and the PsdData loaded from disk,
-		// so, the two data sets must be merged via layer name matching
+		// Mismatches can occur between stored parameters and the PsdData loaded from disk, so
+		// the two data sets must be merged via layer name matching
 
 		// Delete parameters, then load stored parameters from disk (if any)
 		LoadValuesFromJson();
@@ -165,53 +174,57 @@ namespace psd_to_3d
 		{
 			int layerIndex = iter_index(layer,psdData.LayerMaskData.Layers);
 
-			LayerAgent* layerAgent = nullptr;
-			if (layer.Type > psd_reader::TEXTURE_LAYER)
-			{
-				this->AddLayer( "NULL", layerIndex );
-				GetLayerAgent(layerIndex).SetImageLayer(false); // non-image layer
-			}
-			else
-			{
-				QString layerName( QString::fromStdString(layer.LayerName) );
-				this->AddLayer( layerName, layerIndex );
+			// create layer, by default assume it's a non-image layer (separator, adjustment layer, etc)
+			this->AddLayer( "NULL", layerIndex, false );
 
+			if (layer.Type == psd_reader::TEXTURE_LAYER) // handle image layers
+			{
 				LayerAgent& layerAgent = GetLayerAgent(layerIndex);
 				LayerParameters& layerParams = layerAgent.GetLayerParameters();
-				int jsonIndex = curToJsonLayerMap.MapSrcToDst(layerIndex);
-				if( jsonIndex!=-1 )  // copy params loaded from json, if available
-					layerParams = jsonLayerParams[jsonIndex]->GetLayerParameters();
+				QString layerName( QString::fromUtf8(layer.LayerName.data()) );
+				layerParams.LayerName = layerName;
 
-				layerParams.DepthIndex = depthIndex++;
-				layerParams.HasVectorSupport = !layer.PathRecords.empty();
-				// If a path exists with same name as the layer,
-				// but it's empty or contains fewer than three points, then the path is not usable
-				layerParams.HasLinearSupport = false; // assume false unless usable path is found...
-				if( psdData.ImageResourceData.IsPathExist(layer.LayerName) )
+				InitCompLayerData( psdData, layerParams );
+				// process only if confirmed as a texture base layer (not a comp layer)
+				if( layerParams.CompLayerType<0 )
 				{
-					const ResourceBlockPath& path = psdData.ImageResourceData.GetBlockPath(layer.LayerName);
+					GetLayerAgent(layerIndex).SetImageLayer(true);
+					int jsonIndex = curToJsonLayerMap.MapSrcToDst(layerIndex);
+					if( jsonIndex!=-1 )  // copy params loaded from json, if available
+						layerParams = jsonLayerParams[jsonIndex]->GetLayerParameters();
 
-					// TODO: This should cull any spline in PathRecords of size 2 or less,
-					// the check whether any splines remain.  Instead it bails if first spline has only 2 points
-
-					if( (path.PathRecords.size()>0) && (path.PathRecords[0].Points.size()>=3) )
+					layerParams.DepthIndex = depthIndex++;
+					layerParams.HasVectorSupport = !layer.PathRecords.empty();
+					// If a path exists with same name as the layer,
+					// but it's empty or contains fewer than three points, then the path is not usable
+					layerParams.HasLinearSupport = false; // assume false unless usable path is found...
+					if( psdData.ImageResourceData.IsPathExist(layer.LayerName) )
 					{
-						layerParams.HasLinearSupport = true; // found usable path
-						layerParams.HasDelaunaySupport = layerParams.HasLinearSupport; // alias
+						const ResourceBlockPath& path = psdData.ImageResourceData.GetBlockPath(layer.LayerName);
+
+						// TODO: This should cull any spline in PathRecords of size 2 or less,
+						// the check whether any splines remain.  Instead it bails if first spline has only 2 points
+
+						if( (path.PathRecords.size()>0) && (path.PathRecords[0].Points.size()>=3) )
+						{
+							layerParams.HasLinearSupport = true; // found usable path
+							layerParams.HasDelaunaySupport = layerParams.HasLinearSupport; // alias
+						}
 					}
+
+					if( (!IsLinearModeSupported) && (layerParams.Algo==LayerParameters::LINEAR) )
+						layerParams.Algo = LayerParameters::DELAUNAY; // revert from linear to delaunay if necessary
+
+					AtlasParameters& atlasParams = GetAtlasAgent( layerParams.AtlasIndex ).GetAtlasParameters();
+					atlasParams.layerIndices.insert( layerIndex );
+
+					// Clear widget pointers until UI is rebuilt
+					layerParams.ClearWidgets();
 				}
-
-				if( (!IsLinearModeSupported) && (layerParams.Algo==LayerParameters::LINEAR) )
-					layerParams.Algo = LayerParameters::DELAUNAY; // revert from linear to delaunay if necessary
-
-				AtlasParameters& atlasParams = GetAtlasAgent( layerParams.AtlasIndex ).GetAtlasParameters();
-				atlasParams.layerIndices.insert( layerIndex );
-
-				// Clear widget pointers until UI is rebuilt
-				layerParams.ClearWidgets();
-				layerParams.SetInfluenceLayer(psdData, layer);
 			}
 		}
+
+		PatchCompLayerData( *this ); // associate layers with their component layers
 
 		// Delete old params
 		for (auto item : jsonLayerParams)
@@ -260,6 +273,8 @@ namespace psd_to_3d
 		std::string parentGroupName;
 		std::string textureName;
 		std::string textureFilepath;
+		std::string baseFilepath; // filepath without .png, to append comp layer postfixes
+		std::vector<std::string> compLayerFilepaths;
 		const std::string& layerName = psdData.LayerMaskData.Layers[layerIndex].LayerName;
 		if( layerParams.AtlasIndex >= 0 )
 		{
@@ -273,7 +288,10 @@ namespace psd_to_3d
 			textureName = layerName;
 		}
 
-		textureFilepath = std::string(globalParams.FileExportPath.toUtf8().data()) + "\\" + textureName + ".png";
+		baseFilepath = std::string(globalParams.FileExportPath.toUtf8().data()) + "\\" + textureName;
+		textureFilepath = baseFilepath + ".png";
+
+		GenerateCompLayerFilepaths( compLayerFilepaths, baseFilepath, layerParams );
 
 		// Compute layer region with padding
 		// TODO: is padding needed when EnableOutputCrop is false?
@@ -311,6 +329,7 @@ namespace psd_to_3d
 		graphLayer_out.MaterialName = textureName + maya_plugin::EditorComponentGenerator::materialNamePostfix; // TODO: remove maya-specific value here
 		graphLayer_out.TextureName = textureName;
 		graphLayer_out.TextureFilepath = textureFilepath;
+		graphLayer_out.CompLayerFilepaths = compLayerFilepaths;
 		graphLayer_out.LayerIndex = layerIndex;
 		graphLayer_out.AtlasIndex = layerParams.AtlasIndex;
 		graphLayer_out.Depth = depth;
@@ -365,18 +384,18 @@ namespace psd_to_3d
 			if(meshPtr==nullptr)
 				continue; // Surface is not a mesh object, skip
 	
-			// Surface is a mesh object, proceed
-			DataMesh& mesh = (*meshPtr);
-			int index = psdData.LayerMaskData.GetIndexInfluenceLayer(mesh.GetName());
-			if (index == -1)
-				continue;
-	
 			int layerIndex = item.first;
 			const LayerAgent& layerAgent = GetLayerAgent(layerIndex);
 			const LayerParameters& layerParams = layerAgent.GetLayerParameters();
+			int index = layerParams.CompLayerIndex[INFLUENCE_LAYER];
+			if (index == -1)
+				continue;
+	
 			if (!layerParams.EnableInfluence)
 				continue;
 
+			// Surface is a mesh object, and has influence proceed
+			DataMesh& mesh = (*meshPtr);
 			meshGeneratorController.ApplyInfluenceLayer( *meshPtr, layerIndex, layerParams.InfluenceParameters );
 		}
 	}
@@ -386,6 +405,398 @@ namespace psd_to_3d
 	{
 		meshGeneratorController.CreateTreeStructure( tree_out, meshes_in_out, filter );
 	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	void SceneController::GenerateTextureMap( TextureMap& tmptexture_out, int layerIndex, int compLayerType, ProgressTask& progressTask ) const
+	{
+		const LayerAgent& layerAgent = GetLayerAgent(layerIndex); 
+		const LayerParameters& layerParams = layerAgent.GetLayerParameters();
+		const GlobalParameters globalParams = GetGlobalParameters();
+		const psd_reader::LayerData& baseLayer = psdData.LayerMaskData.Layers[layerIndex];
+		bool hasAlpha = (baseLayer.NbrChannel==4);
+
+		// Check whether to use the base layer, or one of its component layers (roughness, etc)
+		int compLayerIndex = layerIndex;
+		if( (compLayerType>=0) && (compLayerType<COMP_LAYER_COUNT) )
+		{
+			compLayerIndex = GetCompLayerIndex( layerIndex, compLayerType );
+		}
+
+		if( compLayerIndex >= 0)
+		{
+			// Generate the layer bounds; requires mesh evaluation, and waits until evaluation is finished
+			const LayerData& compLayer = psdData.LayerMaskData.Layers[compLayerIndex];
+			boundsPixels baseLayerBounds;
+			layerAgent.GenerateLayerBounds( baseLayerBounds ); // bounds of base layer are reused for component layer
+
+			if( layerParams.EnableTextureCrop )
+			{
+				//void Init( int width, int height, int bitDepth, int channels=4, int padding=0, int widthScaled=-1, int heightScaled=-1 );
+				tmptexture_out.Init( baseLayerBounds.WidthPixels(), baseLayerBounds.HeightPixels() );
+
+				TextureExporter::ConvertIffFormat( tmptexture_out, compLayer, psdData.HeaderData.BitsPerPixel, baseLayerBounds );
+
+				tmptexture_out.ApplyPadding( globalParams.Padding );
+			}
+			else
+			{
+				boundsPixels fullBounds = boundsPixels( 0, 0, psdData.HeaderData.Width, psdData.HeaderData.Height );
+
+				tmptexture_out.Init( psdData.HeaderData.Width, psdData.HeaderData.Height );
+
+				TextureExporter::ConvertIffFormat( tmptexture_out, compLayer, psdData.HeaderData.BitsPerPixel, fullBounds);
+			}
+
+			if( hasAlpha && !(tmptexture_out.Empty()) && !(progressTask.IsCancelled()) ) // cannot defringe transparent pixels if no alpha channel
+			{
+				TextureExporter::Defringe( tmptexture_out, globalParams.Defringe );
+			}
+		}
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	void SceneController::GenerateTextureFilepath( std::string& filepath_out, const std::string path, int layerIndex, int compLayerType ) const
+	{
+		const GlobalParameters globalParams = GetGlobalParameters();
+		const psd_reader::LayerData& layer = psdData.LayerMaskData.Layers[layerIndex];
+		std::string postfix("");
+			
+		if( (compLayerType>=0) && (compLayerType<COMP_LAYER_COUNT) )
+		{
+			postfix = std::string("_") + GetCompLayerTag(compLayerType);
+		}
+
+		int pathCreated = _wmkdir( util::to_utf16(path).c_str() ); // 0 if created, EEXIST if already exists, ENOENT if not found
+#if defined PSDTO3D_FBX_VERSION
+		// TODO: centralize calculation of output filename,
+		// currently smeared between ExportTexture(), ExportAtlas(), CreateTreeStructure() and IPluginOutput methods
+		std::string exportName = globalParams.FileExportName.toUtf8().data();
+		filepath_out = (path + "/" + exportName + "_" + layer.LayerName + postfix + ".png");
+#else
+		filepath_out = (path + "/" + layer.LayerName + postfix + ".png");
+#endif
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	bool SceneController::WriteTextureMap( const std::string filepath, TextureMap& tmptexture, ProgressTask& progressTask ) const
+	{
+		const GlobalParameters globalParams = GetGlobalParameters();
+
+		// Verify the conversion from PSD to PNG succeeded
+		if( (tmptexture.Width()>0) && (tmptexture.Height()>0) && (!tmptexture.Empty()) )
+		{
+			// apply proxy scaling if appropriate
+			if( globalParams.TextureProxy!=1 )
+			{
+				int texWidth = tmptexture.Width() / globalParams.TextureProxy;
+				int texHeight = tmptexture.Height() / globalParams.TextureProxy;
+				tmptexture.ApplyScaling( texWidth, texHeight ); // rescale source bitmap, changes size and reallocates data
+			}
+
+			TextureExporter::SaveToDiskLibpng( filepath, tmptexture.Buffer(),
+				tmptexture.Width(), tmptexture.Height(), progressTask );
+
+			return true;
+		}
+		return false;
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	void SceneController::GenerateAtlasMap( TextureMap& tmptexture_out, int atlasIndex, int layerIndex, int compLayerType ) const
+	{
+		const AtlasAgent& atlasAgent = GetAtlasAgent(atlasIndex); // use const version since this is a const method
+		const LayerAgent& layerAgent = GetLayerAgent(layerIndex); 
+		const LayerParameters& layerParams = layerAgent.GetLayerParameters();
+		const LayerData& baseLayer = psdData.LayerMaskData.Layers[layerIndex];
+
+		// Check whether to use the base layer, or one of its component layers (roughness, etc)
+		int compLayerIndex = layerIndex;
+		if( (compLayerType>=0) && (compLayerType<COMP_LAYER_COUNT) )
+		{
+			compLayerIndex = GetCompLayerIndex( layerIndex, compLayerType );
+		}
+
+		if( compLayerIndex>=0 )
+		{
+			// Generate the layer bounds; requires mesh evaluation, and waits until evaluation is finished
+			const LayerData& compLayer = psdData.LayerMaskData.Layers[compLayerIndex];
+			boundsPixels atlasBounds;
+			boundsPixels baseLayerBounds;
+			BoundsByLayerIndexMap islandBounds;
+			layerAgent.GenerateLayerBounds( baseLayerBounds );  // bounds of base layer are reused for component layer
+			atlasAgent.GenerateAtlasBounds( atlasBounds, islandBounds );
+
+			int atlasWidth = atlasBounds.WidthPixels();
+			int atlasHeight = atlasBounds.WidthPixels();
+			if( (tmptexture_out.Width()!=atlasWidth) || (tmptexture_out.Height()!=atlasHeight) )
+			{
+				tmptexture_out.Init( atlasWidth, atlasHeight );
+			}
+
+			// sizes of entire src and dst images, not bounding boxes, for traversal
+			int dstImageWidth = atlasWidth;
+			int dstImageHeight = atlasHeight;
+					
+			boundsPixels srcBounds = baseLayerBounds;
+			boundsPixels dstBounds = islandBounds[layerIndex]; // bounds includes the padding pixels...
+			// only copy pixels to unpadded area of dstRegion; exclude padding in AtlasRegion
+
+			// TODO: apply downscaling to padding
+			dstBounds.Expand( -globalParams.Padding );
+
+			TextureMap tmptexture;
+			tmptexture.Init( srcBounds.WidthPixels(), srcBounds.HeightPixels() );
+
+			TextureExporter::ConvertIffFormat( tmptexture, compLayer, psdData.HeaderData.BitsPerPixel, srcBounds );
+
+			bool is_rotated = srcBounds.IsRotatedRelativeTo( dstBounds ); // Rotate texture if packing rotated the layer
+			int copy_width  = MIN(srcBounds.WidthPixels(),   (is_rotated?  dstBounds.HeightPixels() : dstBounds.WidthPixels()) );
+			int copy_height = MIN(srcBounds.HeightPixels(),  (is_rotated?  dstBounds.WidthPixels()  : dstBounds.HeightPixels()) );
+			int pixel_size = 4; // assume output is rgba 1 byte per channel
+
+			if( (tmptexture.Data()!=nullptr) && (copy_width>0) && (copy_height>0) )
+			{
+				tmptexture.ApplyScaling( copy_width, copy_height ); // rescale source bitmap, changes size and reallocates data
+
+				unsigned char* src = tmptexture.Data();
+				unsigned char* dst = tmptexture_out.Data();
+
+				for( int i=0; i<copy_height; i++ )
+				{
+					int src_offset = (i * copy_width) * pixel_size;
+					if( is_rotated )
+					{
+						for( int j=(copy_width-1); j>=0; j--, src_offset+=4 )
+						{
+							int dst_offset = (((j + dstBounds.YPixels()) * dstImageWidth) + (i + dstBounds.XPixels())) * pixel_size;
+							memcpy( dst + dst_offset, src + src_offset, pixel_size );
+						}
+					}
+					else
+					{
+						// Not rotated, more efficient copy
+						int dst_offset = (((i + dstBounds.YPixels()) * dstImageWidth) + dstBounds.XPixels()) * pixel_size;
+						memcpy( dst + dst_offset, src + src_offset, copy_width * pixel_size );
+					}
+				}
+			}
+		}
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	void SceneController::GenerateAtlasFilepath( std::string& filepath_out, const std::string path, int atlasIndex, int compLayerType ) const
+	{
+		const GlobalParameters globalParams = GetGlobalParameters(); // use const version since this is a const method
+		const AtlasAgent& atlasAgent = GetAtlasAgent(atlasIndex);
+		const AtlasParameters& atlasParams = atlasAgent.GetAtlasParameters();
+		const std::string atlasNameNoSpace = atlasParams.atlasName.simplified().replace( " ", "_" ).toUtf8().data();
+		std::string postfix("");
+
+		if( (compLayerType>=0) && (compLayerType<COMP_LAYER_COUNT) )
+		{
+			postfix = std::string("_") + GetCompLayerTag(compLayerType);
+		}
+
+#if defined PSDTO3D_FBX_VERSION
+		// TODO: centralize calculation of output filename,
+		// currently smeared between ExportTexture(), ExportAtlas(), CreateTreeStructure() and IPluginOutput methods
+		std::string exportName = globalParams.FileExportName.toUtf8().data();
+		filepath_out = (path + "/" + exportName + "_TextureAtlas_" + atlasNameNoSpace + postfix + ".png");
+#else
+		filepath_out = (path + "/" + "TextureAtlas_" + atlasNameNoSpace + postfix + ".png");
+#endif
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	bool SceneController::WriteAtlasMap( const std::string filepath, TextureMap& tmptexture, ProgressTask& progressTask ) const
+	{
+		const GlobalParameters globalParams = GetGlobalParameters();
+
+		// Verify the conversion to PNG succeeded
+		if( (tmptexture.Width()>0) && (tmptexture.Height()>0) && (!tmptexture.Empty()) )
+		{
+			TextureExporter::Defringe( tmptexture, globalParams.Defringe );
+
+			// apply proxy scaling if appropriate
+			if( globalParams.TextureProxy!=1 )
+			{
+				int texWidth = tmptexture.Width() / globalParams.TextureProxy;
+				int texHeight = tmptexture.Height() / globalParams.TextureProxy;
+				tmptexture.ApplyScaling( texWidth, texHeight ); // rescale source bitmap, changes size and reallocates data
+			}
+
+			TextureExporter::SaveToDiskLibpng( filepath, tmptexture.Buffer(),
+				tmptexture.Width(), tmptexture.Height(), progressTask );
+
+			return true;
+		}
+		return false;
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	void SceneController::GetCompLayerCount( int& compLayerCount_out, int& compAtlasCount_out, const LayerParametersFilter& filter ) const
+	{
+		compLayerCount_out = 0;
+		compAtlasCount_out = 0;
+
+		// count number of textures to output for all comp layers (not counting the base color texture)
+		for( int layerIndex = 0; layerIndex < this->layerAgents.size(); layerIndex++ )
+		{
+			if( filter(layerIndex) )
+			{
+				LayerParameters& layerParams = this->layerAgents[layerIndex]->GetLayerParameters();
+				compLayerCount_out += layerParams.CompLayerCount; // found this many comp textures to write to disk
+			}
+		}
+
+		// count number textures to output for all comp layer atlases (not counting the base color texture atlas)
+		int atlasCount = GetAtlasCount();
+		for( int atlasIndex=0; atlasIndex<atlasCount; atlasIndex++ )
+		{
+			const AtlasParameters& atlasParams = GetAtlasAgent(atlasIndex).GetAtlasParameters();
+			for( int compLayerType=0; compLayerType<COMP_LAYER_COUNT; compLayerType++ )
+			{
+				for( int layerIndex : atlasParams.layerIndices )
+				{
+					LayerParameters& layerParams = this->layerAgents[layerIndex]->GetLayerParameters();
+					if( layerParams.CompLayerIndex[compLayerType]>=0 )
+					{
+						// for this atlas, for this comp layer type, there's at least one layer with a component of that type;
+						compAtlasCount_out++; // found one comp texture atlas to write to disk
+						// no need to continue with the [atlas | comp layer type] pair, increment the output count and move on
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	int SceneController::GetCompLayerIndex(int layerIndex, int comp_layer_id) const
+	{
+		if( (comp_layer_id>=0) && (comp_layer_id<COMP_LAYER_COUNT) )
+		{
+			LayerParameters& baseLayerParams = this->layerAgents[layerIndex]->GetLayerParameters();
+			return baseLayerParams.CompLayerIndex[comp_layer_id];
+		}
+		return -1;
+	}
+
+	//----------------------------------------------------------------------------------------
+	// Helper for SceneController::Init()
+	// Given layer name, returns comp layer type matching its suffix, -1 if no suffix
+	int GetCompLayerType( const QString& layerName )
+	{
+		int layerType=-1;
+
+		// TODO: multi-language case insensitive comparison in UTF8 without using Qt library QString
+
+		QString name = layerName;
+		int pos = (1 + name.lastIndexOf(QString("_"))); // position of the first postfix character; after the last '_'
+
+		if( (pos>0) && (pos<name.length()) )
+		{
+			QString postfix = name.right( name.length()-pos );
+			for( int compLayerType=0; compLayerType<COMP_LAYER_COUNT; compLayerType++ )
+			{
+				QString tag = QString::fromUtf8(GetCompLayerTag(compLayerType).data());
+
+				// if any component layer tag matches the postfix of the layer, it's a match
+				if( tag.compare(postfix, Qt::CaseInsensitive)==0 )
+				{
+					layerType = compLayerType;
+					break;
+				}
+			}
+		}
+		return layerType;
+	}
+
+	//----------------------------------------------------------------------------------------
+	// Helper for SceneController::Init()
+	// Finds the comp layer type and base index and sets these values; comp layer count must be patched later
+	void InitCompLayerData( const PsdData& psdData, LayerParameters& layerParams )
+	{
+		int compLayerType = GetCompLayerType( layerParams.LayerName );
+		int compBaseLayerIndex = -1;
+		
+		if( compLayerType>=0 )
+		{
+			// get the base name, characters left of the postfix
+			int pos = layerParams.LayerName.lastIndexOf( QString("_") ); // position of the last '_' character
+			QString baseName = layerParams.LayerName.left( pos );
+
+			for (int layerIndex = 0; layerIndex < psdData.LayerMaskData.LayerCount(); layerIndex++)
+			{
+				const LayerData& layer = psdData.LayerMaskData.Layers[layerIndex];
+				QString layerName = QString::fromUtf8(layer.LayerName.data());
+
+				if( baseName.compare(layerName, Qt::CaseInsensitive)==0 )
+				{
+					compBaseLayerIndex = layerIndex;
+					break;
+				}
+			}
+		}
+
+		for( int i=0; i<COMP_LAYER_COUNT; i++ )
+		{
+			layerParams.CompLayerIndex[i] = -1;
+		}
+		layerParams.CompLayerCount = 0;
+
+		if( compBaseLayerIndex>=0 )
+		{
+			layerParams.CompLayerType = compLayerType;
+			layerParams.CompBaseLayerIndex = compBaseLayerIndex;
+		}
+		else
+		{
+			layerParams.CompLayerType = -1;
+			layerParams.CompBaseLayerIndex = -1;
+		}
+	}
+
+	//----------------------------------------------------------------------------------------
+	// Helper for SceneController::Init()
+	// Sets all comp layer count and index values; requires comp layer type and base index values set beforehand
+	void PatchCompLayerData( SceneController& scene )
+	{
+		int layerCount = scene.GetLayerCount();
+		for( int layerIndex=0; layerIndex<layerCount; layerIndex++ )
+		{
+			LayerAgent& layerAgent = scene.GetLayerAgent(layerIndex);
+			LayerParameters& layerParams = layerAgent.GetLayerParameters();
+
+			if( layerParams.CompBaseLayerIndex>=0 )
+			{
+				LayerAgent& baseLayerAgent = scene.GetLayerAgent( layerParams.CompBaseLayerIndex );
+				LayerParameters& baseLayerParams = baseLayerAgent.GetLayerParameters();
+
+				baseLayerParams.CompLayerCount++;
+				baseLayerParams.CompLayerIndex[ layerParams.CompLayerType ] = layerIndex;
+			}
+		}
+	}
+
+	//----------------------------------------------------------------------------------------
+	// Helper for SceneController::GenerateGraphLayer
+	void GenerateCompLayerFilepaths( std::vector<std::string>& filepaths_out, const std::string baseFilepath, const LayerParameters& layerParams )
+	{
+		filepaths_out.clear();
+		for( int compLayerType=0; compLayerType<COMP_LAYER_COUNT; compLayerType++ )
+		{
+			if( layerParams.CompLayerIndex[compLayerType] >= 0 )
+			{
+				filepaths_out.push_back( baseFilepath + "_" + GetCompLayerTag(compLayerType) + ".png" );
+			}
+			else
+			{
+				filepaths_out.push_back( std::string("") );
+			}
+		}
+	}
+
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	GlobalParameters& SceneController::GetGlobalParameters()
@@ -449,7 +860,7 @@ namespace psd_to_3d
 
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	void SceneController::AddLayer(const QString& layerName, int layerIndex)
+	void SceneController::AddLayer(const QString& layerName, int layerIndex, bool isImageLayer)
 	{
 		if( layerIndex<0 ) // negative index means append to list
 			layerIndex = (int)(layerAgents.size());
@@ -459,7 +870,7 @@ namespace psd_to_3d
 		else if( layerAgents[layerIndex]!=nullptr ) // ...or delete existing entry
 			delete layerAgents[layerIndex];
 
-		layerAgents[layerIndex] = new LayerAgent(*this,layerName,layerIndex);
+		layerAgents[layerIndex] = new LayerAgent(*this,layerName,layerIndex,isImageLayer);
 	}
 
 
@@ -725,10 +1136,11 @@ namespace psd_to_3d
 		// Helper for Init()
 
 		// Create layer agents and atlas agents from user preferences on disk, and update agent lists
-		// NOTE: layerIndex numbers in JSON may not match PSD; layer->atlas matching should be patched later
 		// Assumes the lists have been cleared via Free()
 		// Mimatches can occur between stored parameters and the PsdData loaded from disk,
 		// so, the two data sets must be merged via layer name matching in Init()
+
+		// NOTE: layerIndex numbers in JSON may not match PSD; indices are patched later in SceneController::Init()
 
 		if( root.count(L"ExportPath")>0 )
 		{
@@ -775,7 +1187,7 @@ namespace psd_to_3d
 				{
 					packingAlgo = nameObject[L"PackingAlgo"]->AsNumber();
 				}
-				int customSize = 1024;
+				int customSize = 0; // by default, disables custom size option
 				if( nameObject.count(L"CustomSize")>0 ) // Legacy support, Check whether param exist
 				{
 					customSize = nameObject[L"CustomSize"]->AsNumber();
@@ -799,11 +1211,7 @@ namespace psd_to_3d
 			QString layerName = QString::fromWCharArray( layerObject[L"Name"]->AsString().c_str() );
 
 			// Add new layer
-			// ---------- ----------
-			// BUG: If the json doesn't match the current PSD due to user iteration and changes,
-			// then the layerIndex here won't match the actual file, causing atlas indices to be garbled
-			// ---------- ----------
-			this->AddLayer( layerName, layerIndex );
+			this->AddLayer( layerName, layerIndex, true );
 			LayerAgent& layerAgent = GetLayerAgent(layerIndex); 
 			LayerParameters& layerParams = layerAgent.GetLayerParameters();
 
@@ -861,7 +1269,6 @@ namespace psd_to_3d
 			// update atlas
 			AtlasParameters& atlasParams = GetAtlasAgent( layerParams.AtlasIndex ).GetAtlasParameters();
 			atlasParams.layerIndices.insert( layerIndex );
-			// NOTE: layerIndex numbers in JSON may not match PSD; layer->atlas matching should be patched later
 		}
 	}
 
@@ -906,7 +1313,7 @@ namespace psd_to_3d
 				AtlasParameters& atlasParams = GetAtlasAgent(i).GetAtlasParameters();
 				nameObject[L"Name"] = new JSONValue(atlasParams.atlasName.toStdWString());
 				nameObject[L"Index"] = new JSONValue(atlasUsage[i]);
-				nameObject[L"CustomSize"] = new JSONValue(atlasParams.isCustomSize? atlasParams.customSize : 1024);
+				nameObject[L"CustomSize"] = new JSONValue(atlasParams.isCustomSize? atlasParams.customSize : 0);
 				nameObject[L"CustomPadding"] = new JSONValue(atlasParams.isCustomSize? atlasParams.customPadding : 2);
 				nameObject[L"PackingAlgo"] = new JSONValue(atlasParams.packingAlgo);
 
@@ -981,7 +1388,7 @@ namespace psd_to_3d
 	}
 
 	//----------------------------------------------------------------------------------------
-	bool AtlasIndexLayerFilter::operator()( int layerIndex )
+	bool AtlasIndexLayerFilter::operator()( int layerIndex ) const
 	{
 		const LayerAgent& layerAgent = scene.GetLayerAgent(layerIndex);
 		if( layerAgent.IsNull() )
@@ -999,22 +1406,22 @@ namespace psd_to_3d
 		const LayerParameters& layerParams = layerAgent.GetLayerParameters();
 		// TODO: Allow empty layers, support this case elsewhere
 		//bool empty = (layerBounds.WidthPixels()<=0) && (layerBounds.HeightPixels()<=0);
-		bool empty = false; // TODO: test with background an unsupported layers
-		bool exportable = (layerParams.IsActive || exportAll);
-		if( empty || !exportable ) // if the layer is empty or shouldn't be exported otherwise, skip it
+		bool isCompLayer = (layerParams.CompLayerType>=0);
+		bool isExportable = (layerParams.IsActive || exportAll);
+		if( (isCompLayer) || (!isExportable) ) // if the layer is a component of another or shouldn't be exported, skip it
 			return false;
 
 		return true;
 	}
 
-	bool ActiveLayerFilter::operator()( int layerIndex )
+	bool ActiveLayerFilter::operator()( int layerIndex ) const
 	{
 		const LayerAgent& layerAgent = scene.GetLayerAgent(layerIndex);
 		const psd_reader::LayerData& layer = layerMaskData.Layers[layerIndex];
 		return ActiveLayerFilterFn( layer, layerAgent, exportAll );
 	}
 
-	bool ActiveNoAtlasLayerFilter::operator()( int layerIndex )
+	bool ActiveNoAtlasLayerFilter::operator()( int layerIndex ) const
 	{
 		const LayerAgent& layerAgent = scene.GetLayerAgent(layerIndex);
 		const LayerParameters& layerParams = layerAgent.GetLayerParameters();

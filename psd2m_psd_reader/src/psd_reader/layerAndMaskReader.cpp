@@ -30,25 +30,8 @@ using namespace util;
 namespace psd_reader
 {
 	//----------------------------------------------------------------------------------------
-	const std::string LayerAndMaskData::INFLUENCE_LAYER_TAG("influence");
 	const int LayerAndMaskReader::PATH_BLOCK_SIZE(26);
 	
-
-	//----------------------------------------------------------------------------------------
-	std::string LayerAndMaskData::LayerNameInfluenceAssociated(std::string const& str)
-	{
-		std::string layerName;
-		std::string name = str;
-
-		std::transform(name.begin(), name.end(), name.begin(), tolower);
-
-		const auto found = name.find_last_of('_');
-		if (name.substr(found + 1) == (INFLUENCE_LAYER_TAG))
-		{
-			layerName = str.substr(0, found);
-		}
-		return layerName;
-	}
 
 	//----------------------------------------------------------------------------------------
 	static bool CheckSignatureLayerInfo(char* const signature)
@@ -120,14 +103,6 @@ namespace psd_reader
 			currentlayer.LayerIndex = layerIndex;
 			ReadLayerRecordsSection(file, bytesLayerinfoRead, currentlayer);
 			ReadLayerInfoSectionExtraDataField(file, bytesLayerinfoRead, currentlayer);
-			if(currentlayer.Type == TEXTURE_LAYER)
-			{
-				std::string layerName = LayerAndMaskData::LayerNameInfluenceAssociated(currentlayer.LayerName);
-				if (!layerName.empty())
-				{
-					currentlayer.Type = INFLUENCE_LAYER;
-				}
-			}
 			layerMaskData.Layers.push_back(currentlayer);
 		}
 

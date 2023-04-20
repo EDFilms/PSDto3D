@@ -76,17 +76,41 @@ public:
 		std::string textureName;
 	};
 
+	struct TextureSet
+	{
+		TextureSet()
+		: diffuseTexture(nullptr), normalMapTexture(nullptr), heightMapTexture(nullptr),
+		  roughnessTexture(nullptr), occlusionTexture(nullptr),
+		  detailColorTexture(nullptr), detailNormalMapTexture(nullptr), detailHeightMapTexture(nullptr),
+		  detailRoughnessTexture(nullptr), detailOcclusionTexture(nullptr),
+		  wpoWindTexture(nullptr), wpoNoiseTexture(nullptr) {}
+
+		// this could be an array for compactness, but it's more readable this way
+		UTexture2D* diffuseTexture;
+		UTexture2D* normalMapTexture;
+		UTexture2D* heightMapTexture;
+		UTexture2D* roughnessTexture;
+		UTexture2D* occlusionTexture;
+		UTexture2D* detailColorTexture;
+		UTexture2D* detailNormalMapTexture;
+		UTexture2D* detailHeightMapTexture;
+		UTexture2D* detailRoughnessTexture;
+		UTexture2D* detailOcclusionTexture;
+		UTexture2D* wpoWindTexture;
+		UTexture2D* wpoNoiseTexture;
+	};
 
 
 	static void OutputLayers( OutputLayersTask task );
 	static void OutputLayer( OutputLayerTask task );
 	static void OutputTextures( OutputTexturesTask task );
 
+	static TextureSet ObtainTextureSet( const psd_to_3d::GraphLayer& graphLayer, const char* assetName, const char* packageName );
 	static UTexture2D* ObtainTexture( const char* textureFilepath, const char* assetName, const char* packageName );
 
 	static bool CheckMaterial( const char* assetName, const char* packageName ); // true if already created in the scene
 	static UMaterialInterface* ObtainCustomMaterial( const char* masterAssetPath, const char* assetName, const char* packageName );
-	static void SetupCustomMaterial( UMaterialInterface* material, UTexture2D* diffuseTexture );
+	static void SetupCustomMaterial( UMaterialInterface* material, TextureSet* textureSet );
 	static UMaterial* ObtainStandardMaterial( const char* assetName, const char* packageName );
 	static void SetupStandardMaterial( UMaterial* material, UTexture2D* diffuseTexture );
 	
