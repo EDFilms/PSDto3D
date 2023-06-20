@@ -1,5 +1,9 @@
 mkdir ..\..\Builds\photoshop\cc\
-ZXPSignCmd_win64 -sign .\Extension ..\..\Builds\photoshop\cc\PsdExporter.zxp .\key_edfilms.p12 edfilms2018 
+
+ZXPSignCmd_win64 -selfSignedCert CA QC EDFilms EDFilms.PsdExporter edfilms2018 ..\..\Builds\key_selfsigned_photoshop.p12
+ZXPSignCmd_win64 -sign .\Extension ..\..\Builds\photoshop\cc\PsdExporter.zxp ..\..\Builds\key_selfsigned_photoshop.p12 edfilms2018
+@rem may add timestamp option:  -tsa https://timestamp.geotrust.com/ts
+
 copy install_plugin.bat ..\..\Builds\photoshop\cc
 xcopy ..\install_tool ..\..\Builds\photoshop\cc\ /E /Y
 

@@ -434,18 +434,27 @@ namespace psd_to_3d
 	SceneController& ToolWidget::GetScene()
 	{
 		return Controller->GetScene();
+		// Support for only one controller, currently
+		// Support for many controllers would require refactor
+		//return this->Controllers[0]->GetScene();
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	GlobalParameters& ToolWidget::GetParameters()
 	{
 		return GetScene().GetGlobalParameters();
+		// Support for only one controller, currently
+		// Support for many controllers would require refactor
+		//return this->Controllers[0]->GetScene().GetGlobalParameters();
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	IPluginController::NotifyStatus& ToolWidget::GetNotifyStatus()
 	{
 		return this->Controller->GetNotifyStatus();
+		// Support for only one controller, currently
+		// Support for many controllers would require refactor
+		//return this->Controllers[0]->GetNotifyStatus();
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
