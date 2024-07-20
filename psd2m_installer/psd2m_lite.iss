@@ -42,6 +42,8 @@ Name: mp2019; Description: Maya 2019;   Types: full
 Name: mp2020; Description: Maya 2020;   Types: full
 Name: mp2022; Description: Maya 2022;   Types: full
 Name: mp2023; Description: Maya 2023;   Types: full
+Name: mp2024; Description: Maya 2024;   Types: full
+Name: mp2025; Description: Maya 2025;   Types: full
 
 [Files]
 Source: "..\Builds\installer\stage_lite\maya\conf\english\language.ini"; DestDir: "{userappdata}\EDFilms"; Flags: ignoreversion recursesubdirs createallsubdirs; Languages: english;

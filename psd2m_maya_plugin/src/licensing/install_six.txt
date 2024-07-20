@@ -2,11 +2,12 @@
 @echo NOTE:  This file when named as .bat may be flagged as a virus, and deleted by a virus scanner
 
 @echo *** IMPORTANT: EDIT THIS SCRIPT to refer to correct location for python executable, on line 3... ***
+@echo ***            and patch the call to   b i t s  a d m i n  for bitdefender ***
 @pause
 set PYTHON=C:\ProgramData\python-3.7.4
 set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
 
-bitsadmin /transfer downloadpip /download /priority FOREGROUND "https://bootstrap.pypa.io/get-pip.py" "C:\get-pip.py"
+bits***REMOVE THIS TEXT***admin /transfer downloadpip /download /priority FOREGROUND "https://bootstrap.pypa.io/get-pip.py" "C:\get-pip.py"
 python C:\get-pip.py
 pip install six
 

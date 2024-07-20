@@ -57,7 +57,7 @@ namespace maya_plugin
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	MObject EditorComponentGenerator::CreateTransformShape(MDagModifier& dag, MString const& name, float const& depth, MObject & parent)
 	{
-		MObject& transform = dag.createNode("transform", parent);
+		MObject transform = dag.createNode("transform", parent);
 		dag.renameNode( transform, name );
 
 		MFnTransform transformFn(transform);

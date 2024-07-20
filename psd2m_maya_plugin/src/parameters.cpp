@@ -142,10 +142,10 @@ namespace psd_to_3d
 	void LicensingParameters::Store()
 	{
 		QSettings settings(QSettings::IniFormat, QSettings::UserScope, "EDFilms", optionDefaultFilename);
-		settings.setValue( optionDefaultUserInfoFirstName, this->UserInfoFirstName.toUtf8().data() );
-		settings.setValue( optionDefaultUserInfoLastName, this->UserInfoLastName.toUtf8().data() );
-		settings.setValue( optionDefaultUserInfoEmail, this->UserInfoEmail.toUtf8().data() );
-		settings.setValue( optionDefaultLicenseKey, this->LicenseKey.toUtf8().data() );
+		settings.setValue( optionDefaultUserInfoFirstName, this->UserInfoFirstName.toUtf8() );
+		settings.setValue( optionDefaultUserInfoLastName, this->UserInfoLastName.toUtf8() );
+		settings.setValue( optionDefaultUserInfoEmail, this->UserInfoEmail.toUtf8() );
+		settings.setValue( optionDefaultLicenseKey, this->LicenseKey.toUtf8() );
 	}
 
 #pragma endregion
@@ -245,8 +245,8 @@ namespace psd_to_3d
 	void PreferenceParameters::Store()
 	{
 		QSettings settings(QSettings::IniFormat, QSettings::UserScope, "EDFilms", optionDefaultFilename);
-		settings.setValue( optionDefaultFileImportPath, this->FileImportPath.toUtf8().data() );
-		settings.setValue( optionDefaultFileExportPath, this->FileExportPath.toUtf8().data() );
+		settings.setValue( optionDefaultFileImportPath, this->FileImportPath.toUtf8() );
+		settings.setValue( optionDefaultFileExportPath, this->FileExportPath.toUtf8() );
 
 		// TESTING ONLY: Store these on disk, to experiment with calibrating slider values at runtime
 		//settings.setValue( optionDefaultDelaunayInnerDetailLo,  this->DelaunayInnerDetailLo );

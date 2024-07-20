@@ -1081,7 +1081,7 @@ void GenerateCompLayerFilepaths( std::vector<std::string>& filepaths_out, const 
 	{
 		// Try to get the params metadata.
 		QFileInfo qtFilePath( this->globalParams.FileImportPath + "/" + this->globalParams.FileImportFilename );
-		QFileInfo pathname = qtFilePath.path() + "/" + qtFilePath.baseName() + "/parameters.json";
+		QFileInfo pathname( qtFilePath.path() + "/" + qtFilePath.baseName() + "/parameters.json" );
 
 		if (!pathname.exists())
 		{
@@ -1089,7 +1089,7 @@ void GenerateCompLayerFilepaths( std::vector<std::string>& filepaths_out, const 
 		}
 
 		// Try to open the metadata.
-		std::string pathname_utf8 = pathname.absoluteFilePath().toUtf8();
+		std::string pathname_utf8 = pathname.absoluteFilePath().toUtf8().data();
 		std::ifstream file( util::to_utf16(pathname_utf8) );
 		if (!file.is_open())
 		{
@@ -1120,7 +1120,7 @@ void GenerateCompLayerFilepaths( std::vector<std::string>& filepaths_out, const 
 		}
 
 		QFileInfo qtFilePath( this->globalParams.FileImportPath + "/" + this->globalParams.FileImportFilename );
-		QFileInfo paramsPath = qtFilePath.path() + "/" + qtFilePath.baseName() + "/parameters.json";
+		QFileInfo paramsPath( qtFilePath.path() + "/" + qtFilePath.baseName() + "/parameters.json" );
 		std::string filename_utf8 = paramsPath.absoluteFilePath().toStdString();
 
 		std::ofstream file( util::to_utf16(filename_utf8) );

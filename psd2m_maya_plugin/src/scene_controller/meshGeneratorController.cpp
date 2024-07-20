@@ -100,25 +100,29 @@ void MeshGeneratorController::GenerateMesh(DataSurface& mesh_out, const LayerPar
 	{
 	case LayerParameters::Algorithm::LINEAR:
 		{
-			mesh_out = GenerateDataLinearMesh(data, layerParams, layerIndex, progressTask);
+			DataSurface generatedMesh = GenerateDataLinearMesh(data, layerParams, layerIndex, progressTask);
+			mesh_out = generatedMesh;
 			break;
 			// compile error:  //meshes[layerIndex] = GenerateDataLinearMesh(data, blockPath, layerParam);
 		}
 	case LayerParameters::Algorithm::DELAUNAY:
 		{
-			mesh_out = GenerateDataDelaunayMesh(data, layerParams, layerIndex, progressTask);
+			DataSurface generatedMesh = GenerateDataDelaunayMesh(data, layerParams, layerIndex, progressTask);
+			mesh_out = generatedMesh;
 			break;
 			// compile error:  //meshes[layerIndex] = GenerateDataDelaunayMesh(data, blockPath, layerParam);
 		}
 	case LayerParameters::Algorithm::CURVE:
 		{
-			mesh_out = GenerateDataCurveGridMesh(data, layerParams, layerIndex, progressTask);
+			DataSurface generatedMesh = GenerateDataCurveGridMesh(data, layerParams, layerIndex, progressTask);
+			mesh_out = generatedMesh;
 			break;
 			// compile error:  //meshes[layerIndex] = GenerateDataCurveGridMesh(data, layer, layerParam);
 		}
 	case LayerParameters::Algorithm::BILLBOARD:
 		{
-			mesh_out = GenerateDataBillboardMesh(data, layerParams, layerIndex, progressTask);
+			DataSurface generatedMesh = GenerateDataBillboardMesh(data, layerParams, layerIndex, progressTask);
+			mesh_out = generatedMesh;
 			break;
 		}
 	}

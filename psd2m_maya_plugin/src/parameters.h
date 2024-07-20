@@ -17,6 +17,13 @@
 #ifndef PARAMETERS_H
 #define PARAMETERS_H
 
+
+// ===============================================
+// Versioning build settings
+#define PSDTO3D_LICENSING_DISABLE
+// ===============================================
+
+
 #include "compLayers.h"
 #include "mesh_generator/curve_mesh/curveMeshGenerator.h"	// for CurveParameters
 #include "mesh_generator/influence_mesh/influenceMesh.h"	// for InfluenceParameters

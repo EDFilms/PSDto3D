@@ -29,10 +29,10 @@ namespace maya_plugin
 	class EditorComponentGenerator
 	{
 	public:
-		static const char* EditorComponentGenerator::meshNamePostfix; // blank, no postfix
-		static const char* EditorComponentGenerator::materialNamePostfix; //"_Lb"
-		static const char* EditorComponentGenerator::textureNamePostfix; //"_PNG"
-		static const char* EditorComponentGenerator::shaderGroupNamePostfix; //"_SG"
+		static const char* meshNamePostfix; // blank, no postfix
+		static const char* materialNamePostfix; //"_Lb"
+		static const char* textureNamePostfix; //"_PNG"
+		static const char* shaderGroupNamePostfix; //"_SG"
 		static MString CreateUniqueName( MString const& name);
 		static MObject CreateTransformShape(   MDagModifier& dag, MString const& name, float const& depth, MObject& parent);
 		static MObject CreateMaterialNode(     MDagModifier& dag, MString const& name);

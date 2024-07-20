@@ -17,6 +17,7 @@
 // TODO: Need this, otherwise error linking method QByteArray QString::toUtf8() const & Q_REQUIRED_RESULT
 //#define QT_COMPILING_QSTRING_COMPAT_CPP // added in project settings
 
+#include "parameters.h" // versioning build settings like PSDTO3D_LICENSING_DISABLE
 #include "mainWindowCmd.h"
 #include "pluginController.h"
 #include "interface/toolWidget.h"
@@ -192,7 +193,10 @@ namespace psd_to_3d
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	bool PluginContext::LicenseCheck()
 	{
-#if (defined PSDTO3D_UNREAL_VERSION) || (defined PSDTO3D_LICENSING_DISABLE)
+#if (defined PSDTO3D_LICENSING_DISABLE)
+		return true;
+#elif (defined PSDTO3D_UNREAL_VERSION)
+		// Licensing enabled but in PSDtoUnreal?  Still disable licensing but with a message
 		MessageBox( nullptr, "PSDtoUnreal is an unlicensed demo plugin developed by ED Films.  Enjoy!", "PSDtoUnreal", MB_OK);
 		return true;
 #else
@@ -323,7 +327,8 @@ volatile QApplication* qtApp = nullptr;
 void threadApp()
 {
 	int argc = 1;
-	char* args = "app";
+	char arg1[] = "app";
+	char *argv[] = {arg1};
 
 	// Support 4k high-dpi monitors, also requires manifest setting,
 	//  Configuration Properties->Manifest Tool->Input and Output->DPI Awarenes: High DPI Aware
@@ -332,7 +337,7 @@ void threadApp()
 	// Create the app
 	if( qtApp == nullptr )
 	{
-		qtApp = new QApplication(argc,&args);
+		qtApp = new QApplication(argc,argv);
 //#if defined PSDTO3D_FBX_VERSION
 //		qtApp->setQuitOnLastWindowClosed(true);
 //#elif defined PSDTO3D_UNREAL_VERSION

@@ -262,7 +262,7 @@ namespace psd_to_3d
 		progressImport->BeginProgressBar( util::LocalizeString( IDC_MAIN, IDS_IMPORTING_PSD ), 1, true ); // "Loading PSD file..." 
 
 		// Create folder before the Parse starts
-		std::string newFolderName_utf8 = folderInfo.absoluteFilePath().toUtf8();
+		std::string newFolderName_utf8 = folderInfo.absoluteFilePath().toUtf8().data();
 		if (!folderInfo.exists())
 			_wmkdir( util::to_utf16(newFolderName_utf8).c_str() );
 

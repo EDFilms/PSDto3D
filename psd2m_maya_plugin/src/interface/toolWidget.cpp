@@ -42,6 +42,11 @@ typedef unsigned long ULONG; // TODO: Remove this; with older Maya vesions, and 
 #include <QtGui/QMouseEvent>
 #include <QDesktopServices>
 #include <QMimeData>
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+#include <QRegularExpression.h>
+typedef QRegularExpression QRegExp;
+typedef QRegularExpressionValidator QRegExpValidator;
+#endif
 #include <set>
 
 // window default size for aesthetic purposes, independent of screen resolution
@@ -681,7 +686,7 @@ namespace psd_to_3d
 		QString dir = this->GetParameters().Prefs.FileExportPath;
 
 		QFileInfo qtFilePath(dir);
-		QFileInfo paramsPath = qtFilePath.path() + "/" + qtFilePath.baseName() + "/";
+		QFileInfo paramsPath( qtFilePath.path() + "/" + qtFilePath.baseName() + "/" );
 		QString path = paramsPath.path();
 		path = QFileDialog::getExistingDirectory( this, tr("Save Fbx"), path ); // TODO: Localize this
 

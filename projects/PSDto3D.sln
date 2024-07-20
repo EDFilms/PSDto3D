@@ -36,6 +36,8 @@ Global
 		RelWithDebInfo_Maya2020|x64 = RelWithDebInfo_Maya2020|x64
 		RelWithDebInfo_Maya2022|x64 = RelWithDebInfo_Maya2022|x64
 		RelWithDebInfo_Maya2023|x64 = RelWithDebInfo_Maya2023|x64
+		RelWithDebInfo_Maya2024|x64 = RelWithDebInfo_Maya2024|x64
+		RelWithDebInfo_Maya2025|x64 = RelWithDebInfo_Maya2025|x64
 		RelWithDebInfo_Unreal|x64 = RelWithDebInfo_Unreal|x64
 		RelWithDebInfo|x64 = RelWithDebInfo|x64
 	EndGlobalSection
@@ -66,6 +68,10 @@ Global
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelWithDebInfo_Maya2022|x64.Build.0 = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelWithDebInfo_Maya2023|x64.ActiveCfg = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelWithDebInfo_Maya2023|x64.Build.0 = RelWithDebInfo|x64
+		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelWithDebInfo_Maya2024|x64.ActiveCfg = RelWithDebInfo|x64
+		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelWithDebInfo_Maya2024|x64.Build.0 = RelWithDebInfo|x64
+		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelWithDebInfo_Maya2025|x64.ActiveCfg = RelWithDebInfo|x64
+		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelWithDebInfo_Maya2025|x64.Build.0 = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelWithDebInfo_Unreal|x64.ActiveCfg = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelWithDebInfo_Unreal|x64.Build.0 = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}.RelWithDebInfo|x64.ActiveCfg = RelWithDebInfo|x64
@@ -96,6 +102,10 @@ Global
 		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelWithDebInfo_Maya2022|x64.Build.0 = RelWithDebInfo|x64
 		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelWithDebInfo_Maya2023|x64.ActiveCfg = RelWithDebInfo|x64
 		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelWithDebInfo_Maya2023|x64.Build.0 = RelWithDebInfo|x64
+		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelWithDebInfo_Maya2024|x64.ActiveCfg = RelWithDebInfo|x64
+		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelWithDebInfo_Maya2024|x64.Build.0 = RelWithDebInfo|x64
+		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelWithDebInfo_Maya2025|x64.ActiveCfg = RelWithDebInfo|x64
+		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelWithDebInfo_Maya2025|x64.Build.0 = RelWithDebInfo|x64
 		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelWithDebInfo_Unreal|x64.ActiveCfg = RelWithDebInfo|x64
 		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelWithDebInfo_Unreal|x64.Build.0 = RelWithDebInfo|x64
 		{C1C1B2DA-D119-397D-AC9C-1F25B3485FFE}.RelWithDebInfo|x64.ActiveCfg = RelWithDebInfo|x64
@@ -126,6 +136,10 @@ Global
 		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelWithDebInfo_Maya2022|x64.Build.0 = RelWithDebInfo|x64
 		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelWithDebInfo_Maya2023|x64.ActiveCfg = RelWithDebInfo|x64
 		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelWithDebInfo_Maya2023|x64.Build.0 = RelWithDebInfo|x64
+		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelWithDebInfo_Maya2024|x64.ActiveCfg = RelWithDebInfo|x64
+		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelWithDebInfo_Maya2024|x64.Build.0 = RelWithDebInfo|x64
+		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelWithDebInfo_Maya2025|x64.ActiveCfg = RelWithDebInfo|x64
+		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelWithDebInfo_Maya2025|x64.Build.0 = RelWithDebInfo|x64
 		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelWithDebInfo_Unreal|x64.ActiveCfg = RelWithDebInfo|x64
 		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelWithDebInfo_Unreal|x64.Build.0 = RelWithDebInfo|x64
 		{09A2DA65-C8F4-37FC-91B8-AACA66F82ECF}.RelWithDebInfo|x64.ActiveCfg = RelWithDebInfo|x64
@@ -156,6 +170,10 @@ Global
 		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelWithDebInfo_Maya2022|x64.Build.0 = RelWithDebInfo|x64
 		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelWithDebInfo_Maya2023|x64.ActiveCfg = RelWithDebInfo|x64
 		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelWithDebInfo_Maya2023|x64.Build.0 = RelWithDebInfo|x64
+		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelWithDebInfo_Maya2024|x64.ActiveCfg = RelWithDebInfo|x64
+		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelWithDebInfo_Maya2024|x64.Build.0 = RelWithDebInfo|x64
+		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelWithDebInfo_Maya2025|x64.ActiveCfg = RelWithDebInfo|x64
+		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelWithDebInfo_Maya2025|x64.Build.0 = RelWithDebInfo|x64
 		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelWithDebInfo_Unreal|x64.ActiveCfg = RelWithDebInfo|x64
 		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelWithDebInfo_Unreal|x64.Build.0 = RelWithDebInfo|x64
 		{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}.RelWithDebInfo|x64.ActiveCfg = RelWithDebInfo|x64
@@ -186,6 +204,10 @@ Global
 		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelWithDebInfo_Maya2022|x64.Build.0 = RelWithDebInfo_Maya2022|x64
 		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelWithDebInfo_Maya2023|x64.ActiveCfg = RelWithDebInfo_Maya2023|x64
 		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelWithDebInfo_Maya2023|x64.Build.0 = RelWithDebInfo_Maya2023|x64
+		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelWithDebInfo_Maya2024|x64.ActiveCfg = RelWithDebInfo_Maya2024|x64
+		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelWithDebInfo_Maya2024|x64.Build.0 = RelWithDebInfo_Maya2024|x64
+		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelWithDebInfo_Maya2025|x64.ActiveCfg = RelWithDebInfo_Maya2025|x64
+		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelWithDebInfo_Maya2025|x64.Build.0 = RelWithDebInfo_Maya2025|x64
 		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelWithDebInfo_Unreal|x64.ActiveCfg = RelWithDebInfo_Unreal|x64
 		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelWithDebInfo_Unreal|x64.Build.0 = RelWithDebInfo_Unreal|x64
 		{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}.RelWithDebInfo|x64.ActiveCfg = RelWithDebInfo_Unreal|x64
@@ -216,6 +238,10 @@ Global
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelWithDebInfo_Maya2022|x64.Build.0 = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelWithDebInfo_Maya2023|x64.ActiveCfg = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelWithDebInfo_Maya2023|x64.Build.0 = RelWithDebInfo|x64
+		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelWithDebInfo_Maya2024|x64.ActiveCfg = RelWithDebInfo|x64
+		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelWithDebInfo_Maya2024|x64.Build.0 = RelWithDebInfo|x64
+		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelWithDebInfo_Maya2025|x64.ActiveCfg = RelWithDebInfo|x64
+		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelWithDebInfo_Maya2025|x64.Build.0 = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelWithDebInfo_Unreal|x64.ActiveCfg = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelWithDebInfo_Unreal|x64.Build.0 = RelWithDebInfo|x64
 		{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}.RelWithDebInfo|x64.ActiveCfg = RelWithDebInfo|x64
