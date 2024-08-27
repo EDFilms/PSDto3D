@@ -36,6 +36,7 @@ using std::cerr;
 typedef unsigned long ULONG; // TODO: Remove this; with older Maya vesions, and with Visual Studio 2017 toolset, Qt headers depend on windows.h or require this
 #include <QString.h>
 #include <QMessageBox>
+#include <QDesktopWidget>
 #if defined PSDTO3D_MAYA_VERSION
 #include <maya/MFnPlugin.h>
 #include <maya/MGlobal.h>
@@ -153,6 +154,11 @@ namespace psd_to_3d
 			}
 			if( this->GuiTool!=nullptr )
 			{
+				int primaryScreen = QApplication::desktop()->primaryScreen();
+				QRect screenGeometry = QApplication::desktop()->screenGeometry(primaryScreen);
+				int x = (screenGeometry.width()-this->GuiTool->width()) / 2;
+				int y = (screenGeometry.height()-this->GuiTool->height()) / 2;
+				this->GuiTool->move(x, y);
 				this->GuiTool->show();
 			}
 		}

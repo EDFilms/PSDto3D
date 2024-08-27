@@ -52,7 +52,7 @@ typedef QRegularExpressionValidator QRegExpValidator;
 // window default size for aesthetic purposes, independent of screen resolution
 // based on a multiple of the size of the psdSelectorBtn, which never scales as window is resized
 #define DEFAULT_WIDTH_HEURISTIC 9.5f //26.8f
-#define DEFAULT_HEIGHT_HEURISTIC 34.3f //44.0f
+#define DEFAULT_HEIGHT_HEURISTIC 31.0f //34.3f //44.0f
 
 namespace psd_to_3d
 {

@@ -1,11 +1,11 @@
 echo %date%  - %time%
 
-set BUILD_VER=075
+set BUILD_VER=077
 set BUILD_DATE=%date%
 set PLUGIN_VER_SHORT=165
 set PLUGIN_VER_BASE=1.6.5
 set PLUGIN_VER=%PLUGIN_VER_BASE%.%BUILD_VER%
-set PLUGIN_YEAR=2023
+set PLUGIN_YEAR=2024
 
 @echo Updating file property resources ...
 copy ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc ..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc.BACKUP

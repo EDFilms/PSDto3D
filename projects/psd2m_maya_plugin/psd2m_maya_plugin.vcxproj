@@ -120,6 +120,7 @@
     <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelWithDebInfo_Maya2023'">10.0.10586.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelWithDebInfo_Maya2024'">10.0.22621.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelWithDebInfo_Maya2025'">10.0.22621.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelWithDebInfo_FBX'">10.0.10586.0</WindowsTargetPlatformVersion>
     <QtDir Condition="'$(MayaVer)'=='standalone'">..\..\..\Qt\src\qtbase</QtDir>
     <QtDir Condition="'$(MayaVer)'!='standalone'">$(MayaDir)</QtDir>
     <UnrealEngine>$(UnrealDir)\Engine</UnrealEngine>
@@ -139,6 +140,7 @@
     <PlatformToolset Condition="'$(Configuration)'=='RelWithDebInfo_Maya2023'">v142</PlatformToolset>
     <PlatformToolset Condition="'$(Configuration)'=='RelWithDebInfo_Maya2024'">v143</PlatformToolset>
     <PlatformToolset Condition="'$(Configuration)'=='RelWithDebInfo_Maya2025'">v143</PlatformToolset>
+    <PlatformToolset Condition="'$(Configuration)'=='RelWithDebInfo_FBX'">v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
