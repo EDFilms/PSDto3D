@@ -42,7 +42,7 @@
     <ProjectGuid>{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <Platform>x64</Platform>
-    <ProjectName>psd2m_maya_plugin</ProjectName>
+    <ProjectName>psd2m_core</ProjectName>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
 
     <Maya2020>C:\build\maya2020</Maya2020>
@@ -146,8 +146,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories Condition="'$(MayaVer)'!='standalone'">..\..\psd2m_maya_plugin\src;..\..\psd2m_maya_plugin\include;..\..\psd2m_mesh_generator\src;..\..\psd2m_util\src;..\..\psd2m_psd_reader\src;$(QtDir)\include;$(QtDir)\include\QtWidgets;$(QtDir)\include\QtGui;$(QtDir)\include\QtCore;$(QtDir)\mkspecs\win32-msvc2015;.\psd2m_maya_plugin\psd2m_maya_plugin_autogen\include_$(ConfigurationShortName);$(IntDir)\psd2m_maya_plugin_autogen;$(MayaDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(MayaVer)'=='standalone'">..\..\psd2m_maya_plugin\src;..\..\psd2m_maya_plugin\include;..\..\psd2m_mesh_generator\src;..\..\psd2m_util\src;..\..\psd2m_psd_reader\src;$(QtDir)\include;$(QtDir)\include\QtWidgets;$(QtDir)\include\QtGui;$(QtDir)\include\QtCore;$(QtDir)\mkspecs\win32-msvc2015;.\psd2m_maya_plugin\psd2m_maya_plugin_autogen\include_$(ConfigurationShortName);$(IntDir)\psd2m_maya_plugin_autogen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(MayaVer)'!='standalone'">..\..\psd2m_core\src;..\..\psd2m_core\include;..\..\psd2m_mesh_generator\src;..\..\psd2m_util\src;..\..\psd2m_psd_reader\src;$(QtDir)\include;$(QtDir)\include\QtWidgets;$(QtDir)\include\QtGui;$(QtDir)\include\QtCore;$(QtDir)\mkspecs\win32-msvc2015;.\psd2m_core\psd2m_core_autogen\include_$(ConfigurationShortName);$(IntDir)\psd2m_core_autogen;$(MayaDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(MayaVer)'=='standalone'">..\..\psd2m_core\src;..\..\psd2m_core\include;..\..\psd2m_mesh_generator\src;..\..\psd2m_util\src;..\..\psd2m_psd_reader\src;$(QtDir)\include;$(QtDir)\include\QtWidgets;$(QtDir)\include\QtGui;$(QtDir)\include\QtCore;$(QtDir)\mkspecs\win32-msvc2015;.\psd2m_core\psd2m_core_autogen\include_$(ConfigurationShortName);$(IntDir)\psd2m_core_autogen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>..\..\Builds\lib\$(Configuration)\$(Platform)</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -220,10 +220,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\psd2m_maya_plugin\src;..\..\psd2m_maya_plugin\include;..\..\psd2m_mesh_generator\src;..\..\psd2m_util\src;$(MayaDir)\include;..\..\psd2m_psd_reader\src;$(QtDir)\include;$(QtDir)\include\QtWidgets;$(QtDir)\include\QtGui;$(QtDir)\include\QtCore;$(QtDir)\mkspecs\win32-msvc2015;.\psd2m_maya_plugin\psd2m_maya_plugin_autogen\include_$(ConfigurationShortName);$(IntDir)\psd2m_maya_plugin_autogen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\psd2m_core\src;..\..\psd2m_core\include;..\..\psd2m_mesh_generator\src;..\..\psd2m_util\src;$(MayaDir)\include;..\..\psd2m_psd_reader\src;$(QtDir)\include;$(QtDir)\include\QtWidgets;$(QtDir)\include\QtGui;$(QtDir)\include\QtCore;$(QtDir)\mkspecs\win32-msvc2015;.\psd2m_core\psd2m_core_autogen\include_$(ConfigurationShortName);$(IntDir)\psd2m_core_autogen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>..\..\psd2m_maya_plugin\src;..\..\psd2m_maya_plugin\include;..\..\psd2m_mesh_generator\src;..\..\psd2m_util\src;$(MayaDir)\include;..\..\psd2m_psd_reader\src;$(QtDir)\include;$(QtDir)\include\QtWidgets;$(QtDir)\include\QtGui;$(QtDir)\include\QtCore;$(QtDir)\mkspecs\win32-msvc2015;.\psd2m_maya_plugin\psd2m_maya_plugin_autogen\include_$(ConfigurationShortName);$(IntDir)\psd2m_maya_plugin_autogen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\psd2m_core\src;..\..\psd2m_core\include;..\..\psd2m_mesh_generator\src;..\..\psd2m_util\src;$(MayaDir)\include;..\..\psd2m_psd_reader\src;$(QtDir)\include;$(QtDir)\include\QtWidgets;$(QtDir)\include\QtGui;$(QtDir)\include\QtCore;$(QtDir)\mkspecs\win32-msvc2015;.\psd2m_core\psd2m_core_autogen\include_$(ConfigurationShortName);$(IntDir)\psd2m_core_autogen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -236,8 +236,8 @@
       <AdditionalDependencies Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">psd_reader.lib;mesh_generator.lib;util.lib;zlib_static.lib;libpng_static.lib;Comdlg32.lib;$(QtDir)\lib\Qt5Widgets.lib;$(QtDir)\lib\Qt5Gui.lib;$(QtDir)\lib\Qt5Core.lib;</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">psd_reader.lib;mesh_generator.lib;util.lib;zlib_static.lib;libpng_static.lib;Comdlg32.lib;$(QtDir)\lib\Qt5Widgets.lib;$(QtDir)\lib\Qt5Gui.lib;$(QtDir)\lib\Qt5Core.lib;</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(MayaVer)'!='standalone'">psd_reader.lib;mesh_generator.lib;util.lib;zlib_static.lib;libpng_static.lib;Comdlg32.lib;$(MayaDir)\lib\OpenMaya.lib;$(MayaDir)\lib\OpenMayaAnim.lib;$(MayaDir)\lib\OpenMayaFX.lib;$(MayaDir)\lib\OpenMayaRender.lib;$(MayaDir)\lib\OpenMayaUI.lib;$(MayaDir)\lib\Foundation.lib;$(MayaDir)\lib\clew.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories Condition="'$(MayaVer)'=='standalone'">../../Builds/lib/$(ConfigurationShortName)_$(VSVer)/$(Platform);..\..\psd2m_maya_plugin/lib;../../psd2m_psd_reader/lib;$(QtDir)/lib;$(FbxDir)\lib\vs2015\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories Condition="'$(MayaVer)'!='standalone'">../../Builds/lib/$(ConfigurationShortName)_$(VSVer)/$(Platform);..\..\psd2m_maya_plugin/lib;../../psd2m_psd_reader/lib;$(QtDir)/lib;$(MayaDir)/lib;$(MayaDir)/lib/$(ConfigurationShortName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(MayaVer)'=='standalone'">../../Builds/lib/$(ConfigurationShortName)_$(VSVer)/$(Platform);..\..\psd2m_core/lib;../../psd2m_psd_reader/lib;$(QtDir)/lib;$(FbxDir)\lib\vs2015\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(MayaVer)'!='standalone'">../../Builds/lib/$(ConfigurationShortName)_$(VSVer)/$(Platform);..\..\psd2m_core/lib;../../psd2m_psd_reader/lib;$(QtDir)/lib;$(MayaDir)/lib;$(MayaDir)/lib/$(ConfigurationShortName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions Condition="'$(MayaVer)'=='standalone'">%(AdditionalOptions) /machine:x64 /export:openPlugin /export:setPluginOutput /export:initializePlugin /export:uninitializePlugin</AdditionalOptions>
       <AdditionalOptions Condition="'$(MayaVer)'!='standalone'">%(AdditionalOptions) /machine:x64 /export:initializePlugin /export:uninitializePlugin</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -269,13 +269,13 @@
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Unreal|x64'">echo Copying to Unreal plugin directory ...
 copy /Y $(TargetDir)\$(TargetName)* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
-xcopy /Y /E /F ..\..\psd2m_maya_plugin\deps\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
-xcopy /Y /E /F /I ..\..\psd2m_maya_plugin\icons\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64\icons
+xcopy /Y /E /F ..\..\psd2m_core\deps\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
+xcopy /Y /E /F /I ..\..\psd2m_core\icons\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64\icons
 </Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_Unreal|x64'">echo Copying to Unreal plugin directory ...
 copy /Y $(TargetDir)\$(TargetName)* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
-xcopy /Y /E ..\..\psd2m_maya_plugin\deps\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
-xcopy /Y /E /I ..\..\psd2m_maya_plugin\icons\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64\icons
+xcopy /Y /E ..\..\psd2m_core\deps\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
+xcopy /Y /E /I ..\..\psd2m_core\icons\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64\icons
 </Command>
     </PostBuildEvent>
     <PostBuildEvent>
@@ -286,88 +286,88 @@ xcopy /Y /E /I ..\..\psd2m_maya_plugin\icons\*.* $(UnrealEngine)\Plugins\Editor\
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\interface\licensingWidget.cpp">
+    <ClCompile Include="..\..\psd2m_core\src\interface\licensingWidget.cpp">
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\licensing\ECDSA_fgmp.c">
+    <ClCompile Include="..\..\psd2m_core\src\licensing\ECDSA_fgmp.c">
       <ConformanceMode>false</ConformanceMode>
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\licensing\ECDSA_SerialNumber.cpp">
+    <ClCompile Include="..\..\psd2m_core\src\licensing\ECDSA_SerialNumber.cpp">
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\texture_exporter\textureExporter.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\maya_mesh\mayaMeshConvertor.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\maya_mesh\editorComponentGenerator.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\pluginController.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\mainWindowCmd.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\parameters.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\qtProgress.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\interface\toolWidget.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\interface\toolWidgetLocalization_english.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\interface\toolWidgetLocalization_french.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\scene_controller\meshGeneratorController.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\scene_controller\sceneController.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\scene_controller\sceneControllerCache.cpp" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\interface\ui_wrapper.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\interface\licensingWidget.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\licensing\ECDSA_bigint.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\licensing\ECDSA_fgmp.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\licensing\ECDSA_sha256.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\texture_exporter\textureExporter.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\maya_mesh\mayaMeshConvertor.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\maya_mesh\editorComponentGenerator.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\IControllerUpdate.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\mayaUtils.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\pluginController.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\mainWindowCmd.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\parameters.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\qtProgress.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\interface\toolWidget.h" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\json\JSON.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\json\JSONValue.cpp" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\json\JSON.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\json\JSONValue.h" />
-    <ClCompile Include="$(IntDir)\psd2m_maya_plugin_autogen\moc_toolWidget.cpp" />
-    <ClCompile Include="$(IntDir)\psd2m_maya_plugin_autogen\moc_licensingWidget.cpp" />
-    <ClInclude Include="$(IntDir)\psd2m_maya_plugin_autogen\ui_toolWidget.h" />
-    <ClInclude Include="$(IntDir)\psd2m_maya_plugin_autogen\ui_licensingWidget.h" />
+    <ClCompile Include="..\..\psd2m_core\src\texture_exporter\textureExporter.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\maya_mesh\mayaMeshConvertor.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\maya_mesh\editorComponentGenerator.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\pluginController.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\mainWindowCmd.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\parameters.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\qtProgress.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\interface\toolWidget.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\interface\toolWidgetLocalization_english.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\interface\toolWidgetLocalization_french.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\scene_controller\meshGeneratorController.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\scene_controller\sceneController.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\scene_controller\sceneControllerCache.cpp" />
+    <ClInclude Include="..\..\psd2m_core\src\interface\ui_wrapper.h" />
+    <ClInclude Include="..\..\psd2m_core\src\interface\licensingWidget.h" />
+    <ClInclude Include="..\..\psd2m_core\src\licensing\ECDSA_bigint.h" />
+    <ClInclude Include="..\..\psd2m_core\src\licensing\ECDSA_fgmp.h" />
+    <ClInclude Include="..\..\psd2m_core\src\licensing\ECDSA_sha256.h" />
+    <ClInclude Include="..\..\psd2m_core\src\texture_exporter\textureExporter.h" />
+    <ClInclude Include="..\..\psd2m_core\src\maya_mesh\mayaMeshConvertor.h" />
+    <ClInclude Include="..\..\psd2m_core\src\maya_mesh\editorComponentGenerator.h" />
+    <ClInclude Include="..\..\psd2m_core\src\IControllerUpdate.h" />
+    <ClInclude Include="..\..\psd2m_core\src\mayaUtils.h" />
+    <ClInclude Include="..\..\psd2m_core\src\pluginController.h" />
+    <ClInclude Include="..\..\psd2m_core\src\mainWindowCmd.h" />
+    <ClInclude Include="..\..\psd2m_core\src\parameters.h" />
+    <ClInclude Include="..\..\psd2m_core\src\qtProgress.h" />
+    <ClInclude Include="..\..\psd2m_core\src\interface\toolWidget.h" />
+    <ClCompile Include="..\..\psd2m_core\src\json\JSON.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\json\JSONValue.cpp" />
+    <ClInclude Include="..\..\psd2m_core\src\json\JSON.h" />
+    <ClInclude Include="..\..\psd2m_core\src\json\JSONValue.h" />
+    <ClCompile Include="$(IntDir)\psd2m_core_autogen\moc_toolWidget.cpp" />
+    <ClCompile Include="$(IntDir)\psd2m_core_autogen\moc_licensingWidget.cpp" />
+    <ClInclude Include="$(IntDir)\psd2m_core_autogen\ui_toolWidget.h" />
+    <ClInclude Include="$(IntDir)\psd2m_core_autogen\ui_licensingWidget.h" />
     <ClInclude Include="..\..\include\MaxRectsBinPack.h" />
     <ClInclude Include="..\..\include\png.h" />
     <ClInclude Include="..\..\include\pngconf.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\interface\toolWidgetLocalization.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\IPluginOutput.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\mayaStub.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\outputs.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\scene_controller\meshGeneratorController.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\scene_controller\sceneController.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\scene_controller\sceneControllerCache.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\resource.h" />
-    <CustomBuild Include="..\..\psd2m_maya_plugin\src\interface\moc_toolWidget.h_to_cpp_custom_build">
+    <ClInclude Include="..\..\psd2m_core\src\interface\toolWidgetLocalization.h" />
+    <ClInclude Include="..\..\psd2m_core\src\IPluginOutput.h" />
+    <ClInclude Include="..\..\psd2m_core\src\mayaStub.h" />
+    <ClInclude Include="..\..\psd2m_core\src\outputs.h" />
+    <ClInclude Include="..\..\psd2m_core\src\scene_controller\meshGeneratorController.h" />
+    <ClInclude Include="..\..\psd2m_core\src\scene_controller\sceneController.h" />
+    <ClInclude Include="..\..\psd2m_core\src\scene_controller\sceneControllerCache.h" />
+    <ClInclude Include="..\..\psd2m_core\src\resource.h" />
+    <CustomBuild Include="..\..\psd2m_core\src\interface\moc_toolWidget.h_to_cpp_custom_build">
       <FileType>Document</FileType>
-      <Command>$(QtDir)\bin\moc -I$(QtDir)/include -I..\..\psd2m_maya_plugin/src -I. -DWIN32 -o $(IntDir)\psd2m_maya_plugin_autogen\moc_toolWidget.cpp ..\..\psd2m_maya_plugin/src/interface/toolWidget.h </Command>
+      <Command>$(QtDir)\bin\moc -I$(QtDir)/include -I..\..\psd2m_core/src -I. -DWIN32 -o $(IntDir)\psd2m_core_autogen\moc_toolWidget.cpp ..\..\psd2m_core/src/interface/toolWidget.h </Command>
       <Message>Generating mocs_toolWidget.cpp</Message>
-      <AdditionalInputs>..\..\psd2m_maya_plugin\src\interface\toolWidget.h </AdditionalInputs>
+      <AdditionalInputs>..\..\psd2m_core\src\interface\toolWidget.h </AdditionalInputs>
       <LinkObjects>false</LinkObjects>
       <ExcludedFromBuild>false</ExcludedFromBuild>
-      <Outputs>$(IntDir)\psd2m_maya_plugin_autogen\moc_toolWidget.cpp</Outputs>
+      <Outputs>$(IntDir)\psd2m_core_autogen\moc_toolWidget.cpp</Outputs>
       <Message>Generating moc_toolWidget.cpp</Message>
     </CustomBuild>
-    <CustomBuild Include="..\..\psd2m_maya_plugin\src\interface\moc_licensingWidget.h_to_cpp_custom_build">
+    <CustomBuild Include="..\..\psd2m_core\src\interface\moc_licensingWidget.h_to_cpp_custom_build">
       <FileType>Document</FileType>
-      <Command>$(QtDir)\bin\moc -I$(QtDir)/include -I..\..\psd2m_maya_plugin/src -I. -DWIN32 -o $(IntDir)\psd2m_maya_plugin_autogen\moc_licensingWidget.cpp ..\..\psd2m_maya_plugin/src/interface/licensingWidget.h </Command>
+      <Command>$(QtDir)\bin\moc -I$(QtDir)/include -I..\..\psd2m_core/src -I. -DWIN32 -o $(IntDir)\psd2m_core_autogen\moc_licensingWidget.cpp ..\..\psd2m_core/src/interface/licensingWidget.h </Command>
       <Message>Generating mocs_licensingWidget.cpp</Message>
-      <AdditionalInputs>..\..\psd2m_maya_plugin\src\interface\licensingWidget.h </AdditionalInputs>
+      <AdditionalInputs>..\..\psd2m_core\src\interface\licensingWidget.h </AdditionalInputs>
       <LinkObjects>false</LinkObjects>
       <ExcludedFromBuild>false</ExcludedFromBuild>
-      <Outputs>$(IntDir)\psd2m_maya_plugin_autogen\moc_licensingWidget.cpp</Outputs>
+      <Outputs>$(IntDir)\psd2m_core_autogen\moc_licensingWidget.cpp</Outputs>
       <Message>Generating moc_licensingWidget.cpp</Message>
     </CustomBuild>
-    <CustomBuild Include="..\..\psd2m_maya_plugin\src\interface\licensingWidget.ui">
+    <CustomBuild Include="..\..\psd2m_core\src\interface\licensingWidget.ui">
       <FileType>Document</FileType>
       <Command>setlocal
-$(QtDir)\bin\uic.exe -o $(IntDir)/psd2m_maya_plugin_autogen/ui_licensingWidget.h ..\..\psd2m_maya_plugin/src/interface/licensingWidget.ui
+$(QtDir)\bin\uic.exe -o $(IntDir)/psd2m_core_autogen/ui_licensingWidget.h ..\..\psd2m_core/src/interface/licensingWidget.ui
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -376,15 +376,15 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <Message>Generating ui_licensingWidget.h</Message>
-      <Outputs>$(IntDir)\psd2m_maya_plugin_autogen\ui_licensingWidget.h</Outputs>
-      <AdditionalInputs>..\..\psd2m_maya_plugin\src\interface\licensingWidget.ui%(AdditionalInputs)</AdditionalInputs>
+      <Outputs>$(IntDir)\psd2m_core_autogen\ui_licensingWidget.h</Outputs>
+      <AdditionalInputs>..\..\psd2m_core\src\interface\licensingWidget.ui%(AdditionalInputs)</AdditionalInputs>
       <LinkObjects>false</LinkObjects>
       <SubType>Designer</SubType>
     </CustomBuild>
-    <CustomBuild Include="..\..\psd2m_maya_plugin\src\interface\toolWidget.ui">
+    <CustomBuild Include="..\..\psd2m_core\src\interface\toolWidget.ui">
       <FileType>Document</FileType>
       <Command>setlocal
-$(QtDir)\bin\uic.exe -o $(IntDir)/psd2m_maya_plugin_autogen/ui_toolWidget.h ..\..\psd2m_maya_plugin/src/interface/toolWidget.ui
+$(QtDir)\bin\uic.exe -o $(IntDir)/psd2m_core_autogen/ui_toolWidget.h ..\..\psd2m_core/src/interface/toolWidget.ui
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -393,7 +393,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <Message>Generating ui_toolWidget.h</Message>
-      <Outputs>$(IntDir)\psd2m_maya_plugin_autogen\ui_toolWidget.h</Outputs>
+      <Outputs>$(IntDir)\psd2m_core_autogen\ui_toolWidget.h</Outputs>
       <AdditionalInputs>
       </AdditionalInputs>
       <ExcludedFromBuild>false</ExcludedFromBuild>
@@ -416,7 +416,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\psd2m_maya_plugin\src\psd2m_maya_plugin.rc" />
+    <ResourceCompile Include="..\..\psd2m_core\src\psd2m_core.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -11,20 +11,20 @@ set UNREAL_BUILD=23058290
 mkdir ..\builds\installer\stage_full\unreal\
 mkdir ..\builds\installer\stage_full\unreal\PSDtoUnreal\Binaries\Win64\platforms
 mkdir ..\builds\installer\stage_full\unreal\PSDtoUnreal\Binaries\Win64\imageformats
-xcopy ..\psd2m_maya_plugin\src\unreal\deploy ..\builds\installer\stage_full\unreal\ /E /Y
+xcopy ..\psd2m_core\src\unreal\deploy ..\builds\installer\stage_full\unreal\ /E /Y
 
 
 @echo Updating file property resources ...
-findreplace UNREAL_BUILD_TOKEN %UNREAL_BUILD% ..\psd2m_maya_plugin\src\unreal\deploy\PSDtoUnreal\Binaries\Win64\UnrealEditor.modules ..\builds\installer\stage_full\unreal\PSDtoUnreal\Binaries\Win64\UnrealEditor.modules
+findreplace UNREAL_BUILD_TOKEN %UNREAL_BUILD% ..\psd2m_core\src\unreal\deploy\PSDtoUnreal\Binaries\Win64\UnrealEditor.modules ..\builds\installer\stage_full\unreal\PSDtoUnreal\Binaries\Win64\UnrealEditor.modules
 
 @echo Build Unreal plugin ...
 SET _CL_=/DPSDTO3D_STANDALONE /DPSDTO3D_FULL_VERSION /DPSDTO3D_ATLAS_VERSION /O2 /Ob2 /Ot
 
 SET BuildDir=%UnrealDir%\Engine\Plugins\Editor\PSDtoUnreal\Binaries\Win64
 
-devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Unreal /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Unreal /project psd2m_core
 devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Unreal /project psd2m_unreal_plugin
-devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Unreal /project psd2m_maya_plugin
+devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Unreal /project psd2m_core
 devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Unreal /project psd2m_unreal_plugin
 copy %BuildDir%\PSDto3D_Unreal_dev.dll ..\builds\installer\stage_full\unreal\PSDtoUnreal\Binaries\Win64\
 copy %BuildDir%\PSDto3D_Standalone_dev.dll ..\builds\installer\stage_full\unreal\PSDtoUnreal\Binaries\Win64\
@@ -41,4 +41,4 @@ copy %BuildDir%\platforms\qwindows.dll ..\builds\installer\stage_full\unreal\PSD
 copy %BuildDir%\imageformats\qgif.dll ..\builds\installer\stage_full\unreal\PSDtoUnreal\Binaries\Win64\imageformats\qgif.dll
 copy %BuildDir%\imageformats\qico.dll ..\builds\installer\stage_full\unreal\PSDtoUnreal\Binaries\Win64\imageformats\qico.dll
 copy %BuildDir%\imageformats\qjpeg.dll ..\builds\installer\stage_full\unreal\PSDtoUnreal\Binaries\Win64\imageformats\qjpeg.dll
-copy "..\psd2m_maya_plugin\docs\Online Documentation.url" "..\builds\installer\stage_full\unreal\PSDtoUnreal\Online Documentation.url"
+copy "..\psd2m_core\docs\Online Documentation.url" "..\builds\installer\stage_full\unreal\PSDtoUnreal\Online Documentation.url"

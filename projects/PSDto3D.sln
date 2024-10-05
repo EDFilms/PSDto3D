@@ -14,7 +14,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "psd2m_psd_reader", "psd2m_p
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "psd2m_util", "psd2m_util\psd2m_util.vcxproj", "{EC0F2B11-59EE-32AC-B26A-80FD9D4E4329}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "psd2m_maya_plugin", "psd2m_maya_plugin\psd2m_maya_plugin.vcxproj", "{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "psd2m_core", "psd2m_core\psd2m_core.vcxproj", "{E08C28B3-FBF9-3975-A7EC-F3B289ED4018}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "psd2m_fbx", "psd2m_fbx\psd2m_fbx.vcxproj", "{FD7B6E28-6892-4293-AA4A-EFC2E03B19C6}"
 	ProjectSection(ProjectDependencies) = postProject

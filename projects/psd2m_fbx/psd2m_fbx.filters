@@ -15,18 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\dllmain.cpp">
+    <ClCompile Include="..\..\psd2m_core\src\unreal\dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealmain.cpp">
+    <ClCompile Include="..\..\psd2m_core\src\unreal\unrealmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\psdToUnrealCommands.cpp">
+    <ClCompile Include="..\..\psd2m_core\src\unreal\psdToUnrealCommands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\psdToUnrealCommands.h">
+    <ClInclude Include="..\..\psd2m_core\src\unreal\psdToUnrealCommands.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

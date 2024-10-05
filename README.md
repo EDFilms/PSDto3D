@@ -48,7 +48,7 @@ The steps below take you through cloning your own private fork, then compiling a
 
 1.  Install **[Visual Studio for Windows](https://visualstudio.microsoft.com/vs/older-downloads/)**
 
-    -   Each version of Maya is native to a specific version of Visual Studio.  Plug-ins for older versions of Maya can be build with newer version of Visual Studio, if corresponding MSVC build tools (also called Platform Toolset) and Windows SDK are installed.  These can be selected under **Individual Components** during install.  The list below shows which versions are required for each.  Alternately, check `\devkitBase\devkit\README.md` in the Maya devkit.
+    -   PSDtoMaya matches Maya's development environment.  Each version of Maya is native to a specific version of Visual Studio.  Plug-ins for older versions of Maya can be build with newer version of Visual Studio, if corresponding MSVC build tools (also called Platform Toolset) and Windows SDK are installed.  These can be selected under **Individual Components** during install.  The list below shows which versions are required for each.  Alternately, check `\devkitBase\devkit\README.md` in the Maya devkit.
         -   Maya 2020:  Built with **VS2017** which is **MSVC v141**, using Windows SDK **10.0.10586** and **Qt 5.15.2**
 
         -   Maya 2022 and 2023:  Built with **VS2019** which **MSVC v142**, using Windows SDK **10.0.18362.0** and **Qt 5.15.2**
@@ -79,12 +79,12 @@ The steps below take you through cloning your own private fork, then compiling a
     
     -   Note that **older Visual Studio versions should be installed before newer versions**.
 
-    -   To create a **PSD to Maya installer**, the plug-in will be built for **all versions** of Maya.  You should install all components above.  Note the VS2022 installer provides all components except *Windows 10 SDK (10.0.10586.0)*, so you may avoid full installs of VS2017 and VS2019 if preferred.
+    -   To create a **PSD to Maya installer**, the plug-in will be built for **all versions** of Maya.  You should install all components above.  Note the VS2022 installer provides all components except *Windows 10 SDK (10.0.10586.0)*, so VS2017 and VS2019 are optional otherwise.
 
 
 ### PSD to Maya
 
-1.  Install every version of Maya which you intend to target. Building the plug-in will require binaries from Maya's `\bin` directory.  If you also want to create an installer package, then **all versions** of Maya must be installed.  As of September 2024, the plug-in supports: 
+1.  Consider which versions of Maya which you intend to target.  If you want to create an installer package, then **all versions** of Maya must be installed.  As of September 2024, the plug-in supports: 
 
     - Maya 2020
     - Maya 2022
@@ -101,51 +101,48 @@ The steps below take you through cloning your own private fork, then compiling a
 
     -   Create subfolders for each Maya version, named like `C:\build\Maya2025`.  These are the devkit root directories for each build.
     
-    -   These root directory paths are **hard-coded** in the project files.  To redirect this, use a search-replace tool, such as Visual Studio's `Edit menu->Find and Replace->Replace in Files (Ctlr+Shift+H)` to iterate through each `.vcxproj` under the `\projects` directory.  Replace each pathname like `C:\build\Maya2025` with another value
+    -   These root directory paths are **hard-coded** in the project file.  To redirect this, open the project file `\projects\psd2m_core\psd2m_core.vcxproj` in a text editor and replace each pathname like `C:\build\Maya2025`.
 
 1.  Populate the devkit directories
-    -   Each devkit zipfile has a base directory named `devkitBase`.  Underneath that are a few others. Copy those subfolders to the respective `C:\build` subfolder.  This should create directories like `C:\build\Maya2025\include`, `C:\build\Maya2025\lib`, etc.
+    -   Each devkit zipfile has a base directory named `devkitBase`.  Underneath are several subfolders. Copy those subfolders to the respective `C:\build` root locations.  This should create directories like `C:\build\Maya2025\include`, `C:\build\Maya2025\lib`, etc.
 
 1. **Patch** each devkit
 
     -   **include** directory, named like `C:\build\Maya2025\include`
     
-        If this contains a Qt zipfile like `qt_6.5.3_vc14-include.zip`, unzip it into here.  Otherwise, look for the zipfile in Maya's installed include directory, named like `C:\Program Files\Autodesk\Maya2025\include\qt_6.5.3_vc14-include.zip`
+        For Maya 2020-2024, this contains a Qt zipfile like `qt_6.5.3_vc14-include.zip`.  Unzip it into here.
+        
+        For Maya 2025, the devkit contains `\devkitBase\Qt.zip` which contains `\Qt\include`. Unzip it here.
 
     -   **lib** directory, named like `C:\build\Maya2025\lib`
     
-        If this does not contain any Qt files, like `Qt5Gui.lib`, then copy `Qt*.lib` from Maya's installed lib directory, named like `C:\Program Files\Autodesk\Maya2025\lib`
+        For Maya 2020-2024, this should already contain the necessary files.
+
+        For Maya 2025, the devkit contains `\devkitBase\Qt.zip` which contains `\Qt\lib`. Unzip it here.
 
     -   **mkspecs** directory, named like `C:\build\Maya2025\mkspecs`
     
-        If this contains a Qt zipfile like `qt_5.15.2_vc14-mkspecs.zip`, unzip it here.  Otherwise, look for a `Qt.zip` file in the devkit root directory `\devkitBase`.  In that file, unzip `Qt\mkspecs` to create the mkspecs directory
+        For Maya 2020-2024, this contains a Qt zipfile like `qt_5.15.2_vc14-mkspecs.zip`.  Unzip it here.
+
+        For Maya 2025, the devkit contains `\devkitBase\Qt.zip` which contains `\Qt\mkspecs`. Unzip it here.
 
     -   **Bin** directory, named like `C:\build\Maya2025\bin`
     
-        **Create** an emtpy directory.
+        For Maya 2020-2024, the devkit contains `\devkitBase\devkit\bin`.  Copy those files here.
 
-1.  Manually populate the contents of each **bin** directory under `C:\build\`, copying the following files from Maya's `\bin` directory, named like `C:\Program Files\Autodesk\Maya2025\bin`
-    -   `moc.exe`
-    -   `qmake.exe`
-    -   `qt.conf`
-    -   `Qt6Core.dll` or `Qt5Core.dll`
-    -   `Qt6Gui.dll` or `Qt5Gui.dll`
-    -   `Qt6Widgets.dll` or `Qt5Widgets.dll`
-    -   `rcc.exe`
-    -   `uic.exe`
-    -   Maya2025 was the first version to switch to Qt6, and lacks `qmake.exe`. This file is instead under `\Qt\bin\` in the Qt.zip in the devkit.
+        For Maya 2025, the devkit contains `\devkitBase\Qt.zip` which contains `\Qt\bin`.  Unzip it here.
 
 1.  From your source folder, open `\projects\PSDto3D.sln` in Visual Studio.  Set the solution configuration to match your Maya version, for example `RelWithDebInfo_Maya2025`.  The prefix indicates a release build with debug symbols.  Generally PSD to Maya should **not** be run in debug mode.  Maya itself runs in release mode and can potentially conflict with a plug-in linked against debug runtimes DLLs.
 
-1.  In the Solution Explorer, right click the `psd2m_maya_plugin` project and select Build.  If all goes well, you now have a Maya plug-in located under the `\Builds\plugin` directory.  It should be named like `\Builds\plugin\RelWithDebInfo_Maya2025\PSDto3D_Maya2025_dev.mll`, where `.mll` indicates a Maya plug-in DLL.
+1.  In the Solution Explorer, right click the `psd2m_core` project and select Build.  If all goes well, you now have a Maya plug-in located under the `\Builds\plugin` directory.  It should be named like `\Builds\plugin\RelWithDebInfo_Maya2025\PSDto3D_Maya2025_dev.mll`, where `.mll` indicates a Maya plug-in DLL.
 
     -   If you have made any code changes, the Maya 2025 version of the plug-in may produce compile errors not present in other versions.  This is because it uses Qt6 which disables the `/permissive` setting, and forces all code to strictly follow the language standards.  Qt6 headers use preprocesor commands to toggle this on, will not compile if toggled off with `/permissive-`.
 
 1.  Copy the plug-in and shelf file to Maya, and patch the shelf file
-    -   Copy the `.mll` to the Maya user plug-ins directory, under your `Documents` folder.  For example, `C:\Users\YourUserName\Documents\maya\2025\plug-ins`.  It may be necessary to manually create the `plug-ins` directory.
-    -   Copy the shelf file `shelf_PSDto3D.mel` from the `\psd2m_maya_plugin\shelf` directory to the Maya user shelves directory.  For example, copy `\psd2m_maya_plugin\shelf\Maya2025\shelf_PSDto3D.mel` to `C:\Users\`**`YourUserName`**`\Documents\maya\2025\prefs\shelves`
-    -   **Patch** the new shelf file from the previous step in a text editor.  Replace the string `PSDto3D_Maya2025_PLUGIN_VER_TOKEN.mll`.  This appears in two places.  Swap in the actual plug-in `.mll` filename, like `PSDto3D_Maya2025_dev.mll`.
-    -   Alternately, you may replace the pathname in the shelf file with the absolute path to the development binary.  Remove the `$shelfDir +` before the path, keeping the escaped `\"` before and after the path.  For example, replace `$shelfDir + \"../../plug-ins/PSDto3D_Maya2025_PLUGIN_VER_TOKEN.mll\"` with `\"C:/`**`YourRepository`**`/Builds/plugin/RelWithDebInfo_Maya2025/PSDto3D_Maya2025_dev.mll\"`.  Be sure to change **all backslashes to forward slashes**, or escape the backslashes as `\\`.  Using the absolute pathname allows you to rebuild the plug-in without copying it again.
+    -   Copy the `.mll` to the Maya user plug-ins directory, under your `Documents` folder, like `C:\Users\YourUserName\Documents\maya\2025\plug-ins`.  It may be necessary to manually create the `plug-ins` directory.
+    -   Copy the shelf file `shelf_PSDto3D.mel` from `\psd2m_core\shelf` to the Maya user shelves folder.  For example, copy `\psd2m_core\shelf\Maya2025\shelf_PSDto3D.mel` to `C:\Users\`**`YourUserName`**`\Documents\maya\2025\prefs\shelves`
+    -   **Patch** the new shelf file from the previous step.  In a text editor, replace the string `PSDto3D_Maya2025_PLUGIN_VER_TOKEN.mll`.  This appears in two places.  Swap in the plug-in `.mll` filename, like `PSDto3D_Maya2025_dev.mll`.
+    -   Alternately, you may replace the pathname in the shelf file with the absolute path to the development binary.  Remove the `$shelfDir +` before the path, keeping the escaped `\"` before and after the path.  For example, replace `$shelfDir + \"../../plug-ins/PSDto3D_Maya2025_PLUGIN_VER_TOKEN.mll\"` with `\"C:/`**`YourRepository`**`/Builds/plugin/RelWithDebInfo_Maya2025/PSDto3D_Maya2025_dev.mll\"`.  Change **all backslashes to forward slashes**, or escape the backslashes as `\\`.  Using the absolute pathname allows you to rebuild the plug-in without copying files again.
 
 1. Launch Maya.  It should now recognize the plug-in, but doesn't load it yet.  There should be a shelf named *PSDto3D*.  Click the first button in this shelf.  This loads the plug-in, and launches the main window.  A new menu named *PSDto3D* appears, which can anternately be used the launch the main window
     -   If the plug-in is located in the Maya user plug-in directory, you can toggle it to load automatically from the Plug-in Manager.  Launch it with `Windows menu->Settings/Preferences->Plug-in Manager`.  Look for the PSD to 3D `.mll` file and check Auto Load.  This will cause the *PSDto3D* menu to appear when Maya launches.
@@ -159,41 +156,41 @@ The steps below take you through cloning your own private fork, then compiling a
 
     -   Create directory `C:\build\fbx`, and unzip the SDK there.  This should create directories `C:\build\fbx\include` and `C:\build\fbx\lib`
 
-    -   This directory location is **hard-coded** in the project file `projects\psd2m_fbx\psd2m_fbx.vcxproj`.  To redirect this, replace the pathname `C:\build\fbx` in the project file.
+    -   This directory location is **hard-coded** in the project file `projects\psd2m_fbx\psd2m_fbx.vcxproj`.  To redirect this, open the project file in a text editor and replace the pathname `C:\build\fbx`.
 
 1.  Configure Qt 5.15.2
 
     -   Create directory `C:\build\qt5`
 
-    -   This directory location is **hard-coded** in the project file `projects\psd2m_fbx\psd2m_fbx.vcxproj`.  To redirect this, replace the pathname `C:\build\qt5` in the project files.
+    -   This directory location is **hard-coded** in the project file `projects\psd2m_fbx\psd2m_fbx.vcxproj`.  To redirect this, open the project file in a text editor and replace the pathname `C:\build\qt5`.
 
     -   **OPTION 1**:  Build Qt following the instructions in **Building Qt** below
 
-    -   **OPTION 2**:  Copy files from a Maya devkit.  **PSD to FBX** is tested with Qt 5.15.2.0 and VS2019, as used by Maya 2022-2023.  Start by creating `C:\build\qt5`, and populate with identical contents to a configured devkit folder, as explained under **PSD to Maya**.  Then, create directory `C:\build\qt5\plugins` and copy the folders `\plugins\platforms` and `\plugins\imageformats` there, from Maya's root directory.  You should have `C:\build\qt5\plugins\platforms\qwindows.dll` and others.  
+    -   **OPTION 2**:  Copy files from an installed copy of Maya, and its devkit.  PSD to FBX is tested with Qt 5.15.2.0 and VS2019, as used by Maya 2022-2023.  Start by creating `C:\build\qt5`, and populate with identical contents to a configured devkit folder, as explained under **PSD to Maya**.  Then, create directory `C:\build\qt5\plugins` and copy the folders `\plugins\platforms` and `\plugins\imageformats` from Maya's root directory.  You should have `C:\build\qt5\plugins\platforms\qwindows.dll` and others.  
 
 1.  From your source folder, open `\projects\PSDto3D.sln` in Visual Studio.  Set the solution configuration to `RelWithDebInfo_FBX`.  The prefix indicates a release build with debug symbols, which improves performance compared to a full debug build.  However, debugging may be hampered as optimizations are enabled, with some variables optimized away.  You may instead use `RelUnoptimized_FBX`.
 
-1.  In the Solution Explorer, right click the `psd2m_fbx` project and select Build.  If all goes well, you now have a **PSD to FBX** standalone app named `\Builds\plugin\RelWithDebInfo_FBX\PSDto3D_FBX_dev.exe`.  It's ready to run!
+1.  In the Solution Explorer, right click the `psd2m_fbx` project and select Build.  If all goes well, you now have a PSD to FBX standalone app named `\Builds\plugin\RelWithDebInfo_FBX\PSDto3D_FBX_dev.exe`.  It's ready to run!
 
 1.  You may use **other versions of Visual Studio**, if you modify the build settings, and if you have Qt built with the same version.  The FBX SDK is available for VS2022, VS2019 and VS2017.  You must configure the *Platform Toolset* and *Windows SDK Version* project settings to match the FBX SDK native compiler version.
     
-    -   For example, to use the FBX SDK with Qt5 for Visual Studio 2019, the binaries in `C:\build\qt5` must be build with VS2019.  Then, in both the `psd2m_fbx` and `psd2m_maya_plugin` project settings, change *Platform Toolset* to `Visual Studio 2019 (v142)` and *Windows SDK Version* to `10.0.18362.0`.  Then change the Solution Configuration so each other project uses the *VS2019* variant.
+    -   For example, to use the FBX SDK for Visual Studio 2022 with Qt6, the binaries in `C:\build\qt6` must be built with VS2022.  Then, in both the `psd2m_fbx` and `psd2m_core` project settings, change *Platform Toolset* to `Visual Studio 2022 (v142)` and *Windows SDK Version* to `10.0.22621.0`.  Then change the Solution Configuration so each other project uses the *VS2022* variant.  Use a text editor to change `C:\build\qt5` to `C:\build\qt6` in project files `psd2m_core.vcxproj` and `psd2m_fbx.vcxproj`.
 
 
 ### Installers
 
-1.  Installers are produced by using [Inno Setup](https://jrsoftware.org/isinfo.php).  You don't need to download this software, because a lightweight deployment is already included in the source repository.  Installer builds are performed using batch files located in `\psd2m_installer`.  The batches run all the builds needed, patch resources files with version numbers, invoke InnoSetup, and zip up the results.
+1.  Installers are produced by using [Inno Setup](https://jrsoftware.org/isinfo.php).  You don't need to download this software, because a lightweight deployment is already included in the source repository.  Installer builds are performed using batch files located in `\psd2m_installer`.  The batches run all the builds needed, patch resources files with version numbers, invoke InnoSetup, and zip the results.
 
 1.  To run any build, first delete or move the contents of the `\Builds` folder.  The folder should be completely empty before any installer build.
 
-1.  Note **if a build script is cancelled** before completing, there will be lingering changes in `\psd2m_maya_plugin\src\psd2m_maya_plugin.rc`.  The build script patches this file with version information, then restores the changes after the build.  But if the batch is interrupted, changes are not restored.  Revert such changes before making a commit.
+1.  Note **if a build script is cancelled** before completing, there will be lingering changes in `\psd2m_core\src\psd2m_core.rc`.  The build script patches this file with version information, then restores the changes after the build.  But if the batch is interrupted, changes are not restored.  Revert such changes before making a commit.
 
 1.  To build **PSD to Maya**:
-    -   Open the build script `\psd2m_installer\build_installer_maya.bat` in a text editor.  Patch the values set for `BUILD_VER`, `PLUGIN_VER_SHORT`, `PLUGIN_VER_BASE` and `PLUGIN_YEAR` to reflect the current build and version number.
+    -   (*Optional*) Open the build script `\psd2m_installer\build_installer_maya.bat` in a text editor.  Patch the values set for `BUILD_VER`, `PLUGIN_VER_SHORT`, `PLUGIN_VER_BASE` and `PLUGIN_YEAR` to reflect the current build and version number.
     -   Open the *x64 Native Tools Command Prompt for VS 2022*, navigate to `\psd2m_installer`, and run `build_installer_maya.bat`.
 
 1.  To build **PSD to FBX**:
-    -   Open the build script `\psd2m_installer\build_installer_fbx.bat` in a text editor.  Patch the values set for `BUILD_VER`, `PLUGIN_VER_SHORT`, `PLUGIN_VER_BASE` and `PLUGIN_YEAR` to reflect the current build and version number.
+    -   (*Optional*) Open the build script `\psd2m_installer\build_installer_fbx.bat` in a text editor.  Patch the values set for `BUILD_VER`, `PLUGIN_VER_SHORT`, `PLUGIN_VER_BASE` and `PLUGIN_YEAR` to reflect the current build and version number.
     -   Open the *x64 Native Tools Command Prompt for VS 2019*, navigate to `\psd2m_installer`, and run `build_installer_fbx.bat`.
 
 1.  Output is located in `\Builds\installer`.  The binary deployment is under `\stage_full`, while the installer executable is under `\installers`.  There is also a zipfile with both of these for convenience.  Note the zipfile does not include source code, only binaries.
@@ -237,7 +234,7 @@ The steps below take you through cloning your own private fork, then compiling a
     jom install
     ```
 
-1. Qt version 6.5.3 is is not fully tested with PSDtoFBX, but is supported by PSDtoMaya for Maya 2025, using the VS2022 build configuration.  To preview with PSDtoFBX:
+1. Qt6 version 6.5.3 is is not fully tested with PSDtoFBX, but is supported by PSDtoMaya for Maya 2025, using the VS2022 build configuration.  To preview with PSDtoFBX:
     -   Run the Visual Studio Installer for VS2022 and select *C++ ATL for latest v143 build tools (x86 x x64)*  under Individual Components.  This resolves a build error with *atlbase.h* when building Qt6 from source.
     -   Download and unzip [Qt 6.5.3](https://download.qt.io/official_releases/qt/6.5/6.5.3/single/), and build from the *x64 Native Tools Command Prompt for VS 2022*.
     -   Update the PSDto3D project settings and Solution Configuration, setting *Windows SDK Version* to *10.0.22621.0* and *Platform Toolkit* to *Visual Studio 2022 (v143)*.

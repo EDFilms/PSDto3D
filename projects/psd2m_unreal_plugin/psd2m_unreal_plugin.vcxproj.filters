@@ -21,36 +21,36 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\dllmain.cpp">
+    <ClCompile Include="..\..\psd2m_core\src\unreal\dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealmain.cpp">
+    <ClCompile Include="..\..\psd2m_core\src\unreal\unrealmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginCommands.cpp">
+    <ClCompile Include="..\..\psd2m_core\src\unreal\unrealEditorPluginCommands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPlugin.cpp">
+    <ClCompile Include="..\..\psd2m_core\src\unreal\unrealEditorPlugin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginStyle.cpp">
+    <ClCompile Include="..\..\psd2m_core\src\unreal\unrealEditorPluginStyle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginCommands.h">
+    <ClInclude Include="..\..\psd2m_core\src\unreal\unrealEditorPluginCommands.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPlugin.h">
+    <ClInclude Include="..\..\psd2m_core\src\unreal\unrealEditorPlugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginStyle.h">
+    <ClInclude Include="..\..\psd2m_core\src\unreal\unrealEditorPluginStyle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginFlags.h">
+    <ClInclude Include="..\..\psd2m_core\src\unreal\unrealEditorPluginFlags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealmain.h">
+    <ClInclude Include="..\..\psd2m_core\src\unreal\unrealmain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -58,7 +58,7 @@
       <PreprocessorDefinitions>PSDTO3D_STANDALONE_VERSION;NDEBUG;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS=1;_WINDLL;_DISABLE_EXTENDED_ALIGNED_STORAGE;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\psd2m_maya_plugin\src;..\..\psd2m_mesh_generator\src;..\..\psd2m_util\src;..\..\psd2m_psd_reader\src;$(FbxDir)\include;$(QtDir)\include\;$(QtDir)\include\QtWidgets;$(QtDir)\include\QtGui;$(QtDir)\include\QtCore</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\psd2m_core\src;..\..\psd2m_mesh_generator\src;..\..\psd2m_util\src;..\..\psd2m_psd_reader\src;$(FbxDir)\include;$(QtDir)\include\;$(QtDir)\include\QtWidgets;$(QtDir)\include\QtGui;$(QtDir)\include\QtCore</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -107,7 +107,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\psd2m_maya_plugin\src\deps_custom_build">
+    <CustomBuild Include="..\..\psd2m_core\src\deps_custom_build">
       <Message>Copying dependencies...</Message>
       <Outputs>$(OutDir)\QtCore.dll</Outputs>
       <ExcludedFromBuild>false</ExcludedFromBuild>
@@ -117,8 +117,8 @@ mkdir $(OutDir)\docs
 mkdir $(OutDir)\icons
 mkdir $(OutDir)\imageformats
 mkdir $(OutDir)\platforms
-xcopy ..\..\psd2m_maya_plugin\docs\*.url $(OutDir)\docs /E /Y
-xcopy ..\..\psd2m_maya_plugin\icons\*.ico $(OutDir)\icons /E /Y
+xcopy ..\..\psd2m_core\docs\*.url $(OutDir)\docs /E /Y
+xcopy ..\..\psd2m_core\icons\*.ico $(OutDir)\icons /E /Y
 xcopy $(QtDir)\bin\libGLESv?.dll $(OutDir) /E /Y
 xcopy $(QtDir)\bin\Qt?Core.dll $(OutDir) /E /Y
 xcopy $(QtDir)\bin\Qt?Gui.dll $(OutDir) /E /Y
@@ -136,24 +136,24 @@ xcopy $(QtDir)\plugins\platforms\qwindows.dll $(OutDir)\platforms /E /Y
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\fbx\FbxMain.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\fbx\FbxCommon.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\fbx\FbxMain.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\fbx\FbxCommon.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\fbx\FbxCommon.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\resources\resource.h" />
+    <ClInclude Include="..\..\psd2m_core\src\fbx\FbxCommon.h" />
+    <ClInclude Include="..\..\psd2m_core\src\resources\resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\psd2m_maya_plugin\src\resources\psd2m_fbx.rc" />
+    <ResourceCompile Include="..\..\psd2m_core\src\resources\psd2m_fbx.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\psd2m_maya_plugin\icons\PSD to 3D Icons.ico" />
-    <Image Include="..\..\psd2m_maya_plugin\icons\PSD to FBX Icons.ico" />
-    <Image Include="..\..\psd2m_maya_plugin\icons\PSDto3D_Logo_16px.png" />
-    <Image Include="..\..\psd2m_maya_plugin\icons\PSDto3D_Logo_24px.png" />
-    <Image Include="..\..\psd2m_maya_plugin\icons\PSDto3D_Logo_256px.png" />
-    <Image Include="..\..\psd2m_maya_plugin\icons\PSDto3D_Logo_32px.png" />
-    <Image Include="..\..\psd2m_maya_plugin\icons\PSDto3D_Logo_48px.png" />
+    <Image Include="..\..\psd2m_core\icons\PSD to 3D Icons.ico" />
+    <Image Include="..\..\psd2m_core\icons\PSD to FBX Icons.ico" />
+    <Image Include="..\..\psd2m_core\icons\PSDto3D_Logo_16px.png" />
+    <Image Include="..\..\psd2m_core\icons\PSDto3D_Logo_24px.png" />
+    <Image Include="..\..\psd2m_core\icons\PSDto3D_Logo_256px.png" />
+    <Image Include="..\..\psd2m_core\icons\PSDto3D_Logo_32px.png" />
+    <Image Include="..\..\psd2m_core\icons\PSDto3D_Logo_48px.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

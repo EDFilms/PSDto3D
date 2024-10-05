@@ -16,8 +16,8 @@
 #include "DelaunayAlgo.h"
 #include "delaunayAlgo.h"
 #include "util\utils.h"
-#include "..\..\..\..\psd2m_maya_plugin\src\json\JSONValue.h" // TODO: Move JSON support to Util project
-#include "..\..\..\..\psd2m_maya_plugin\src\json\JSON.h"
+#include "..\..\..\..\psd2m_core\src\json\JSONValue.h" // TODO: Move JSON support to Util project
+#include "..\..\..\..\psd2m_core\src\json\JSON.h"
 
 #include <vector>
 #include <queue>

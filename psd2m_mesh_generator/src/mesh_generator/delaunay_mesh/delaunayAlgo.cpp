@@ -16,8 +16,8 @@
 #include "delaunayAlgo.h"
 #include "util/utils.h"
 #include "util/helpers.h"
-#include "..\..\..\..\psd2m_maya_plugin\src\json\JSONValue.h" // TODO: Move JSON support to Util project
-#include "..\..\..\..\psd2m_maya_plugin\src\json\JSON.h"
+#include "..\..\..\..\psd2m_core\src\json\JSONValue.h" // TODO: Move JSON support to Util project
+#include "..\..\..\..\psd2m_core\src\json\JSON.h"
 
 #include <vector>
 #include <queue>
@@ -988,7 +988,7 @@ namespace mesh_generator
 #define PNG_STDIO_SUPPORTED
 #define PNG_INFO_IMAGE_SUPPORTED
 #define PNG_WRITE_SUPPORTED
-#include "..\..\..\..\psd2m_maya_plugin\include\png.h" // TODO: Delete this, testing only
+#include "..\..\..\..\psd2m_core\include\png.h" // TODO: Delete this, testing only
 // Libpng helpers
 extern const char* libpng_user_error_ptr;
 void libpng_user_error_fn(png_structp png_ptr,png_const_charp error_msg);
