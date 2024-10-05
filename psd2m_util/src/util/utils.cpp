@@ -133,7 +133,7 @@ namespace util
 
 	void NameToNameMap::InitDstName( const char* str )
 	{
-		int dstIndex = dstNameMap->size();
+		int dstIndex = (int)dstNameMap->size();
 		int srcIndex = srcNameMap->AddDst( str, dstIndex );
 		dstNameMap->AddSrc( str, srcIndex );
 	}

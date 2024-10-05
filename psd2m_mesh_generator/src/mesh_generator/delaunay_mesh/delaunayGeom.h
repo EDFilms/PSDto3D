@@ -64,7 +64,7 @@ struct Line2F
 		end = b;
 		dir.x = (b.x-a.x);
 		dir.y = (b.y-a.y);
-		length = sqrt( (dir.x*dir.x) + (dir.y*dir.y) );
+		length = (float)sqrt( (dir.x*dir.x) + (dir.y*dir.y) );
 		dir.x = (length<=0.000001? 1.0f : (dir.x/length));
 		dir.y = (length<=0.000001? 0.0f : (dir.y/length));
 	}

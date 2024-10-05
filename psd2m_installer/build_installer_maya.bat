@@ -58,16 +58,15 @@ devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2020 /project psd2m_m
 copy ..\builds\plugin\RelWithDebInfo_Maya2020\PSDto3D_Maya2020_dev.mll ..\builds\installer\stage_full\maya\2020\PSDto3D_Maya2020_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2019_Full
-mkdir ..\builds\installer\stage_full\maya\2019\
-devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2019 /project psd2m_maya_plugin
-devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2019 /project psd2m_maya_plugin
-copy ..\builds\plugin\RelWithDebInfo_Maya2019\PSDto3D_Maya2019_dev.mll ..\builds\installer\stage_full\maya\2019\PSDto3D_Maya2019_%PLUGIN_VER%.mll
+@rem mkdir ..\builds\installer\stage_full\maya\2019\
+@rem devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2019 /project psd2m_maya_plugin
+@rem devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2019 /project psd2m_maya_plugin
+@rem copy ..\builds\plugin\RelWithDebInfo_Maya2019\PSDto3D_Maya2019_dev.mll ..\builds\installer\stage_full\maya\2019\PSDto3D_Maya2019_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2018_Full
-mkdir ..\builds\installer\stage_full\maya\2018\
-devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2018 /project psd2m_maya_plugin
-devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2018 /project psd2m_maya_plugin
-copy ..\builds\plugin\RelWithDebInfo_Maya2018\PSDto3D_Maya2018_dev.mll ..\builds\installer\stage_full\maya\2018\PSDto3D_Maya2018_%PLUGIN_VER%.mll
+@rem devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_Maya2018 /project psd2m_maya_plugin
+@rem devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Maya2018 /project psd2m_maya_plugin
+@rem copy ..\builds\plugin\RelWithDebInfo_Maya2018\PSDto3D_Maya2018_dev.mll ..\builds\installer\stage_full\maya\2018\PSDto3D_Maya2018_%PLUGIN_VER%.mll
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_2017_Full
 @rem mkdir ..\builds\installer\stage_full\maya\2017\
@@ -82,8 +81,8 @@ findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_maya_plugin\shelf\Maya2024\sh
 findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_maya_plugin\shelf\Maya2023\shelf_PSDto3D.mel ..\builds\installer\stage_full\maya\2023\shelf_PSDto3D.mel
 findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_maya_plugin\shelf\Maya2022\shelf_PSDto3D.mel ..\builds\installer\stage_full\maya\2022\shelf_PSDto3D.mel
 findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_maya_plugin\shelf\Maya2020\shelf_PSDto3D.mel ..\builds\installer\stage_full\maya\2020\shelf_PSDto3D.mel
-findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_maya_plugin\shelf\Maya2019\shelf_PSDto3D.mel ..\builds\installer\stage_full\maya\2019\shelf_PSDto3D.mel
-findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_maya_plugin\shelf\Maya2018\shelf_PSDto3D.mel ..\builds\installer\stage_full\maya\2018\shelf_PSDto3D.mel
+@rem findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_maya_plugin\shelf\Maya2019\shelf_PSDto3D.mel ..\builds\installer\stage_full\maya\2019\shelf_PSDto3D.mel
+@rem findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_maya_plugin\shelf\Maya2018\shelf_PSDto3D.mel ..\builds\installer\stage_full\maya\2018\shelf_PSDto3D.mel
 @rem findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_maya_plugin\shelf\Maya2017\shelf_PSDto3D.mel ..\builds\installer\stage_full\maya\2017\shelf_PSDto3D.mel
 
 mkdir ..\builds\installer\stage_full\maya\icons

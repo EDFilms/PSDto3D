@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="RelUnoptimized|x64">
-      <Configuration>RelUnoptimized</Configuration>
+    <ProjectConfiguration Include="RelUnoptimized_FBX|x64">
+      <Configuration>RelUnoptimized_FBX</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="RelWithDebInfo|x64">
-      <Configuration>RelWithDebInfo</Configuration>
+    <ProjectConfiguration Include="RelWithDebInfo_FBX|x64">
+      <Configuration>RelWithDebInfo_FBX</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\fbx\FbxMain.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\fbx\FbxCommon.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\fbx\FbxCommon.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\resources\resource.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -24,25 +16,18 @@
     <Keyword>Win32Proj</Keyword>
     <Platform>x64</Platform>
     <ProjectName>psd2m_fbx</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelWithDebInfo_FBX'">10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelUnoptimized_FBX'">10.0.18362.0</WindowsTargetPlatformVersion>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
-    <QtDir>..\..\..\Qt\src\qtbase</QtDir>
-    <FbxDir>..\..\..\FBX</FbxDir>
-    <ConfigurationLongName Condition="'$(Configuration)'=='RelWithDebInfo'">RelWithDebInfo_Standalone</ConfigurationLongName>
-    <ConfigurationLongName Condition="'$(Configuration)'=='RelUnoptimized'">RelUnoptimized_Standalone</ConfigurationLongName>
+    <QtDir>C:\build\qt5</QtDir>
+    <FbxDir>C:\build\fbx</FbxDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+  <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_FBX|x64'">v142</PlatformToolset>
+    <PlatformToolset Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">v142</PlatformToolset>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -51,38 +36,24 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+  <PropertyGroup>
     <LinkIncremental>true</LinkIncremental>
     <TargetName>PSDto3D_FBX_dev</TargetName>
-    <OutDir>..\..\Builds\plugin\$(ConfigurationLongName)\</OutDir>
+    <OutDir>..\..\Builds\plugin\$(Configuration)\</OutDir>
     <IntDir>..\..\Builds\int\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
     <WarningsNotAsErrors>612,618</WarningsNotAsErrors>
     <GenerateManifest>true</GenerateManifest>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'">
-    <LinkIncremental>true</LinkIncremental>
-    <TargetName>PSDto3D_FBX_dev</TargetName>
-    <OutDir>..\..\Builds\plugin\$(ConfigurationLongName)\</OutDir>
-    <IntDir>..\..\Builds\int\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
-    <WarningsNotAsErrors>612,618</WarningsNotAsErrors>
-    <GenerateManifest>true</GenerateManifest>
-    <TargetExt>.exe</TargetExt>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+  <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>PSDTO3D_STANDALONE_VERSION;NDEBUG;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS=1;_WINDLL;_DISABLE_EXTENDED_ALIGNED_STORAGE;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
@@ -96,15 +67,21 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <TreatWChar_tAsBuiltInType />
       <AdditionalOptions>/c /Gw /Zm1000 /source-charset:utf-8 /execution-charset:utf-8 /Ot /GF /bigobj /Zo /Zp8 /wd4819 /we4456 /we4458 /we4459  /wd4463 /wd4838 /TP /GR-</AdditionalOptions>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <CreateHotpatchableImage>false</CreateHotpatchableImage>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <ProgramDataBaseFileName>..\..\Builds\lib\$(Configuration)\$(Platform)\$(ProjectName).pdb</ProgramDataBaseFileName>
       <AssemblerListingLocation>..\..\Builds\lib\$(Configuration)\$(Platform)</AssemblerListingLocation>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_FBX|x64'">MaxSpeed</Optimization>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">Disabled</Optimization>
+      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_FBX|x64'">AnySuitable</InlineFunctionExpansion>
+      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">Disabled</InlineFunctionExpansion>
+      <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_FBX|x64'">true</IntrinsicFunctions>
+      <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">false</IntrinsicFunctions>
+      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_FBX|x64'">Speed</FavorSizeOrSpeed>
+      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">Neither</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -112,64 +89,14 @@
       <OptimizeReferences>false</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>true</EnableUAC>
-      <AdditionalLibraryDirectories>$(FbxDir)\lib\vs2017\x64\release;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(FbxDir)\lib\x64\release;</AdditionalLibraryDirectories>
       <AdditionalDependencies>libfbxsdk-mt.lib;libxml2-mt.lib;zlib-mt.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <SupportUnloadOfDelayLoadedDLL>true</SupportUnloadOfDelayLoadedDLL>
       <FixedBaseAddress>false</FixedBaseAddress>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-    </Link>
-    <Manifest>
-      <AdditionalManifestFiles>
-      </AdditionalManifestFiles>
-    </Manifest>
-    <Manifest>
-      <EnableDpiAwareness>true</EnableDpiAwareness>
-    </Manifest>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'">
-    <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>PSDTO3D_STANDALONE_VERSION;NDEBUG;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS=1;_WINDLL;_DISABLE_EXTENDED_ALIGNED_STORAGE;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\psd2m_maya_plugin\src;..\..\psd2m_mesh_generator\src;..\..\psd2m_util\src;..\..\psd2m_psd_reader\src;$(FbxDir)\include;$(QtDir)\include\;$(QtDir)\include\QtWidgets;$(QtDir)\include\QtGui;$(QtDir)\include\QtCore</AdditionalIncludeDirectories>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <CompileAs>CompileAsCpp</CompileAs>
-      <FloatingPointModel>Fast</FloatingPointModel>
-      <TreatWChar_tAsBuiltInType>
-      </TreatWChar_tAsBuiltInType>
-      <AdditionalOptions>/c /Gw /Zm1000 /source-charset:utf-8 /execution-charset:utf-8 /Ot /GF /bigobj /Zo /Zp8 /wd4819 /we4456 /we4458 /we4459  /wd4463 /wd4838 /TP /GR-</AdditionalOptions>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <CreateHotpatchableImage>false</CreateHotpatchableImage>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <OmitFramePointers>false</OmitFramePointers>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <ProgramDataBaseFileName>..\..\Builds\lib\$(Configuration)\$(Platform)\$(ProjectName).pdb</ProgramDataBaseFileName>
-      <AssemblerListingLocation>..\..\Builds\lib\$(Configuration)\$(Platform)</AssemblerListingLocation>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>false</EnableCOMDATFolding>
-      <OptimizeReferences>false</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableUAC>true</EnableUAC>
-      <AdditionalLibraryDirectories>$(FbxDir)\lib\vs2017\x64\release;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libfbxsdk-mt.lib;libxml2-mt.lib;zlib-mt.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <SupportUnloadOfDelayLoadedDLL>true</SupportUnloadOfDelayLoadedDLL>
-      <FixedBaseAddress>false</FixedBaseAddress>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_FBX|x64'">/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>
@@ -188,27 +115,33 @@
       <Command>
 mkdir $(OutDir)\docs
 mkdir $(OutDir)\icons
-xcopy ..\..\docs\*.url $(OutDir)\docs /E /Y
-xcopy ..\..\psd2m_maya_plugin\icons\*.ico $(OutDir)\icons /E /Y
-xcopy ..\..\deps\*.* $(OutDir) /E /Y
-      </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'">
-mkdir $(OutDir)\docs
-mkdir $(OutDir)\icons
+mkdir $(OutDir)\imageformats
+mkdir $(OutDir)\platforms
 xcopy ..\..\psd2m_maya_plugin\docs\*.url $(OutDir)\docs /E /Y
 xcopy ..\..\psd2m_maya_plugin\icons\*.ico $(OutDir)\icons /E /Y
-xcopy ..\..\psd2m_maya_plugin\deps\*.* $(OutDir) /E /Y
+xcopy $(QtDir)\bin\libGLESv?.dll $(OutDir) /E /Y
+xcopy $(QtDir)\bin\Qt?Core.dll $(OutDir) /E /Y
+xcopy $(QtDir)\bin\Qt?Gui.dll $(OutDir) /E /Y
+xcopy $(QtDir)\bin\Qt?Widgets.dll $(OutDir) /E /Y
+xcopy $(QtDir)\plugins\imageformats\qgif.dll $(OutDir)\imageformats /E /Y
+xcopy $(QtDir)\plugins\imageformats\qico.dll $(OutDir)\imageformats /E /Y
+xcopy $(QtDir)\plugins\imageformats\qjpeg.dll $(OutDir)\imageformats /E /Y
+xcopy $(QtDir)\plugins\platforms\qdirect2d.dll $(OutDir)\platforms /E /Y
+xcopy $(QtDir)\plugins\platforms\qminimal.dll $(OutDir)\platforms /E /Y
+xcopy $(QtDir)\plugins\platforms\qoffscreen.dll $(OutDir)\platforms /E /Y
+xcopy $(QtDir)\plugins\platforms\qwindows.dll $(OutDir)\platforms /E /Y
       </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
-mkdir $(OutDir)\docs
-mkdir $(OutDir)\icons
-xcopy ..\..\psd2m_maya_plugin\docs\*.url $(OutDir)\docs /E /Y
-xcopy ..\..\psd2m_maya_plugin\icons\*.ico $(OutDir)\icons /E /Y
-xcopy ..\..\psd2m_maya_plugin\deps\*.* $(OutDir) /E /Y
-      </Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'">$(OutDir)\Qt5Core.dll</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(OutDir)\Qt5Core.dll</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_FBX|x64'">$(OutDir)\Qt5Core.dll</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">$(OutDir)\Qt5Core.dll</Outputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\psd2m_maya_plugin\src\fbx\FbxMain.cpp" />
+    <ClCompile Include="..\..\psd2m_maya_plugin\src\fbx\FbxCommon.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\psd2m_maya_plugin\src\fbx\FbxCommon.h" />
+    <ClInclude Include="..\..\psd2m_maya_plugin\src\resources\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\psd2m_maya_plugin\src\resources\psd2m_fbx.rc" />

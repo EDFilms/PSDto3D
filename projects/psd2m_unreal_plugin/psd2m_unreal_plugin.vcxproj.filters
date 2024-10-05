@@ -38,32 +38,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\psd2m_maya_plugin\deps\Qt5Widgets.dll">
-      <Filter>Dependencies</Filter>
-    </None>
-    <None Include="..\..\psd2m_maya_plugin\deps\Qt5Core.dll">
-      <Filter>Dependencies</Filter>
-    </None>
-    <None Include="..\..\psd2m_maya_plugin\deps\Qt5Gui.dll">
-      <Filter>Dependencies</Filter>
-    </None>
-    <None Include="..\..\psd2m_maya_plugin\deps\platforms\qoffscreen.dll">
-      <Filter>Dependencies\platforms</Filter>
-    </None>
-    <None Include="..\..\psd2m_maya_plugin\deps\platforms\qwebgl.dll">
-      <Filter>Dependencies\platforms</Filter>
-    </None>
-    <None Include="..\..\psd2m_maya_plugin\deps\platforms\qwindows.dll">
-      <Filter>Dependencies\platforms</Filter>
-    </None>
-    <None Include="..\..\psd2m_maya_plugin\deps\platforms\qdirect2d.dll">
-      <Filter>Dependencies\platforms</Filter>
-    </None>
-    <None Include="..\..\psd2m_maya_plugin\deps\platforms\qminimal.dll">
-      <Filter>Dependencies\platforms</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginCommands.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -10,67 +10,38 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\dllmain.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPlugin.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginCommands.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginStyle.cpp" />
-    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealmain.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPlugin.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginCommands.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginFlags.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginStyle.h" />
-    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealmain.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\psd2m_maya_plugin\deps\platforms\qdirect2d.dll" />
-    <None Include="..\..\psd2m_maya_plugin\deps\platforms\qminimal.dll" />
-    <None Include="..\..\psd2m_maya_plugin\deps\platforms\qoffscreen.dll" />
-    <None Include="..\..\psd2m_maya_plugin\deps\platforms\qwebgl.dll" />
-    <None Include="..\..\psd2m_maya_plugin\deps\platforms\qwindows.dll" />
-    <None Include="..\..\psd2m_maya_plugin\deps\Qt5Core.dll" />
-    <None Include="..\..\psd2m_maya_plugin\deps\Qt5Gui.dll" />
-    <None Include="..\..\psd2m_maya_plugin\deps\Qt5Widgets.dll" />
-  </ItemGroup>
+
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{FD7B6E28-6892-4293-AA4A-EFC2E03B19C5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>psd2munrealplugin</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+
+    <QtDir>C:\build\qt5\qtbase</QtDir>
     <UnrealEngine>$(UnrealDir)\Engine</UnrealEngine>
     <UnrealRuntime>$(UnrealEngine)\Source\Runtime</UnrealRuntime>
     <UnrealIntermediate>$(UnrealEngine)\Intermediate\Build\Win64\UnrealEditor</UnrealIntermediate>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+
+  <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+  <ImportGroup Label="ExtensionSettings"></ImportGroup>
+  <ImportGroup Label="Shared"></ImportGroup>
+
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
+
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <LinkIncremental>true</LinkIncremental>
@@ -85,7 +56,6 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS=1;_WINDLL;_DISABLE_EXTENDED_ALIGNED_STORAGE;PSD2MUNREALPLUGIN_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -104,6 +74,18 @@
       <AssemblerListingLocation>..\..\Builds\lib\$(Configuration)\$(Platform)</AssemblerListingLocation>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <CreateHotpatchableImage>false</CreateHotpatchableImage>
+      <OmitFramePointers>false</OmitFramePointers>
+
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'">Disabled</Optimization>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">MaxSpeed</Optimization>
+      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'">Default</InlineFunctionExpansion>
+      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'">false</IntrinsicFunctions>
+      <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</IntrinsicFunctions>
+      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'">Neither</FavorSizeOrSpeed>
+      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Speed</FavorSizeOrSpeed>
+
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,25 +102,50 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
-    <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <CreateHotpatchableImage>false</CreateHotpatchableImage>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <OmitFramePointers>false</OmitFramePointers>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'">
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <CreateHotpatchableImage>false</CreateHotpatchableImage>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <OmitFramePointers>false</OmitFramePointers>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-    </ClCompile>
-  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <CustomBuild Include="..\..\psd2m_maya_plugin\src\deps_custom_build">
+      <Message>Copying dependencies...</Message>
+      <Outputs>$(OutDir)\Qt5Core.dll</Outputs>
+      <ExcludedFromBuild>false</ExcludedFromBuild>
+      <LinkObjects>false</LinkObjects>
+      <Command>
+mkdir $(OutDir)\icons
+xcopy ..\..\psd2m_maya_plugin\icons\*.ico $(OutDir)\icons /E /Y
+xcopy $(QtDir)\libGLESv?.dll $(OutDir) /E /Y
+xcopy $(QtDir)\Qt?Core.dll $(OutDir) /E /Y
+xcopy $(QtDir)\Qt?Gui.dll $(OutDir) /E /Y
+xcopy $(QtDir)\Qt?Widgets.dll $(OutDir) /E /Y
+xcopy $(QtDir)\plugins\imageformats\qgif.dll $(OutDir)\imageformats /E /Y
+xcopy $(QtDir)\plugins\imageformats\qico.dll $(OutDir)\imageformats /E /Y
+xcopy $(QtDir)\plugins\imageformats\qjpeg.dll $(OutDir)\imageformats /E /Y
+xcopy $(QtDir)\plugins\platforms\qdirect2d.dll $(OutDir)\platforms /E /Y
+xcopy $(QtDir)\plugins\platforms\qminimal.dll $(OutDir)\platforms /E /Y
+xcopy $(QtDir)\plugins\platforms\qoffscreen.dll $(OutDir)\platforms /E /Y
+xcopy $(QtDir)\plugins\platforms\qwindows.dll $(OutDir)\platforms /E /Y
+      </Command>
+
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(OutDir)\Qt5Core.dll</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized|x64'">$(OutDir)\Qt5Core.dll</Outputs>
+
+    </CustomBuild>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\dllmain.cpp" />
+    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPlugin.cpp" />
+    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginCommands.cpp" />
+    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginStyle.cpp" />
+    <ClCompile Include="..\..\psd2m_maya_plugin\src\unreal\unrealmain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPlugin.h" />
+    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginCommands.h" />
+    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginFlags.h" />
+    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealEditorPluginStyle.h" />
+    <ClInclude Include="..\..\psd2m_maya_plugin\src\unreal\unrealmain.h" />
+  </ItemGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

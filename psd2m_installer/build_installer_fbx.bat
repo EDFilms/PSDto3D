@@ -27,7 +27,7 @@ popd
 @echo Build Maya plugin, Pro version ...
 SET _CL_=/DPSDTO3D_STANDALONE /DPSDTO3D_FULL_VERSION /DPSDTO3D_ATLAS_VERSION /O2 /Ob2 /Ot
 
-@rem mkdir ..\builds\plugin\RelWithDebInfo_Standalone
+@rem mkdir ..\builds\plugin\RelWithDebInfo_FBX
 mkdir ..\builds\installer\stage_full\fbx\
 mkdir ..\builds\installer\stage_full\fbx\platforms
 mkdir ..\builds\installer\stage_full\fbx\imageformats
@@ -38,21 +38,21 @@ devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_FBX /project psd2m_maya_plu
 devenv ..\projects\PSDto3D.sln /clean RelWithDebInfo_FBX /project psd2m_fbx
 devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_FBX /project psd2m_maya_plugin
 devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_FBX /project psd2m_fbx
-copy ..\builds\plugin\RelWithDebInfo_Standalone\PSDto3D_FBX_dev.exe ..\builds\installer\stage_full\fbx\PSDtoFBX_edfilms_%PLUGIN_VER%.exe
-copy ..\builds\plugin\RelWithDebInfo_Standalone\PSDto3D_Standalone_dev.dll ..\builds\installer\stage_full\fbx\PSDto3D_Standalone_%PLUGIN_VER%.dll
+copy ..\builds\plugin\RelWithDebInfo_FBX\PSDto3D_FBX_dev.exe ..\builds\installer\stage_full\fbx\PSDtoFBX_edfilms_%PLUGIN_VER%.exe
+copy ..\builds\plugin\RelWithDebInfo_FBX\PSDto3D_Standalone_dev.dll ..\builds\installer\stage_full\fbx\PSDto3D_Standalone_%PLUGIN_VER%.dll
 
 @echo Staging files, FBX version ...
-copy ..\builds\plugin\RelWithDebInfo_Standalone\Qt5Core.dll ..\builds\installer\stage_full\fbx\Qt5Core.dll
-copy ..\builds\plugin\RelWithDebInfo_Standalone\Qt5Gui.dll ..\builds\installer\stage_full\fbx\Qt5Gui.dll
-copy ..\builds\plugin\RelWithDebInfo_Standalone\Qt5Widgets.dll ..\builds\installer\stage_full\fbx\Qt5Widgets.dll
-copy ..\builds\plugin\RelWithDebInfo_Standalone\libGLESv2.dll ..\builds\installer\stage_full\fbx\libGLESv2.dll
-copy ..\builds\plugin\RelWithDebInfo_Standalone\platforms\qdirect2d.dll ..\builds\installer\stage_full\fbx\platforms\qdirect2d.dll
-copy ..\builds\plugin\RelWithDebInfo_Standalone\platforms\qminimal.dll ..\builds\installer\stage_full\fbx\platforms\qminimal.dll
-copy ..\builds\plugin\RelWithDebInfo_Standalone\platforms\qoffscreen.dll ..\builds\installer\stage_full\fbx\platforms\qoffscreen.dll
-copy ..\builds\plugin\RelWithDebInfo_Standalone\platforms\qwindows.dll ..\builds\installer\stage_full\fbx\platforms\qwindows.dll
-copy ..\builds\plugin\RelWithDebInfo_Standalone\imageformats\qgif.dll ..\builds\installer\stage_full\fbx\imageformats\qgif.dll
-copy ..\builds\plugin\RelWithDebInfo_Standalone\imageformats\qico.dll ..\builds\installer\stage_full\fbx\imageformats\qico.dll
-copy ..\builds\plugin\RelWithDebInfo_Standalone\imageformats\qjpeg.dll ..\builds\installer\stage_full\fbx\imageformats\qjpeg.dll
+copy ..\builds\plugin\RelWithDebInfo_FBX\Qt5Core.dll ..\builds\installer\stage_full\fbx\Qt5Core.dll
+copy ..\builds\plugin\RelWithDebInfo_FBX\Qt5Gui.dll ..\builds\installer\stage_full\fbx\Qt5Gui.dll
+copy ..\builds\plugin\RelWithDebInfo_FBX\Qt5Widgets.dll ..\builds\installer\stage_full\fbx\Qt5Widgets.dll
+copy ..\builds\plugin\RelWithDebInfo_FBX\libGLESv2.dll ..\builds\installer\stage_full\fbx\libGLESv2.dll
+copy ..\builds\plugin\RelWithDebInfo_FBX\platforms\qdirect2d.dll ..\builds\installer\stage_full\fbx\platforms\qdirect2d.dll
+copy ..\builds\plugin\RelWithDebInfo_FBX\platforms\qminimal.dll ..\builds\installer\stage_full\fbx\platforms\qminimal.dll
+copy ..\builds\plugin\RelWithDebInfo_FBX\platforms\qoffscreen.dll ..\builds\installer\stage_full\fbx\platforms\qoffscreen.dll
+copy ..\builds\plugin\RelWithDebInfo_FBX\platforms\qwindows.dll ..\builds\installer\stage_full\fbx\platforms\qwindows.dll
+copy ..\builds\plugin\RelWithDebInfo_FBX\imageformats\qgif.dll ..\builds\installer\stage_full\fbx\imageformats\qgif.dll
+copy ..\builds\plugin\RelWithDebInfo_FBX\imageformats\qico.dll ..\builds\installer\stage_full\fbx\imageformats\qico.dll
+copy ..\builds\plugin\RelWithDebInfo_FBX\imageformats\qjpeg.dll ..\builds\installer\stage_full\fbx\imageformats\qjpeg.dll
 copy "..\psd2m_maya_plugin\icons\PSD to 3D Icons.ico" "..\builds\installer\stage_full\fbx\icons\PSD to 3D Icons.ico"
 copy "..\psd2m_maya_plugin\icons\PSD to 3D Icons.ico" ".\TEMP_PSDto3D_INSTALLER.ico"
 copy "..\psd2m_maya_plugin\docs\Online Documentation.url" "..\builds\installer\stage_full\docs\Online Documentation.url"

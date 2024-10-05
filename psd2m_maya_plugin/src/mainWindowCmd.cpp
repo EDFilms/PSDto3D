@@ -36,7 +36,7 @@ using std::cerr;
 typedef unsigned long ULONG; // TODO: Remove this; with older Maya vesions, and with Visual Studio 2017 toolset, Qt headers depend on windows.h or require this
 #include <QString.h>
 #include <QMessageBox>
-#include <QDesktopWidget>
+#include <QScreen>
 #if defined PSDTO3D_MAYA_VERSION
 #include <maya/MFnPlugin.h>
 #include <maya/MGlobal.h>
@@ -56,25 +56,6 @@ typedef unsigned long ULONG; // TODO: Remove this; with older Maya vesions, and 
 // threading variables
 //volatile bool threadApp_running = false;
 //volatile bool threadApp_done = false;
-
-
-// Set output filename depending on Full or Lite version, and depending on Maya version
-#if MAYA_API_VERSION >= 20220000
-#define MAYA_VER_STR "2022"
-#elif MAYA_API_VERSION >= 20200000
-#define MAYA_VER_STR "2020"
-#elif MAYA_API_VERSION >= 20190000
-#define MAYA_VER_STR "2019"
-#elif MAYA_API_VERSION >= 20180000
-#define MAYA_VER_STR "2018"
-#else MAYA_API_VERSION >= 20170000
-#define MAYA_VER_STR "2017"
-#endif
-#ifdef PSDTO3D_FULL_VERSION
-#pragma comment(linker, "/out:../../Builds/plugin/RelWithDebInfo_Maya" MAYA_VER_STR "_Full/PSDto3D_Maya" MAYA_VER_STR "_dev.mll")
-#else
-#pragma comment(linker, "/out:../../Builds/plugin/RelWithDebInfo_Maya" MAYA_VER_STR "_Lite/PSDto3D_Maya" MAYA_VER_STR "_dev.mll")
-#endif
 
 namespace psd_to_3d
 {
@@ -154,8 +135,9 @@ namespace psd_to_3d
 			}
 			if( this->GuiTool!=nullptr )
 			{
-				int primaryScreen = QApplication::desktop()->primaryScreen();
-				QRect screenGeometry = QApplication::desktop()->screenGeometry(primaryScreen);
+				//int primaryScreen = QApplication::desktop()->primaryScreen();
+				//QRect screenGeometry = QApplication::desktop()->screenGeometry(primaryScreen);
+				QSize screenGeometry = QGuiApplication::primaryScreen()->size();
 				int x = (screenGeometry.width()-this->GuiTool->width()) / 2;
 				int y = (screenGeometry.height()-this->GuiTool->height()) / 2;
 				this->GuiTool->move(x, y);
@@ -338,7 +320,10 @@ void threadApp()
 
 	// Support 4k high-dpi monitors, also requires manifest setting,
 	//  Configuration Properties->Manifest Tool->Input and Output->DPI Awarenes: High DPI Aware
+#if QT_VERSION < 0x060000
+	// Qt 5.x only.  In Qt 6.x, High-DPI scaling is always enabled
 	QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling); 
+#endif
 
 	// Create the app
 	if( qtApp == nullptr )

@@ -37,8 +37,8 @@ Name: "custom";   Description: "Custom installation"; Flags: iscustom;
 [Components]
 Name: extCC; Description: Photoshop Creative Cloud Extension; Types: full custom;
 ;Name: mp2017; Description: Maya 2017;   Types: full
-Name: mp2018; Description: Maya 2018;   Types: full
-Name: mp2019; Description: Maya 2019;   Types: full
+;Name: mp2018; Description: Maya 2018;   Types: full
+;Name: mp2019; Description: Maya 2019;   Types: full
 Name: mp2020; Description: Maya 2020;   Types: full
 Name: mp2022; Description: Maya 2022;   Types: full
 Name: mp2023; Description: Maya 2023;   Types: full
@@ -55,15 +55,15 @@ Source: "..\Builds\installer\stage_full\photoshop\*"; DestDir: "{app}\photoshop"
 ;Source: "..\Builds\installer\stage_full\maya\2017\shelf_PSDto3D.mel"; DestDir: "{code:GetDataDir|2017\prefs\shelves}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2017
 ;Source: "..\Builds\installer\stage_full\maya\2017\shelf_PSDto3D.mel"; DestDir: "{app}\maya\2017\prefs\shelves"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2017
 
-Source: "..\Builds\installer\stage_full\maya\2018\PSDto3D_Maya2018_PLUGIN_VER_TOKEN.mll"; DestDir: "{code:GetDataDir|2018\plug-ins}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018;
-Source: "..\Builds\installer\stage_full\maya\2018\PSDto3D_Maya2018_PLUGIN_VER_TOKEN.mll"; DestDir: "{app}\maya\2018\plug-ins"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018;
-Source: "..\Builds\installer\stage_full\maya\2018\shelf_PSDto3D.mel"; DestDir: "{code:GetDataDir|2018\prefs\shelves}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018
-Source: "..\Builds\installer\stage_full\maya\2018\shelf_PSDto3D.mel"; DestDir: "{app}\maya\2018\prefs\shelves"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018
+;Source: "..\Builds\installer\stage_full\maya\2018\PSDto3D_Maya2018_PLUGIN_VER_TOKEN.mll"; DestDir: "{code:GetDataDir|2018\plug-ins}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018;
+;Source: "..\Builds\installer\stage_full\maya\2018\PSDto3D_Maya2018_PLUGIN_VER_TOKEN.mll"; DestDir: "{app}\maya\2018\plug-ins"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018;
+;Source: "..\Builds\installer\stage_full\maya\2018\shelf_PSDto3D.mel"; DestDir: "{code:GetDataDir|2018\prefs\shelves}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018
+;Source: "..\Builds\installer\stage_full\maya\2018\shelf_PSDto3D.mel"; DestDir: "{app}\maya\2018\prefs\shelves"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2018
 
-Source: "..\Builds\installer\stage_full\maya\2019\PSDto3D_Maya2019_PLUGIN_VER_TOKEN.mll"; DestDir: "{code:GetDataDir|2019\plug-ins}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2019
-Source: "..\Builds\installer\stage_full\maya\2019\PSDto3D_Maya2019_PLUGIN_VER_TOKEN.mll"; DestDir: "{app}\maya\2019\plug-ins"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2019
-Source: "..\Builds\installer\stage_full\maya\2019\shelf_PSDto3D.mel"; DestDir: "{code:GetDataDir|2019\prefs\shelves}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2019
-Source: "..\Builds\installer\stage_full\maya\2019\shelf_PSDto3D.mel"; DestDir: "{app}\maya\2019\prefs\shelves"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2019
+;Source: "..\Builds\installer\stage_full\maya\2019\PSDto3D_Maya2019_PLUGIN_VER_TOKEN.mll"; DestDir: "{code:GetDataDir|2019\plug-ins}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2019
+;Source: "..\Builds\installer\stage_full\maya\2019\PSDto3D_Maya2019_PLUGIN_VER_TOKEN.mll"; DestDir: "{app}\maya\2019\plug-ins"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2019
+;Source: "..\Builds\installer\stage_full\maya\2019\shelf_PSDto3D.mel"; DestDir: "{code:GetDataDir|2019\prefs\shelves}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2019
+;Source: "..\Builds\installer\stage_full\maya\2019\shelf_PSDto3D.mel"; DestDir: "{app}\maya\2019\prefs\shelves"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2019
 
 Source: "..\Builds\installer\stage_full\maya\2020\PSDto3D_Maya2020_PLUGIN_VER_TOKEN.mll"; DestDir: "{code:GetDataDir|2020\plug-ins}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2020
 Source: "..\Builds\installer\stage_full\maya\2020\PSDto3D_Maya2020_PLUGIN_VER_TOKEN.mll"; DestDir: "{app}\maya\2020\plug-ins"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: mp2020

@@ -86,9 +86,9 @@ namespace mesh_generator
 	// assumes the interior is always "to the right" as the spline travels
 	bool IsEdgeInterior( Vector2F& p_prev, Vector2F& p_cur, Vector2F& p_next, Vector2F& p_check )
 	{
-		float a_prev = atan2( p_prev.x-p_cur.x, p_prev.y-p_cur.y );
-		float a_next = atan2( p_next.x-p_cur.x, p_next.y-p_cur.y );
-		float a_check = atan2( p_check.x-p_cur.x, p_check.y-p_cur.y );
+		float a_prev = (float)atan2( p_prev.x-p_cur.x, p_prev.y-p_cur.y );
+		float a_next = (float)atan2( p_next.x-p_cur.x, p_next.y-p_cur.y );
+		float a_check = (float)atan2( p_check.x-p_cur.x, p_check.y-p_cur.y );
 
 		a_next = a_next - a_prev;
 		a_check = a_check - a_prev;
@@ -564,7 +564,7 @@ namespace mesh_generator
 		}
 		sx /= c, sy /= c;
 		// solve for z:  sqrt(x^2 + y^2 + z^2)=1 ... square both sides, x^2 + y^2 + z^2 = 1 ... z = sqrt( 1 - (x^2 + y^2))
-		sz = sqrt( 1.0f - ((sx*sx) + (sy*sy)) );
+		sz = (float)sqrt( 1.0f - ((sx*sx) + (sy*sy)) );
 
 		int ix = (int)(127.5f + (127.5f*sx)), iy = (int)(127.5f + (127.5f*sy)), iz = (int)(127.5f + (127.5f*sz));
 		return NormalPix( (BYTE)ix, (BYTE)iy, (BYTE)iz );

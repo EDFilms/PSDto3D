@@ -365,7 +365,7 @@ namespace util
 		inline static Matrix2F Rotation( float degrees )
 		{
 			float rad = (degrees / 360.0f) * (float)TWO_PI;
-			return Matrix2F( cos(rad), -sin(rad), sin(rad), cos(rad), 0.0f, 0.0f );
+			return Matrix2F( (float)cos(rad), (float)-sin(rad), (float)sin(rad), (float)cos(rad), 0.0f, 0.0f );
 		}
 
 		inline static Matrix2F Translation( float x, float y )
