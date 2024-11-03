@@ -14,6 +14,9 @@
 //
 //----------------------------------------------------------------------------------------------
 
+#include "PSDtoUnrealOutput.h"
+
+#if 0 // disabled during code migration
 
 // include before Unreal headers
 #include "unrealEditorPluginFlags.h"
@@ -908,3 +911,5 @@ void PsdToUnrealPluginOutput::GetSaveDialogParams( void* ofnw, const IPluginOutp
 	//ofnw; // unused
 	//params; // unused
 }
+
+#endif // disabled during code migration

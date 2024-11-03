@@ -16,8 +16,8 @@
 
 
 #include "psdReader.h"
-#include "util\utils.h"
-
+#include "util/utils.h"
+#include "util/progressJob.h"
 
 namespace psd_reader
 {

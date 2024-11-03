@@ -17,6 +17,8 @@
 
 #pragma once
 
+#if 0 //disabled during code migration
+
 #include "unrealEditorPluginFlags.h"
 
 #include "IPluginOutput.h"
@@ -130,3 +132,5 @@ protected:
 
 	const char* GetPackageName() { return session_packageName.c_str(); }
 };
+
+#endif //disabled during code migration

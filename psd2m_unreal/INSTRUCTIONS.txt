@@ -1,0 +1,68 @@
+
+PSDtoUnreal Demo
+28 Oct 2024
+
+Tested with Unreal version 5.4.4
+
+Install instructions:
+    -   Ensure you have supported Unreal version installed
+        If you have a different version:
+        From the Epic games launcher -> Library tab -> Yellow "+" button ->
+        Click the dropdown arrow in the icon that appears -> Select desired version -> Click "Install" in the icon
+
+    -   In windows file explorer, from the Unreal Engine install location, open the Unreal Root folder
+        By default the full path will be: C:\Program Files\Epic Games\UE_[Unreal Version]
+
+    -   Copy deployment to [Unreal Root]\Engine\Plugins\Editor\PSDtoUnreal
+
+    -   Ensure the folder structure is correct
+        You should have .dll files locayed in this path:
+        [Unreal Root]\Engine\Plugins\Editor\PSDtoUnreal\Binaries\Win64
+
+    ----- ----- ----- ----- ----- ----- ----- -----
+    - IMPORTANT: Ensure BuildId is correct
+    ----- ----- ----- ----- ----- ----- ----- -----
+    -   Find the correct BuildId number from another plugin, here
+        [Unreal Root]\Engine\Plugins\Editor\PluginBrowser\Binaries\Win64\UnrealEditor.modules
+    -   Open in notepad, and confirm the BuildId value ("23058290" for Unreal 5.1.0, "33043543" for Unreal 5.4.4)
+    -   Ensure that PSDtoUnreal uses a matching BuildId number, here
+        [Unreal Root]\Engine\Plugins\Editor\PSDtoUnreal\Binaries\Win64\UnrealEditor.modules
+		
+    -   Run the Unreal Engine, and open any existing project
+    -   The PSDtoUnreal windows can be launched from the Window menu -> PSDtoUnreal
+
+
+
+
+Build instructions:
+    -   Requires Visual Studio 2022
+    -   Open the "x64 Native Tools Command Prompt"
+	
+    -   To build and deploy only (no development)
+	    -   Open script \psd2m_installer\build_deployment_unreal.bat in text editor
+	    -   Set UNREAL_DIR to the Unreal install root directory (containing the \Engine folder)
+		-   Run script from command line
+		
+		-   Deployment is in \Builds\installer\stage_full\unreal
+	
+    -   To build for development
+	    -   Use scripts \psd2m_unreal\prepare_project.bat and \psd2m_unreal\prepare_solution.bat
+	    -   Open prepare_solution.bat in text editor
+		-   Set UNREAL_DIR to the Unreal install root directory (containing the \Engine folder)
+	    -   Run prepare_project.bat first, then prepare_solution.bat
+	    -   Open HostProject.sln in Visual Studio
+		-   Right-click project "HostProject" -> Set as startup project, click F5 to launch Unreal
+		
+		-   Deployment is in \psd2m_unreal\Plugins\Editor\PSDtoUnreal
+        -   Project uses read-only copies of header files from PSDto3D - do not modify
+            Located under \psd2m_unreal\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary
+            Instead, modify original header files only, then use prepare_project.bat to re-copy
+		
+    -   Unreal working project is in \psd2m_unreal, and .gitignore ensures Unreal intermediate files are not checked in
+
+
+Enjoy!
+
+Michaelson Britt
+Software Developer
+E.D. Films

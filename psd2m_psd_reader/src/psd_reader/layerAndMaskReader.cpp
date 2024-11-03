@@ -16,14 +16,16 @@
 
 #include <string>
 #include <locale>
-
-#include "layerAndMaskReader.h"
-#include "util/utils.h"
-#include "imageResourceReader.h"
 #include <algorithm>
 #include <functional>
-#include "zlib.h"
+
+#include "layerAndMaskReader.h"
+#include "imageResourceReader.h"
 #include "headerReader.h"
+#include "zlib.h"
+#include "util/utils.h"
+#include "util/progressJob.h"
+
 
 using namespace util;
 

@@ -53,6 +53,26 @@ typedef unsigned long ULONG; // TODO: Remove this; with older Maya vesions, and 
 
 #include <windows.h> // for Sleep()
 
+// Helper, Qt search path for plugins
+// Uses the current DLL location as the base directory for /imageformats and /platforms
+void SetQtPluginPath( )
+{
+	static int dummy; // address of this static variable identifies the current DLL
+	HMODULE hModule;
+	if( GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | 
+		GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+		(LPCSTR) &dummy, &hModule) )
+	{
+		// retrieve absolute filename of the DLL and split out the path
+		char path[MAX_PATH], drive[MAX_PATH], dir[MAX_PATH];
+		GetModuleFileName(hModule, path, MAX_PATH);
+		_splitpath_s( path, drive, MAX_PATH, dir, MAX_PATH, nullptr, 0, nullptr, 0 );
+		sprintf_s( path, MAX_PATH, "%s%s", drive, dir );
+		// inform Qt of the base directory
+		QCoreApplication::addLibraryPath(path);
+	}
+}
+
 // threading variables
 //volatile bool threadApp_running = false;
 //volatile bool threadApp_done = false;
@@ -328,6 +348,7 @@ void threadApp()
 	// Create the app
 	if( qtApp == nullptr )
 	{
+		SetQtPluginPath();
 		qtApp = new QApplication(argc,argv);
 //#if defined PSDTO3D_FBX_VERSION
 //		qtApp->setQuitOnLastWindowClosed(true);

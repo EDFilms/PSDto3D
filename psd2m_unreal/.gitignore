@@ -1,0 +1,26 @@
+# ignore ALL Visual Studio user preference files
+*.vcxproj.user
+
+# ignore ALL Visual Studio cache directories
+.vs
+.vsconfig
+
+# ignore these folders specifically
+/Backup
+/Binaries
+/Config
+/Content
+/DerivedDataCache
+/Intermediate
+/Saved
+/Plugins/Editor/PSDtoUnreal/Binaries
+/Plugins/Editor/PSDtoUnreal/Intermediate
+/Plugins/Editor/PSDtoUnreal/Source/ThirdParty/PSDto3DLibrary/Public/PSDto3DLibrary
+
+# ignore these files specifically
+HostProject.sln
+UpgradeLog.htm
+LaunchUnrealEditor.bat
+
+# allow these files specifically
+!/Content/Main.umap

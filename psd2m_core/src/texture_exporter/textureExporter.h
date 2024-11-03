@@ -28,6 +28,7 @@ typedef unsigned long ULONG; // TODO: Remove this; with older Maya vesions, and 
 #include "mayaStub.h"
 #endif
 #include "util/bounds_2D.h"
+#include "util/progressJob.h"
 #include "psd_reader/layerAndMaskReader.h"
 
 namespace psd_to_3d
