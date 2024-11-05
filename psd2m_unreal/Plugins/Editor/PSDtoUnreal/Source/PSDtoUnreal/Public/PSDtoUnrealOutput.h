@@ -1,32 +1,28 @@
-//----------------------------------------------------------------------------------------------
 // ===============================================
-//  Copyright (C) 2020, E.D. Films.
+//  Copyright (C) 2024, E.D. Films.
 //  All Rights Reserved.
 // ===============================================
 //  Unauthorized copying of this file, via any medium is strictly prohibited
 //  Proprietary and confidential
 //
-//  @file unrealMain.h
+//  @file PSDtoUnrealOutput.h
 //  @author Michaelson Britt
-//  @date 06-25-2020
+//  @date 2024-10-16
 //
 //  @section DESCRIPTION
+//  Main PSDtoUnreal module
+//  Interfaces with the PSDto3D core and implements IPluginOutput
+//  Translates meshes and textures from PSDto3D into Unreal entities
 //
 //----------------------------------------------------------------------------------------------
 
 
 #pragma once
 
-#if 0 //disabled during code migration
-
-#include "unrealEditorPluginFlags.h"
-
 #include "IPluginOutput.h"
 
-#include "CoreMinimal.h" // common
-#include "Modules/ModuleManager.h" // common
-
 #include <set>
+#include <string>
 
 // PsdToUnrealPluginOutput
 class UMaterialInterface; // forward declaration
@@ -37,6 +33,11 @@ class PsdToUnrealPluginOutput : public psd_to_3d::IPluginOutput
 {
 public:
 	//static bool outputTextureOpDone; // TODO: Add threadsafety
+
+	PsdToUnrealPluginOutput() : hModule(nullptr) {};
+
+	static PsdToUnrealPluginOutput& GetInstance();
+	void OpenDialog( void* hLibrary ); // HMODULE hLibrary
 
 	struct OutputLayersTask
 	{
@@ -124,6 +125,7 @@ public:
 	virtual void CancelSession( const PsdData& psdData, const IPluginOutputParameters& params ) override;
 	virtual void GetSaveDialogParams( void* ofn, const IPluginOutputParameters& params );
 protected:
+	void* hModule; //HMODULE
 	char session_psdFileName[1024];
 	int session_psdSceneWidth, session_psdSceneHeight;
 	std::string session_packageName;
@@ -132,5 +134,3 @@ protected:
 
 	const char* GetPackageName() { return session_packageName.c_str(); }
 };
-
-#endif //disabled during code migration

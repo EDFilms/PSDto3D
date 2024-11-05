@@ -1,4 +1,19 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// ===============================================
+//  Copyright (C) 2024, E.D. Films.
+//  All Rights Reserved.
+// ===============================================
+//  Unauthorized copying of this file, via any medium is strictly prohibited
+//  Proprietary and confidential
+//
+//  @file PSDtoUnreal.h
+//  @author Michaelson Britt
+//  @date 2024-10-16
+//
+//  @section DESCRIPTION
+//  Entry point module
+//  Loads the PSDto3D core and handles Unreal user actions to launch the UI
+//
+//----------------------------------------------------------------------------------------------
 
 #pragma once
 

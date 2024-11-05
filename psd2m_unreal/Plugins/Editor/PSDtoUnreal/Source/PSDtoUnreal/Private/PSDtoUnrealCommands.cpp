@@ -1,11 +1,11 @@
 // ===============================================
-//  Copyright (C) 2020, E.D. Films.
+//  Copyright (C) 2024, E.D. Films.
 //  All Rights Reserved.
 // ===============================================
 //  Unauthorized copying of this file, via any medium is strictly prohibited
 //  Proprietary and confidential
 //
-//  @file psdToUnrealCommands.h
+//  @file PSDtoUnrealCommands.cpp
 //  @author Michaelson Britt
 //  @date 2024-10-16
 //

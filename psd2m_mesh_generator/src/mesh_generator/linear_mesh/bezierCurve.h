@@ -19,7 +19,6 @@
 
 #include <vector>
 #include "util/vectorialPath.h"
-#include "../curve_mesh/bezier.h"
 
 using namespace util;
 

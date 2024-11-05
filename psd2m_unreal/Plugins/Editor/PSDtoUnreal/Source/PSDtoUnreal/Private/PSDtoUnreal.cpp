@@ -1,4 +1,19 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// ===============================================
+//  Copyright (C) 2024, E.D. Films.
+//  All Rights Reserved.
+// ===============================================
+//  Unauthorized copying of this file, via any medium is strictly prohibited
+//  Proprietary and confidential
+//
+//  @file PSDtoUnreal.cpp
+//  @author Michaelson Britt
+//  @date 2024-10-16
+//
+//  @section DESCRIPTION
+//  Entry point module
+//  Loads the PSDto3D core and handles Unreal user actions to launch the UI
+//
+//----------------------------------------------------------------------------------------------
 
 #include "PSDtoUnreal.h"
 #include "PSDtoUnrealStyle.h"
@@ -9,6 +24,9 @@
 #include "Misc/Paths.h"
 #include "HAL/PlatformProcess.h"
 #include "ToolMenus.h"
+
+// Local includes
+#include "PSDtoUnrealOutput.h"
 
 #include <Windows.h> // for LoadLibrary() and GetProcAddress(); how to support this cross-platform?
 
@@ -81,28 +99,12 @@ void FPSDtoUnrealModule::PluginButtonClicked()
 
 	if (PSDto3DLibraryHandle)
 	{
-		FARPROC lpfProcFunc = NULL;
-		//hLibrary = HMODULE)PSDto3DLibraryHandle;
-		lpfProcFunc = GetProcAddress( (HMODULE)PSDto3DLibraryHandle, "setPluginOutput" );
-		if(lpfProcFunc!=NULL)
-		{
-			void* temp = lpfProcFunc; // to avoid compiler warning about function pointer type conversion
-			t_vfnvp fn_setPluginOutput = (t_vfnvp)temp;
-			// TODO: Implement this
-			//fn_setPluginOutput( &pluginOutput );
-		}
-
-		lpfProcFunc = GetProcAddress( (HMODULE)PSDto3DLibraryHandle, "openPlugin" );
-		if(lpfProcFunc!=NULL)
-		{
-			void* temp = lpfProcFunc; // to avoid compiler warning about function pointer type conversion
-			t_vfni fn_openPlugin = (t_vfni)temp;
-			fn_openPlugin(0);
-		}
+		PsdToUnrealPluginOutput& instance = PsdToUnrealPluginOutput::GetInstance();
+		instance.OpenDialog( PSDto3DLibraryHandle );
 	}
 	else
 	{
-		FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("ThirdPartyLibraryError", "Failed to load PSDto3D Standalone library"));
+		FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("PSDtoUnreal Error", "Failed to load PSDto3D Standalone library"));
 	}
 
 #else // PLATFORM_WINDOWS

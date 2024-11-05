@@ -1,87 +1,66 @@
-//----------------------------------------------------------------------------------------------
 // ===============================================
-//  Copyright (C) 2020, E.D. Films.
+//  Copyright (C) 2024, E.D. Films.
 //  All Rights Reserved.
 // ===============================================
 //  Unauthorized copying of this file, via any medium is strictly prohibited
 //  Proprietary and confidential
 //
-//  @file unrealMain.cpp
+//  @file PSDtoUnrealOutput.cpp
 //  @author Michaelson Britt
-//  @date 04-01-2020
+//  @date 2024-10-16
 //
 //  @section DESCRIPTION
+//  Main PSDtoUnreal module
+//  Interfaces with the PSDto3D core and implements IPluginOutput
+//  Translates meshes and textures from PSDto3D into Unreal entities
 //
 //----------------------------------------------------------------------------------------------
 
 #include "PSDtoUnrealOutput.h"
 
-#if 0 // disabled during code migration
-
-// include before Unreal headers
-#include "unrealEditorPluginFlags.h"
-
-// Header file list, 12 May 2022
-// Unreal version 4.27.2
-
-#include "Interfaces/IPluginManager.h" // for IPluginManager
-
+#include "Windows/WindowsPlatformAtomics.h"
+#include "PackageTools.h"
+#include "EditorReimportHandler.h"
+#include "AssetToolsModule.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "UObject/SavePackage.h"
+#include "StaticMeshAttributes.h"
+#include "Engine/StaticMeshActor.h"
+#include "Factories/MaterialFactoryNew.h"
+#include "Materials/MaterialInstanceConstant.h"
+#include "Materials/MaterialExpressionTextureSample.h"
+#include "Factories/MaterialInstanceConstantFactoryNew.h"
+#include "ObjectTools.h"
 #include "Utils.h"
-#include "ImageUtils.h"
-#include "CanvasTypes.h" // for FImageUtils
-
-#include "PackageTools.h" // for UPackageTools
-
-#include "AssetRegistry/AssetRegistryModule.h" // for FAssetRegistryModule
-
-#include "AssetToolsModule.h" // for AssetToolsModule
-
-#include "Editor.h" // for GEditor
-
-#include "UObject/SavePackage.h" // for FSavePackageArgs
-
-#include "UObject/ConstructorHelpers.h" // for FObjectFinder
-
-#include "Factories/MaterialFactoryNew.h" // for UMaterialFactoryNew
-
-#include "Factories/MaterialInstanceConstantFactoryNew.h" // for UMaterialInstanceConstantFactoryNew
-
-#include "Materials/Material.h" // for UMaterial
-
-#include "Materials/MaterialInstanceConstant.h" // for UMaterialInstanceConstant
-
-#include "Materials/MaterialInstanceDynamic.h" // for UMaterialInstanceDynamic
-
-#include "StaticMeshAttributes.h" // for FStaticMeshAttributes
-
-#include "Engine/StaticMeshActor.h" // for AStaticMeshActor
-
-#include "Async/Async.h" // for AsyncTask
-
-#include "Framework/MultiBox/MultiBoxBuilder.h" // for FToolBarBuilder
-#include "Framework/Commands/UIAction.h"
-
-#include "Widgets/Docking/SDockTab.h" // for ETabRole::NomadTab
-#include "Framework/Docking/TabManager.h" 
-
-#include "LevelEditor.h" // for FLevelEditorModule
-
-#include "Widgets/DeclarativeSyntaxSupport.h" // for SCompoundWidget
-#include "Widgets/SCompoundWidget.h"
-
-#include "Modules/ModuleManager.h" // for FModuleManager
-
-#include "Factories/ReimportTextureFactory.h"
-
-#include "EditorReimportHandler.h" // for FReimportManager
-
-// Include after Unreal headers, because they separately declare many windows values
-#include <Windows.h> // for LoadLibrary() and GetProcAddress(); how to support this cross-platform?
 
 // Local includes
-#include "unrealMain.h"
-#include "unrealEditorPluginFlags.h"
 #include "psd_reader/psdReader.h"
+
+// Includes conflicting with Unreal includes, must be included last
+#include <Windows.h> // for HMODULE
+
+// Helper
+inline void DebugPrint(const TCHAR* format, ...)
+{
+	static const int bufSize = 8192;
+	static TCHAR buf[bufSize + 1];
+	va_list ap;
+	va_start(ap, format);
+	_vstprintf_s(buf, bufSize, format, ap);
+	OutputDebugString(buf);
+	_tprintf(buf);
+	va_end(ap);
+}
+
+class SanitizeUTF8
+{
+public:
+	FTCHARToUTF8 name;
+	SanitizeUTF8( const char* nameRaw )
+	: name( *ObjectTools::SanitizeObjectName(nameRaw) )
+	{}
+	operator const char* () { return name.Get(); }
+};
 
 
 
@@ -90,43 +69,29 @@ typedef void (*t_vfnvp)( void* );
 
 typedef PsdToUnrealPluginOutput::TextureSet TextureSet;
 
+PsdToUnrealPluginOutput& PsdToUnrealPluginOutput::GetInstance()
+{
+	static PsdToUnrealPluginOutput instance;
+	return instance;
+}
 
-PsdToUnrealPluginOutput pluginOutput;
-HMODULE hLibrary = NULL;
-
-void OnPluginButtonClicked()
+void PsdToUnrealPluginOutput::OpenDialog( void* hModule_in )
 {
 
-	if( hLibrary==NULL )
+	if( hModule_in!=NULL )
 	{
-		FString modulePath = FModuleManager::Get().GetModuleFilename("PsdToUnreal");
-		modulePath = FPaths::ConvertRelativePathToFull(modulePath);
-		FString moduleDir, moduleFileName, moduleFileExt;
-		FPaths::Split( modulePath, moduleDir, moduleFileName, moduleFileExt );
-		FString binDir = moduleDir + TEXT("\\");
-		// load the core module PSDto3D_Standalone_dev.dll (this plugin is PSDto3D_Unreal_dev.dll)
-		FString binPath = binDir + TEXT("PSDto3D_Standalone_dev.dll");
+		this->hModule = hModule_in;
 
-		// Set environment variables so Qt can find its \platforms directory
-		// Use _putenv_s() and its variant _tputenv_s(), instead of SetEnvironmentVariable(), which does not seem to work
-		_tputenv_s( TEXT("QT_PLUGIN_PATH"), *binDir );
-		_tputenv_s( TEXT("PATH"), *binDir );
-
-		hLibrary = LoadLibrary( *binPath );
-	}
-
-	if( hLibrary!=NULL )
-	{
 		FARPROC lpfProcFunc = NULL;
-		lpfProcFunc = GetProcAddress( hLibrary, "setPluginOutput" );
+		lpfProcFunc = GetProcAddress( (HMODULE)hModule, "setPluginOutput" );
 		if(lpfProcFunc!=NULL)
 		{
 			void* temp = lpfProcFunc; // to avoid compiler warning about function pointer type conversion
 			t_vfnvp fn_setPluginOutput = (t_vfnvp)temp;
-			fn_setPluginOutput( &pluginOutput );
+			fn_setPluginOutput(this);
 		}
 
-		lpfProcFunc = GetProcAddress( hLibrary, "openPlugin" );
+		lpfProcFunc = GetProcAddress( (HMODULE)hModule, "openPlugin" );
 		if(lpfProcFunc!=NULL)
 		{
 			void* temp = lpfProcFunc; // to avoid compiler warning about function pointer type conversion
@@ -160,7 +125,8 @@ void PsdToUnrealPluginOutput::OutputLayers( OutputLayersTask task )
 
 			const psd_to_3d::GraphLayer& graphLayer = *graphLayerPtr;
 			const char* textureFilepath = graphLayer.TextureFilepath.c_str();
-			const char* assetName = graphLayer.TextureName.c_str();
+			// Unreal requires spaces are converted to underscores in asset names
+			SanitizeUTF8 assetName( graphLayer.TextureName.c_str() );
 
 			bool isNewMaterial = !(CheckMaterial( assetName, packageName )); // true if material does not already exist in scene
 
@@ -172,7 +138,7 @@ void PsdToUnrealPluginOutput::OutputLayers( OutputLayersTask task )
 
 			if( isNewMaterial )
 			{
-				task.parent->session_texturesCreated.insert( assetName );
+				task.parent->session_texturesCreated.insert( (const char*)assetName );
 			}
 
 			materialLookup[ graphLayer.TextureFilepath ] = material;
@@ -203,7 +169,8 @@ void PsdToUnrealPluginOutput::OutputLayer( OutputLayerTask task )
 	if( dataMesh==nullptr )
 		return; // need a DataMesh to proceed, no support for DataSpline
 
-	FString layerName = FString( task.graphLayer.LayerName.c_str() );
+	// Unreal requires spaces are converted to underscores in asset names
+	FString layerName = ObjectTools::SanitizeObjectName( FString( task.graphLayer.LayerName.c_str() ) );
 	FString basePackageName = FString( task.parent->GetPackageName() );
 
 	util::boundsUV layerRegion = task.graphLayer.LayerRegion; // relative to scene, range [0-1]
@@ -592,7 +559,7 @@ void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material,
 
 	if( textureSet->diffuseTexture!=nullptr )
 	{
-		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.StaticSwitchParameters )
 		{
 			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseBaseColorMap"))) )
 			{
@@ -605,7 +572,7 @@ void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material,
 
 	if( textureSet->normalMapTexture!=nullptr )
 	{
-		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.StaticSwitchParameters )
 		{
 			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseNormalMap")))    )
 			{
@@ -618,7 +585,7 @@ void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material,
 
 	if( textureSet->heightMapTexture!=nullptr )
 	{
-		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.StaticSwitchParameters )
 		{
 			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseHeightMap")))    )
 			{
@@ -631,7 +598,7 @@ void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material,
 
 	if( textureSet->roughnessTexture!=nullptr )
 	{
-		for ( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		for ( FStaticSwitchParameter& StaticSwitchParameter : staticParams.StaticSwitchParameters )
 		{
 			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseRoughness"))) ||
 				(StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseRoughnessMap")))    )
@@ -645,7 +612,7 @@ void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material,
 
 	if( textureSet->occlusionTexture!=nullptr )
 	{
-		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.StaticSwitchParameters )
 		{
 			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseOcclusion"))) ||
 				(StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseOcclusionMap")))    )
@@ -659,7 +626,7 @@ void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material,
 
 	if( textureSet->detailColorTexture!=nullptr )
 	{
-		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.StaticSwitchParameters )
 		{
 			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseDetailMap")))    )
 			{
@@ -672,7 +639,7 @@ void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material,
 
 	if( textureSet->detailNormalMapTexture!=nullptr )
 	{
-		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.StaticSwitchParameters )
 		{
 			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseDetailMap")))    )
 			{
@@ -685,7 +652,7 @@ void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material,
 
 	if( textureSet->detailHeightMapTexture!=nullptr )
 	{
-		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.StaticSwitchParameters )
 		{
 			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseDetailMap")))    )
 			{
@@ -698,7 +665,7 @@ void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material,
 
 	if( textureSet->detailRoughnessTexture!=nullptr )
 	{
-		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.StaticSwitchParameters )
 		{
 			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseDetailMap")))    )
 			{
@@ -711,7 +678,7 @@ void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material,
 
 	if( textureSet->detailOcclusionTexture!=nullptr )
 	{
-		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.StaticSwitchParameters )
 		{
 			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseDetailMap")))    )
 			{
@@ -724,7 +691,7 @@ void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material,
 
 	if( textureSet->wpoWindTexture!=nullptr )
 	{
-		for ( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		for ( FStaticSwitchParameter& StaticSwitchParameter : staticParams.StaticSwitchParameters )
 		{
 			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseWpoWind"))) ||
 				(StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseWpoMask"))) ||
@@ -739,7 +706,7 @@ void PsdToUnrealPluginOutput::SetupCustomMaterial( UMaterialInterface* material,
 
 	if( textureSet->wpoNoiseTexture!=nullptr )
 	{
-		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.EditorOnly.StaticSwitchParameters )
+		for( FStaticSwitchParameter& StaticSwitchParameter : staticParams.StaticSwitchParameters )
 		{
 			if( (StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseWpoNoise"))) ||
 				(StaticSwitchParameter.ParameterInfo.Name == FName(TEXT("UseWpoMask"))) ||
@@ -911,5 +878,3 @@ void PsdToUnrealPluginOutput::GetSaveDialogParams( void* ofnw, const IPluginOutp
 	//ofnw; // unused
 	//params; // unused
 }
-
-#endif // disabled during code migration

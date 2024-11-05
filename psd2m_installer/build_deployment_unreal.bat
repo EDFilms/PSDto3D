@@ -30,6 +30,7 @@ findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_core\src\psd2m_core.rc ..\psd
 @echo Building Unreal plugin for packaging ...
 @rem This also builds using the following:
 @rem   devenv ..\projects\PSDto3D.sln /rebuild RelWithDebInfo_Unreal /project psd2m_core
+call ..\psd2m_unreal\prepare_headers.bat
 call ..\psd2m_unreal\prepare_project.bat
 
 @echo Packaging plugin ...

@@ -46,6 +46,8 @@ public class PSDtoUnreal : ModuleRules
 				"EditorStyle",
 				"UnrealEd",
 				"LevelEditor",
+				"MeshDescription",
+				"StaticMeshDescription",
 				"InteractiveToolsFramework",
 				"EditorInteractiveToolsFramework"
 				// ... add private dependencies that you statically link with here ...	

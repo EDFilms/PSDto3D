@@ -15,7 +15,7 @@
 /Saved
 /Plugins/Editor/PSDtoUnreal/Binaries
 /Plugins/Editor/PSDtoUnreal/Intermediate
-/Plugins/Editor/PSDtoUnreal/Source/ThirdParty/PSDto3DLibrary/Public/PSDto3DLibrary
+/Plugins/Editor/PSDtoUnreal/Source/ThirdParty/PSDto3DLibrary/Public
 
 # ignore these files specifically
 HostProject.sln

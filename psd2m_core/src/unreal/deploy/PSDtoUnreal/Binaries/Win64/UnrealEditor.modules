@@ -1,7 +1,0 @@
-{
-	"BuildId": "UNREAL_BUILD_TOKEN",
-	"Modules": 
-	{
-		"PSDtoUnreal": "PSDto3D_Unreal_dev.dll"
-	}
-}

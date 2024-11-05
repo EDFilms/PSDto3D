@@ -32,34 +32,4 @@ xcopy /E /Y %QtDir%\plugins\platforms\qminimal.dll    %ProjectBinDir%\platforms\
 xcopy /E /Y %QtDir%\plugins\platforms\qoffscreen.dll  %ProjectBinDir%\platforms\
 xcopy /E /Y %QtDir%\plugins\platforms\qwindows.dll    %ProjectBinDir%\platforms\
 
-@rem Copying headers into project...
-@call :COPY_READ_ONLY ..\psd2m_core\src\  compLayers.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\
-@call :COPY_READ_ONLY ..\psd2m_core\src\  IPluginOutput.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\
-@call :COPY_READ_ONLY ..\psd2m_core\src\  outputs.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\
-
-@call :COPY_READ_ONLY ..\psd2m_mesh_generator\src\mesh_generator\  dataMesh.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\mesh_generator\
-@call :COPY_READ_ONLY ..\psd2m_mesh_generator\src\mesh_generator\linear_mesh\  bezierCurve.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\linear_mesh\
-
-@call :COPY_READ_ONLY ..\psd2m_psd_reader\src\psd_reader\  colorModeReader.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\psd_reader\
-@call :COPY_READ_ONLY ..\psd2m_psd_reader\src\psd_reader\  headerReader.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\psd_reader\
-@call :COPY_READ_ONLY ..\psd2m_psd_reader\src\psd_reader\  imageDataReader.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\psd_reader\
-@call :COPY_READ_ONLY ..\psd2m_psd_reader\src\psd_reader\  imageResourceReader.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\psd_reader\
-@call :COPY_READ_ONLY ..\psd2m_psd_reader\src\psd_reader\  layerAndMaskReader.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\psd_reader\
-@call :COPY_READ_ONLY ..\psd2m_psd_reader\src\psd_reader\  psdReader.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\psd_reader\
-
-@call :COPY_READ_ONLY ..\psd2m_util\src\util\  bounds_2D.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\util\
-@call :COPY_READ_ONLY ..\psd2m_util\src\util\  math_2D.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\util\
-@call :COPY_READ_ONLY ..\psd2m_util\src\util\  progressJob.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\util\
-@call :COPY_READ_ONLY ..\psd2m_util\src\util\  vectorialPath.h  .\Plugins\Editor\PSDtoUnreal\Source\ThirdParty\PSDto3DLibrary\Public\PSDto3DLibrary\util\
-
 @popd
-@goto :eof
-
-@rem Subroutines
-
-:COPY_READ_ONLY
-@rem Param1: source dir, Param2: source filename, Param3: dest dir
-@IF EXIST %3\%2 attrib -r %3\%2
-xcopy /Y %1\%2 %3
-@attrib +r %3\%2
-@EXIT /B
