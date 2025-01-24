@@ -1161,6 +1161,10 @@ void GenerateCompLayerFilepaths( std::vector<std::string>& filepaths_out, const 
 		}
 		globalParams.Depth = root[L"Depth"]->AsNumber();
 		globalParams.Scale = root[L"Scale"]->AsNumber();
+		if (root.count(L"PivotPosition") > 0)
+		{
+			globalParams.PivotPosition = (enum GlobalParameters::PivotPosition)(int(root[L"PivotPosition"]->AsNumber()));
+		}
 		globalParams.AliasPsdName = QString::fromWCharArray(root[L"AliasPsdName"]->AsString().c_str());
 
 		if( root.count(L"WriteMode")>0 )
@@ -1282,6 +1286,7 @@ void GenerateCompLayerFilepaths( std::vector<std::string>& filepaths_out, const 
 		root[L"TextureProxy"] = new JSONValue(globalParams.TextureProxy);
 		root[L"Depth"] = new JSONValue(globalParams.Depth);
 		root[L"Scale"] = new JSONValue(globalParams.Scale);
+		root[L"PivotPosition"] = new JSONValue(globalParams.PivotPosition);
 		root[L"AliasPsdName"] = new JSONValue(globalParams.AliasPsdName.toStdWString());
 		root[L"WriteMode"] = new JSONValue(globalParams.FileWriteMode);
 		root[L"WriteLayout"] = new JSONValue(globalParams.FileWriteLayout);

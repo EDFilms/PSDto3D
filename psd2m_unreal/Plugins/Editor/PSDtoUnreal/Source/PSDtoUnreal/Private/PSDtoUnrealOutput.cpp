@@ -16,6 +16,7 @@
 //
 //----------------------------------------------------------------------------------------------
 
+
 #include "PSDtoUnrealOutput.h"
 
 #include "Windows/WindowsPlatformAtomics.h"
@@ -38,6 +39,8 @@
 
 // Includes conflicting with Unreal includes, must be included last
 #include <Windows.h> // for HMODULE
+
+#pragma optimize("", off)
 
 // Helper
 inline void DebugPrint(const TCHAR* format, ...)
@@ -232,6 +235,12 @@ void PsdToUnrealPluginOutput::OutputLayer( OutputLayerTask task )
 	meshVertexUVs.SetNumChannels( 1 ); // is this the attribute channel count, rather than vertCount ?
 	vertexID.SetNum( vertCount );
 	vertexInstanceID.SetNum( vertCount );
+	Vector2F offset(0,0);
+	if( task.parent->session_pivotPosition == IPluginOutputParameters::PivotPosition::LAYER_CENTER )
+	{
+		Vector2F center = dataMesh->GetBoundsUV().GetCenter();
+		offset = Vector2F( -(center.x), -(center.y) );
+	}
 	for( int i=0; i<vertCount; i++ )
 	{
 		FVertexID vid = meshDescription->CreateVertex();
@@ -241,7 +250,9 @@ void PsdToUnrealPluginOutput::OutputLayer( OutputLayerTask task )
 		vertexID[ i ] = vid;
 		vertexInstanceID[ i ] = viid;
 
-		meshVertexPositions[ vid ] = FVector3f( 0, verts[i].x * layoutWidth, (1.0f-verts[i].y) * layoutHeight );
+		double x = offset.x + verts[i].x;
+		double y = offset.y + verts[i].y;
+		meshVertexPositions[ vid ] = FVector3f(	0, x * layoutWidth,	(1.0f - y) * layoutHeight );
 		meshVertexUVs.Set( viid, meshUVLayerIndex, FVector2f(uv.x,uv.y) );
 	}
 
@@ -307,6 +318,12 @@ void PsdToUnrealPluginOutput::OutputLayer( OutputLayerTask task )
 	UWorld* world = GEngine->GetWorldContexts()[0].World();
 
 	FVector meshPos(layerPosZ, -(0.5f*layoutWidth), 0); //( layerPosZ, layerPosX, layerPosY );
+	if( task.parent->session_pivotPosition == IPluginOutputParameters::PivotPosition::LAYER_CENTER )
+	{
+		Vector2F center = dataMesh->GetBoundsUV().GetCenter();
+		meshPos += FVector( 0, center.x * layoutWidth, (1.0-center.y) * layoutHeight);
+	}
+
 
 	FRotator meshRot(0,0,0);
 
@@ -798,6 +815,7 @@ void PsdToUnrealPluginOutput::BeginSession( const PsdData& psdData, const IPlugi
 	session_texturesCreated.clear();
 	session_psdSceneWidth = psdData.HeaderData.Width;
 	session_psdSceneHeight = psdData.HeaderData.Height;
+	session_pivotPosition = params.PivotPosition();
 	session_packageName = std::string("/Game/Textures/") + std::string(session_psdFileName) + std::string("/");
 }
 

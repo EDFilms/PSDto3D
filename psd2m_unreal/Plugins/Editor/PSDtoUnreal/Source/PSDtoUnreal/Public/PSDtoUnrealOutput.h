@@ -128,6 +128,7 @@ protected:
 	void* hModule; //HMODULE
 	char session_psdFileName[1024];
 	int session_psdSceneWidth, session_psdSceneHeight;
+	int session_pivotPosition;
 	std::string session_packageName;
 	std::set<std::string> session_texturesOutput;  // asset names of textures output to disk during this session
 	std::set<std::string> session_texturesCreated; // asset names of textures created as new scene entities during this session

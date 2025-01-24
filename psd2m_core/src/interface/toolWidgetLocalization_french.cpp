@@ -164,6 +164,11 @@ const util::StringTable::StringTableItem stringTableItems_french[] =
 	{ IDS_MESH_GROUP_NAME_LABEL, "Nommer le groupe :" },
 	{ IDS_DEPTH_MODIFIER_LABEL, "Profondeur entre les calques :" },
 	{ IDS_MESH_SCALE_LABEL, "Échelle de la grille :" },
+
+	{ IDS_PIVOT_POSITION_LABEL, "Position du pivot :" },
+	  { IDS_PIVOT_POSITION_DROPDOWN_LAYER_CENTER, "Point central du calque :" },
+	  { IDS_PIVOT_POSITION_DROPDOWN_LAYER_CORNER, "Point d'angle du calque :" },
+
 	{ IDS_GROUP_STRUCTURE_LABEL, "Structure du groupe PSD" },
 	{ IDS_GROUP_STRUCTURE_FLAT, "Hiérarchie à plat" },
 	{ IDS_GROUP_STRUCTURE_KEEP, "Conserver la hiérarchie" },

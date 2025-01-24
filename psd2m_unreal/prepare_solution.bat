@@ -4,10 +4,10 @@
 @rem ---------- ---------- ---------- ----------
 
 
-set UNREAL_DIR=C:\BUILD\Unreal\
+set UNREAL_DIR=C:\Program Files\Epic Games\UE_5.4
 
 @rem Check for Unreal and Visual Studio
-@IF NOT EXIST %UNREAL_DIR%\Engine\Binaries\Win64\UnrealEditor.exe (
+@IF NOT EXIST "%UNREAL_DIR%\Engine\Binaries\Win64\UnrealEditor.exe" (
     echo Cannot find Unreal binaries.  Edit this script and update UNREAL_DIR
     @goto :eof
 )
@@ -20,8 +20,7 @@ set UNREAL_DIR=C:\BUILD\Unreal\
 )
 
 @echo Generating Visual Studio project files ...
-call %UNREAL_DIR%\Engine\Build\BatchFiles\GetDotnetPath.bat
+call "%UNREAL_DIR%\Engine\Build\BatchFiles\GetDotnetPath.bat"
 dotnet "%UNREAL_DIR%\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -projectfiles -project="%~dp0\HostProject.uproject" -game -rocket -progress
 
 @echo %UNREAL_DIR%\Engine\Binaries\Win64\UnrealEditor.exe >.\LaunchUnrealEditor.bat
-

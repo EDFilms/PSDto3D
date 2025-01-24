@@ -30,7 +30,12 @@ namespace psd_to_3d
 	class IPluginOutputParameters // rename to IPluginExporterParameters?
 	{
 	public:
-		enum FileWriteMode // see GlopalParameters::FileWriteMode
+		enum PivotPosition // see GlobalParameters::PivotPosition
+		{
+			LAYER_CORNER,
+			LAYER_CENTER
+		};
+		enum FileWriteMode // see GlobalParameters::FileWriteMode
 		{
 			BINARY,
 			ASCII
@@ -41,6 +46,7 @@ namespace psd_to_3d
 			MULTI_PER_TEXTURE,
 			MULTI_PER_LAYER
 		}; // rename to ExportWriteLayout?
+		virtual int PivotPosition() const = 0;
 		virtual int FileWriteMode() const = 0;
 		virtual int FileWriteLayout() const = 0;
 		virtual const char* FileImportPath() const = 0;

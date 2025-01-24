@@ -281,6 +281,7 @@ namespace psd_to_3d
 	{
 	public:
 		PluginOutputParameters( const GlobalParameters& params ) : params(params) {}
+		int PivotPosition() const			{ return params.PivotPosition; }
 		int FileWriteMode() const			{ return params.FileWriteMode; }
 		int FileWriteLayout() const			{ return params.FileWriteLayout; }
 		const char* FileImportPath() const	{ fileImportPath = params.FileImportPath.toUtf8().toStdString(); return fileImportPath.c_str(); }

@@ -173,6 +173,12 @@ namespace psd_to_3d
 		GlobalParameters() = default;
 		~GlobalParameters() = default;
 
+		enum PivotPosition // For PSDtoFBX
+		{
+			LAYER_CORNER,
+			LAYER_CENTER
+		};
+
 		enum FileWriteMode // For PSDtoFBX
 		{
 			BINARY,
@@ -190,6 +196,7 @@ namespace psd_to_3d
 		int TextureProxy = 1; // 1 for full size, 2 for half size, 4 for quarter size, 8 for eighth size
 		float Depth = 0;
 		float Scale = 1.0f;
+		PivotPosition PivotPosition = PivotPosition::LAYER_CORNER;
 		bool KeepGroupStructure = false;
 		QString AliasPsdName = ""; // name of the root object or group in the exported file
 		FileWriteMode FileWriteMode = FileWriteMode::BINARY;

@@ -44,13 +44,11 @@
     <Platform>x64</Platform>
     <ProjectName>psd2m_core</ProjectName>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
-
     <Maya2020>C:\build\maya2020</Maya2020>
     <Maya2022>C:\build\maya2022</Maya2022>
     <Maya2023>C:\build\maya2023</Maya2023>
     <Maya2024>C:\build\maya2024</Maya2024>
     <Maya2025>C:\build\maya2025</Maya2025>
-
     <MayaDir Condition="'$(Configuration)'=='RelWithDebInfo_Maya2020'">$(Maya2020)</MayaDir>
     <MayaDir Condition="'$(Configuration)'=='RelWithDebInfo_Maya2022'">$(Maya2022)</MayaDir>
     <MayaDir Condition="'$(Configuration)'=='RelWithDebInfo_Maya2023'">$(Maya2023)</MayaDir>
@@ -60,7 +58,6 @@
     <MayaDir Condition="'$(Configuration)'=='RelUnoptimized_FBX'">C:\temp</MayaDir>
     <MayaDir Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">C:\temp</MayaDir>
     <MayaDir Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">C:\temp</MayaDir>
-
     <MayaVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2020'">Maya2020</MayaVer>
     <MayaVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2022'">Maya2022</MayaVer>
     <MayaVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2023'">Maya2023</MayaVer>
@@ -70,17 +67,15 @@
     <MayaVer Condition="'$(Configuration)'=='RelUnoptimized_FBX'">standalone</MayaVer>
     <MayaVer Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">standalone</MayaVer>
     <MayaVer Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">standalone</MayaVer>
-
-    <VSVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2020'">VS2017</VSVer>
-    <VSVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2022'">VS2019</VSVer>
-    <VSVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2023'">VS2019</VSVer>
-    <VSVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2024'">VS2022</VSVer>
-    <VSVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2025'">VS2022</VSVer>
-    <VSVer Condition="'$(Configuration)'=='RelWithDebInfo_FBX'">VS2019</VSVer>
-    <VSVer Condition="'$(Configuration)'=='RelUnoptimized_FBX'">VS2019</VSVer>
-    <VSVer Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">VS2019</VSVer>
-    <VSVer Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">VS2019</VSVer>
-
+    <ThirdPartyVSVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2020'">VS2017</ThirdPartyVSVer>
+    <ThirdPartyVSVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2022'">VS2019</ThirdPartyVSVer>
+    <ThirdPartyVSVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2023'">VS2019</ThirdPartyVSVer>
+    <ThirdPartyVSVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2024'">VS2022</ThirdPartyVSVer>
+    <ThirdPartyVSVer Condition="'$(Configuration)'=='RelWithDebInfo_Maya2025'">VS2022</ThirdPartyVSVer>
+    <ThirdPartyVSVer Condition="'$(Configuration)'=='RelWithDebInfo_FBX'">VS2019</ThirdPartyVSVer>
+    <ThirdPartyVSVer Condition="'$(Configuration)'=='RelUnoptimized_FBX'">VS2019</ThirdPartyVSVer>
+    <ThirdPartyVSVer Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">VS2022</ThirdPartyVSVer>
+    <ThirdPartyVSVer Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">VS2022</ThirdPartyVSVer>
     <ConfigurationShortName Condition="'$(Configuration)'=='RelWithDebInfo_Maya2020'">RelWithDebInfo</ConfigurationShortName>
     <ConfigurationShortName Condition="'$(Configuration)'=='RelWithDebInfo_Maya2022'">RelWithDebInfo</ConfigurationShortName>
     <ConfigurationShortName Condition="'$(Configuration)'=='RelWithDebInfo_Maya2023'">RelWithDebInfo</ConfigurationShortName>
@@ -97,12 +92,12 @@
     <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelWithDebInfo_Maya2025'">10.0.22621.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelWithDebInfo_FBX'">10.0.18362.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelUnoptimized_FBX'">10.0.18362.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">10.0.18362.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">10.0.22621.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">10.0.22621.0</WindowsTargetPlatformVersion>
     <QtDir Condition="'$(Configuration)'=='RelWithDebInfo_FBX'">C:\build\qt5</QtDir>
     <QtDir Condition="'$(Configuration)'=='RelUnoptimized_FBX'">C:\build\qt5</QtDir>
-    <QtDir Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">C:\build\maya2022</QtDir>
-    <QtDir Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">C:\build\maya2022</QtDir>
+    <QtDir Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">C:\build\qt5</QtDir>
+    <QtDir Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">C:\build\qt5</QtDir>
     <QtDir Condition="'$(MayaVer)'!='standalone'">$(MayaDir)</QtDir>
     <UnrealEngine>$(UnrealDir)\Engine</UnrealEngine>
   </PropertyGroup>
@@ -120,8 +115,8 @@
     <PlatformToolset Condition="'$(Configuration)'=='RelWithDebInfo_Maya2025'">v143</PlatformToolset>
     <PlatformToolset Condition="'$(Configuration)'=='RelWithDebInfo_FBX'">v142</PlatformToolset>
     <PlatformToolset Condition="'$(Configuration)'=='RelUnoptimized_FBX'">v142</PlatformToolset>
-    <PlatformToolset Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">v142</PlatformToolset>
-    <PlatformToolset Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">v142</PlatformToolset>
+    <PlatformToolset Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">v143</PlatformToolset>
+    <PlatformToolset Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -176,7 +171,6 @@
       <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_Unreal|x64'">..\..\Builds\lib\$(Configuration)\$(Platform)\$(ProjectName).pdb</ProgramDataBaseFileName>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Maya2025|x64'">stdcpp17</LanguageStandard>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Maya2025|x64'">/Zc:__cplusplus /permissive- %(AdditionalOptions)</AdditionalOptions>
-
       <Optimization Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_FBX|x64'">MaxSpeed</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Maya2020|x64'">MaxSpeed</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Maya2022|x64'">MaxSpeed</Optimization>
@@ -186,7 +180,6 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Unreal|x64'">MaxSpeed</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_Unreal|x64'">Disabled</Optimization>
-
       <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_FBX|x64'">AnySuitable</InlineFunctionExpansion>
       <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Unreal|x64'">AnySuitable</InlineFunctionExpansion>
       <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Maya2020|x64'">AnySuitable</InlineFunctionExpansion>
@@ -196,7 +189,6 @@
       <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Maya2025|x64'">AnySuitable</InlineFunctionExpansion>
       <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">Default</InlineFunctionExpansion>
       <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_Unreal|x64'">Default</InlineFunctionExpansion>
-
       <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_FBX|x64'">true</IntrinsicFunctions>
       <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Unreal|x64'">true</IntrinsicFunctions>
       <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Maya2020|x64'">true</IntrinsicFunctions>
@@ -206,7 +198,6 @@
       <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Maya2025|x64'">true</IntrinsicFunctions>
       <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">false</IntrinsicFunctions>
       <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_Unreal|x64'">false</IntrinsicFunctions>
-
       <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_FBX|x64'">Speed</FavorSizeOrSpeed>
       <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Maya2020|x64'">Speed</FavorSizeOrSpeed>
       <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Maya2022|x64'">Speed</FavorSizeOrSpeed>
@@ -216,7 +207,6 @@
       <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Unreal|x64'">Speed</FavorSizeOrSpeed>
       <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_FBX|x64'">Neither</FavorSizeOrSpeed>
       <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_Unreal|x64'">Neither</FavorSizeOrSpeed>
-      
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;REQUIRE_IOSTREAM;_BOOL;NT_PLUGIN;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;QT_NO_DEBUG;PSD23D_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -236,8 +226,8 @@
       <AdditionalDependencies Condition="'$(Configuration)'=='RelWithDebInfo_Unreal'">psd_reader.lib;mesh_generator.lib;util.lib;zlib_static.lib;libpng_static.lib;Comdlg32.lib;$(QtDir)\lib\Qt5Widgets.lib;$(QtDir)\lib\Qt5Gui.lib;$(QtDir)\lib\Qt5Core.lib;</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(Configuration)'=='RelUnoptimized_Unreal'">psd_reader.lib;mesh_generator.lib;util.lib;zlib_static.lib;libpng_static.lib;Comdlg32.lib;$(QtDir)\lib\Qt5Widgets.lib;$(QtDir)\lib\Qt5Gui.lib;$(QtDir)\lib\Qt5Core.lib;</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(MayaVer)'!='standalone'">psd_reader.lib;mesh_generator.lib;util.lib;zlib_static.lib;libpng_static.lib;Comdlg32.lib;$(MayaDir)\lib\OpenMaya.lib;$(MayaDir)\lib\OpenMayaAnim.lib;$(MayaDir)\lib\OpenMayaFX.lib;$(MayaDir)\lib\OpenMayaRender.lib;$(MayaDir)\lib\OpenMayaUI.lib;$(MayaDir)\lib\Foundation.lib;$(MayaDir)\lib\clew.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories Condition="'$(MayaVer)'=='standalone'">../../Builds/lib/$(ConfigurationShortName)_$(VSVer)/$(Platform);..\..\psd2m_core/lib;../../psd2m_psd_reader/lib;$(QtDir)/lib;$(FbxDir)\lib\vs2015\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories Condition="'$(MayaVer)'!='standalone'">../../Builds/lib/$(ConfigurationShortName)_$(VSVer)/$(Platform);..\..\psd2m_core/lib;../../psd2m_psd_reader/lib;$(QtDir)/lib;$(MayaDir)/lib;$(MayaDir)/lib/$(ConfigurationShortName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(MayaVer)'=='standalone'">../../Builds/lib/$(ConfigurationShortName)_$(ThirdPartyVSVer)/$(Platform);..\..\psd2m_core/lib;../../psd2m_psd_reader/lib;$(QtDir)/lib;$(FbxDir)\lib\vs2015\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(MayaVer)'!='standalone'">../../Builds/lib/$(ConfigurationShortName)_$(ThirdPartyVSVer)/$(Platform);..\..\psd2m_core/lib;../../psd2m_psd_reader/lib;$(QtDir)/lib;$(MayaDir)/lib;$(MayaDir)/lib/$(ConfigurationShortName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions Condition="'$(MayaVer)'=='standalone'">%(AdditionalOptions) /machine:x64 /export:openPlugin /export:setPluginOutput /export:initializePlugin /export:uninitializePlugin</AdditionalOptions>
       <AdditionalOptions Condition="'$(MayaVer)'!='standalone'">%(AdditionalOptions) /machine:x64 /export:initializePlugin /export:uninitializePlugin</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -268,15 +258,42 @@
     </ProjectReference>
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo_Unreal|x64'">echo Copying to Unreal plugin directory ...
-copy /Y $(TargetDir)\$(TargetName)* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
-xcopy /Y /E /F ..\..\psd2m_core\deps\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
-xcopy /Y /E /F /I ..\..\psd2m_core\icons\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64\icons
+set ProjectBinDir=..\..\psd2m_unreal\Plugins\Editor\PSDtoUnreal\Binaries\ThirdParty\PSDto3DLibrary\Win64
+xcopy /E /Y  $(TargetDir)\$(TargetName)*  %ProjectBinDir%\
+rename %ProjectBinDir%\PSDto3D_Standalone_dev.dll PSDto3D_Standalone.dll
+rename %ProjectBinDir%\PSDto3D_Standalone_dev.pdb PSDto3D_Standalone.pdb
+
+echo Copying Qt binaries into project ...
+xcopy /E /Y  $(QtDir)\bin\libGLESv?.dll  %ProjectBinDir%\
+xcopy /E /Y  $(QtDir)\bin\Qt?Core.dll  %ProjectBinDir%\
+xcopy /E /Y  $(QtDir)\bin\Qt?Gui.dll  %ProjectBinDir%\
+xcopy /E /Y  $(QtDir)\bin\Qt?Widgets.dll  %ProjectBinDir%\
+xcopy /E /Y  $(QtDir)\plugins\imageformats\qgif.dll  %ProjectBinDir%\imageformats\
+xcopy /E /Y  $(QtDir)\plugins\imageformats\qico.dll  %ProjectBinDir%\imageformats\
+xcopy /E /Y  $(QtDir)\plugins\imageformats\qjpeg.dll  %ProjectBinDir%\imageformats\
+xcopy /E /Y  $(QtDir)\plugins\platforms\qdirect2d.dll  %ProjectBinDir%\platforms\
+xcopy /E /Y  $(QtDir)\plugins\platforms\qminimal.dll  %ProjectBinDir%\platforms\
+xcopy /E /Y  $(QtDir)\plugins\platforms\qoffscreen.dll  %ProjectBinDir%\platforms\
+xcopy /E /Y  $(QtDir)\plugins\platforms\qwindows.dll  %ProjectBinDir%\platforms\
 </Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelUnoptimized_Unreal|x64'">echo Copying to Unreal plugin directory ...
-copy /Y $(TargetDir)\$(TargetName)* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
-xcopy /Y /E ..\..\psd2m_core\deps\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64
-xcopy /Y /E /I ..\..\psd2m_core\icons\*.* $(UnrealEngine)\Plugins\Editor\PSDtoUnreal\Binaries\Win64\icons
-</Command>
+set ProjectBinDir=..\..\psd2m_unreal\Plugins\Editor\PSDtoUnreal\Binaries\ThirdParty\PSDto3DLibrary\Win64
+xcopy /E /Y  $(TargetDir)\$(TargetName)*  %ProjectBinDir%\
+rename %ProjectBinDir%\PSDto3D_Standalone_dev.dll PSDto3D_Standalone.dll
+rename %ProjectBinDir%\PSDto3D_Standalone_dev.pdb PSDto3D_Standalone.pdb
+
+echo Copying Qt binaries into project ...
+xcopy /E /Y  $(QtDir)\bin\libGLESv?.dll  %ProjectBinDir%\
+xcopy /E /Y  $(QtDir)\bin\Qt?Core.dll  %ProjectBinDir%\
+xcopy /E /Y  $(QtDir)\bin\Qt?Gui.dll  %ProjectBinDir%\
+xcopy /E /Y  $(QtDir)\bin\Qt?Widgets.dll  %ProjectBinDir%\
+xcopy /E /Y  $(QtDir)\plugins\imageformats\qgif.dll  %ProjectBinDir%\imageformats\
+xcopy /E /Y  $(QtDir)\plugins\imageformats\qico.dll  %ProjectBinDir%\imageformats\
+xcopy /E /Y  $(QtDir)\plugins\imageformats\qjpeg.dll  %ProjectBinDir%\imageformats\
+xcopy /E /Y  $(QtDir)\plugins\platforms\qdirect2d.dll  %ProjectBinDir%\platforms\
+xcopy /E /Y  $(QtDir)\plugins\platforms\qminimal.dll  %ProjectBinDir%\platforms\
+xcopy /E /Y  $(QtDir)\plugins\platforms\qoffscreen.dll  %ProjectBinDir%\platforms\
+xcopy /E /Y  $(QtDir)\plugins\platforms\qwindows.dll  %ProjectBinDir%\platforms\</Command>
     </PostBuildEvent>
     <PostBuildEvent>
     </PostBuildEvent>

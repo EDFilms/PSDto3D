@@ -145,6 +145,8 @@ namespace psd_to_3d
 		void SetTextureCropIndex(const int value);
 		void OnSetMeshScale(const double value); // UI event
 		void SetMeshScale(const double value);
+		void OnSetPivotPosition(const int value); // UI event
+		void SetPivotPosition(const int value);
 		void OnSetWriteMode(const int value); // UI event
 		void SetWriteMode(const int value);
 		void OnSetWriteLayout(const int value); // UI event
@@ -196,6 +198,7 @@ namespace psd_to_3d
 		int GetTextureProxyUi();
 		float GetMeshScaleUi();
 		float GetDepthUi();
+		int GetPivotPositionUi();
 		int GetWriteModeUi();
 		int GetWriteLayoutUi();
 		void UpdateLocalization(); // translate all UI strings

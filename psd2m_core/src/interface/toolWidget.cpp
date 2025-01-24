@@ -144,6 +144,10 @@ namespace psd_to_3d
 		connect(Ui->textureProxyComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnSetTextureProxy(int)));
 		connect(Ui->depthModifierField, SIGNAL(valueChanged(double)), this, SLOT(OnSetDepthModifier(const double &)));
 		connect(Ui->meshScaleSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSetMeshScale(const double &)));
+		if( IsUnrealVersion )
+		{
+			connect(Ui->pivotPositionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnSetPivotPosition(int)));
+		}
 		if( IsFbxVersion )
 		{
 			connect(Ui->writeModeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnSetWriteMode(int)));
@@ -300,6 +304,10 @@ namespace psd_to_3d
 		disconnect(Ui->textureProxyComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnSetTextureProxy(int)));
 		disconnect(Ui->depthModifierField, SIGNAL(valueChanged(double)), this, SLOT(OnSetDepthModifier(const double &)));
 		disconnect(Ui->meshScaleSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSetMeshScale(const double &)));
+		if (IsUnrealVersion)
+		{
+			disconnect(Ui->pivotPositionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnSetPivotPosition(int)));
+		}
 		if( IsFbxVersion )
 		{
 			disconnect(Ui->writeModeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnSetWriteMode(int)));
@@ -920,6 +928,33 @@ namespace psd_to_3d
 		//return this->GetParameters().Scale * 100.0f - 100.f; // integer based
 		return this->GetParameters().Scale; // float based
 	}
+
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	void ToolWidget::OnSetPivotPosition(const int value) // UI event
+	{
+		if (SilenceUi) return;  // avoid deadlock
+		SetPivotPosition(value);
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	void ToolWidget::SetPivotPosition(const int value)
+	{
+		if (value == 1)
+			this->GetParameters().PivotPosition = GlobalParameters::PivotPosition::LAYER_CENTER;
+		else
+			this->GetParameters().PivotPosition = GlobalParameters::PivotPosition::LAYER_CORNER;
+		this->GetScene().SaveValuesToJson(); // write user settings to disk
+	}
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	int ToolWidget::GetPivotPositionUi()
+	{
+		if( this->GetParameters().PivotPosition == GlobalParameters::PivotPosition::LAYER_CENTER )
+			return 1;
+		return 0; // set UI dropdown to "LAYER_CORNER" by default
+	}
+
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	void ToolWidget::OnSetWriteMode(const int value) // UI event
@@ -2245,6 +2280,13 @@ namespace psd_to_3d
 			Ui->meshScaleLabel->setToolTip( util::LocalizeString( IDC_MAIN, IDS_MESH_SCALE_TOOLTIP ) );
 			Ui->meshScaleSpinner->setToolTip( util::LocalizeString( IDC_MAIN, IDS_MESH_SCALE_TOOLTIP ) );
 
+			Ui->pivotPositionLabel->setText( util::LocalizeString( IDC_MAIN, IDS_PIVOT_POSITION_LABEL ) );
+			Ui->pivotPositionLabel->setToolTip( util::LocalizeString( IDC_MAIN, IDS_PIVOT_POSITION_TOOLTIP ) );
+			Ui->pivotPositionComboBox->setToolTip( util::LocalizeString( IDC_MAIN, IDS_PIVOT_POSITION_TOOLTIP ) );
+			Ui->pivotPositionComboBox->setItemText( 0, util::LocalizeString( IDC_MAIN, IDS_PIVOT_POSITION_DROPDOWN_LAYER_CORNER ) );
+			Ui->pivotPositionComboBox->setItemText( 1, util::LocalizeString( IDC_MAIN, IDS_PIVOT_POSITION_DROPDOWN_LAYER_CENTER ) );
+
+
 			// no longer supported
 			//Ui->groupStructureLabel->setText( util::LocalizeString( IDC_MAIN, IDS_GROUP_STRUCTURE_LABEL ) );
 			//Ui->groupStructureLabel->setToolTip( util::LocalizeString( IDC_MAIN, IDS_GROUP_STRUCTURE_TOOLTIP ) );
@@ -2398,6 +2440,14 @@ namespace psd_to_3d
 			Ui->writeModePanel->setVisible(false);
 			Ui->writeLayoutPanel->setVisible(false);
 		}
+		if( IsUnrealVersion )
+		{
+			Ui->pivotPositionPanel->setVisible(true);
+		}
+		else
+		{
+			Ui->pivotPositionPanel->setVisible(false);
+		}
 		// TO DO: Fix "Keep Group Structure" functionality to support this
 		Ui->groupStructurePanel->setVisible(false); // no longer supported; always hide
 
@@ -2482,12 +2532,17 @@ namespace psd_to_3d
 		}
 
 		Ui->customGroupNameLineEdit->setText(this->GetParameters().AliasPsdName);
+		if( IsUnrealVersion )
+		{
+			Ui->pivotPositionComboBox->setCurrentIndex(GetPivotPositionUi());
+		}
 
 		//Ui->groupStructureComboBox->setCurrentIndex(this->GetParameters().KeepGroupStructure); // no longer supported
 
 		Ui->textureProxyComboBox->setCurrentIndex(GetTextureProxyUi());
 		Ui->depthModifierField->setValue(GetDepthUi());
 		Ui->meshScaleSpinner->setValue(GetMeshScaleUi());
+		Ui->pivotPositionComboBox->setCurrentIndex(GetPivotPositionUi());
 		Ui->writeModeComboBox->setCurrentIndex(GetWriteModeUi());
 		Ui->writeLayoutComboBox->setCurrentIndex(GetWriteLayoutUi());
 
