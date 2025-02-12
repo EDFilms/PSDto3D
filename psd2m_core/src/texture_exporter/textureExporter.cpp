@@ -62,6 +62,8 @@ namespace psd_to_3d
 		p.resize( width * height * pixel_size);
 	}
 
+// ApplyScaling() fails due to optimizer bug in VS2022
+#pragma optimize("",off) // TODO: rewrite ApplyScaling() and remove this
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	// Change bitmap size and resample; only supports downscaling, not upscaling
 	void TextureMap::ApplyScaling( int width_output, int height_output )
@@ -134,6 +136,7 @@ namespace psd_to_3d
 		this->width = width_output;
 		this->height = height_output;
 	}
+#pragma optimize("",on) // see note above
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	void TextureMap::ApplyDefringe( int radius )

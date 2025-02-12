@@ -186,7 +186,7 @@ namespace psd_to_3d
 		// TODO: GlobalParameters should be member of class PluginController
 		IPluginController* Controller;
 		ProgressAgent Progress;
-		Ui::DockWidget *Ui;
+		Ui::PSDto3DFrame *Ui;
 		//std::vector<IPluginController*> Controllers;
 		std::map<QListWidgetItem*, int> WidgetMap; // widget to layer index
 		ToolWidgetEventFilter* EventFilter;

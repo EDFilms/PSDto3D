@@ -1,11 +1,7 @@
 echo %date%  - %time%
 
-set BUILD_VER=079
-set BUILD_DATE=%date%
-set PLUGIN_VER_SHORT=165
-set PLUGIN_VER_BASE=1.6.5
-set PLUGIN_VER=%PLUGIN_VER_BASE%.%BUILD_VER%
-set PLUGIN_YEAR=2024
+call build_version.bat
+
 set UNREAL_DIR=C:\Program Files\Epic Games\UE_5.4
 
 @rem Check for Unreal and Visual Studio

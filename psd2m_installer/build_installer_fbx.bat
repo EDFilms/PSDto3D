@@ -1,11 +1,6 @@
 echo %date%  - %time%
 
-set BUILD_VER=079
-set BUILD_DATE=%date%
-set PLUGIN_VER_SHORT=165
-set PLUGIN_VER_BASE=1.6.5
-set PLUGIN_VER=%PLUGIN_VER_BASE%.%BUILD_VER%
-set PLUGIN_YEAR=2024
+call build_version.bat
 
 @echo Updating file property resources ...
 copy ..\psd2m_core\src\psd2m_core.rc ..\psd2m_core\src\psd2m_core.rc.BACKUP
@@ -24,7 +19,7 @@ call build_extension_cs6.bat
 popd
 
 
-@echo Build Maya plugin, Pro version ...
+@echo Build FBX version ...
 SET _CL_=/DPSDTO3D_STANDALONE /DPSDTO3D_FULL_VERSION /DPSDTO3D_ATLAS_VERSION /O2 /Ob2 /Ot
 
 @rem mkdir ..\builds\plugin\RelWithDebInfo_FBX

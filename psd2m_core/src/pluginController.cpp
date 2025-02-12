@@ -135,7 +135,7 @@ namespace psd_to_3d
 		bool retval = true;
 		SceneController& scene = controller->GetScene();
 		GlobalParameters& globalParams = scene.GetGlobalParameters();
-#if (defined PSDTO3D_UNREAL_VERSION) || (defined PSDTO3D_MAYA_VERSION)
+#if (defined PSDTO3D_UNREAL_VERSION) || (defined PSDTO3D_BLENDER_VERSION) || (defined PSDTO3D_MAYA_VERSION)
 		QString exportDir = globalParams.FileImportPath + "/" + globalParams.PsdName + "/";
 		globalParams.FileExportPath = exportDir;
 #elif defined PSDTO3D_FBX_VERSION

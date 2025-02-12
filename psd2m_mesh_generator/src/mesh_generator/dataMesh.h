@@ -39,7 +39,8 @@ namespace mesh_generator
 		void SetVertices(std::vector<Vector2F> const& vertices);
 		bool AddFace(std::vector<int> const& vertices);
 		bool AddFace(int vertices[], int size);
-		void SetValues(std::vector<Vector2F>& vertices, std::vector<int>& faceSizes, std::vector<int>& faceIndices);
+		void SetValues(std::vector<Vector2F>& vertices,
+			std::vector<int>& faceSizes, std::vector<int>& faceMarks, std::vector<int>& faceIndices);
 
 		void ClearFaces();
 		void ClearVertices();
@@ -50,6 +51,7 @@ namespace mesh_generator
 		int GetFaceVertsCount() const { return int(FaceVerts.size()); }
 		const std::vector<Vector2F>& GetVertices() const { return Vertices; }		// position of each vert
 		const std::vector<int>& GetFaceSizes() const { return FaceSizes; }		// number of verts per face
+		const std::vector<int>& GetFaceMarks() const { return FaceMarks; }		// offset to each face's first vert in faceVerts list
 		const std::vector<int>& GetFaceVerts() const { return FaceVerts; }	// vertex indices, contiguous list
 		void SetName( const std::string& name );
 		std::string GetName() const;
@@ -67,6 +69,7 @@ namespace mesh_generator
 
 		std::vector<Vector2F> Vertices;
 		std::vector<int> FaceSizes; // number of verts per face
+		std::vector<int> FaceMarks; // offset to first face vert in FaceVerts list
 		std::vector<int> FaceVerts; // vertex indices per face, contiguous list
 	};
 

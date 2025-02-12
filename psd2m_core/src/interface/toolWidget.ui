@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DockWidget</class>
- <widget class="QMainWindow" name="DockWidget">
+ <class>PSDto3DFrame</class>
+ <widget class="QMainWindow" name="PSDto3DFrame">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -16,8 +16,11 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::NoContextMenu</enum>
+  </property>
   <property name="acceptDrops">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <property name="windowTitle">
    <string>PSD to 3D Editor</string>
@@ -26,7 +29,7 @@
    <iconset>
     <normaloff>icons/PSD to 3D Icons.ico</normaloff>icons/PSD to 3D Icons.ico</iconset>
   </property>
-  <widget class="QWidget" name="dockWidgetContents">
+  <widget class="QWidget" name="PSDto3DWidget">
    <property name="minimumSize">
     <size>
      <width>600</width>

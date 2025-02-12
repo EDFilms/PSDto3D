@@ -13,6 +13,10 @@
 #ifndef MAYASTUB_H
 #define MAYASTUB_H
 
+#ifdef PSDTO3D_BLENDER_VERSION
+#define MAYA_API_VERSION 20220000 // compatibility with Qt6
+#endif
+
 typedef unsigned long ULONG; // TODO: Remove this; with older Maya vesions, and with Visual Studio 2017 toolset, Qt headers depend on windows.h or require this
 #include <QtCore/QList>
 #include <QtCore/QString>
@@ -216,6 +220,7 @@ class MItDependencyNodes
 public:
 	MItDependencyNodes( MFn::Type filter = MFn::kInvalid,
 						MStatus * ReturnStatus = NULL ) { filter; ReturnStatus; }
+	MObject		thisNode( MStatus * ReturnStatus = NULL ) { ReturnStatus; return MObject(); }
 	MStatus		next() {return MStatus::kSuccess;}
 	bool		isDone( MStatus * ReturnStatus = NULL ) const { ReturnStatus; return true; }
 	MObject		item( MStatus * ReturnStatus = NULL ) const { ReturnStatus; return MObject(); }
@@ -308,6 +313,20 @@ public:
 							)
 					{ menuItemName; parentName; commandName; commandParams;
 					  needOptionBox; optBoxFunction; retStatus; extraMenuItemParams; return MStringArray(); }
+	MStringArray	addMenuItem(
+							const MString& menuItemName,
+							const MString& menuItemLabel,
+							const MString& parentName,
+							const MString& commandName,
+							const MString& commandParams,
+							bool needOptionBox = false,
+							const MString *optBoxFunction = nullptr,
+							MStatus *retStatus = nullptr,
+                            const MString *extraMenuItemParams = nullptr
+							)
+					{ menuItemName; menuItemLabel; parentName; commandName; commandParams;
+					  needOptionBox; optBoxFunction; retStatus; extraMenuItemParams; return MStringArray(); }
+
 };
 
 class MFnMesh : public MFnDagNode

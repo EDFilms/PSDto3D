@@ -90,7 +90,7 @@ namespace psd_to_3d
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	ToolWidget::ToolWidget(QMainWindow *parent, IPluginController* controller) 
-		: QMainWindow(parent), Ui(new Ui::DockWidget), EventFilter(new ToolWidgetEventFilter(this)), SilenceUi(0)
+		: QMainWindow(parent), Ui(new Ui::PSDto3DFrame), EventFilter(new ToolWidgetEventFilter(this)), SilenceUi(0)
 	{
 		this->Controller = controller;
 
@@ -144,7 +144,7 @@ namespace psd_to_3d
 		connect(Ui->textureProxyComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnSetTextureProxy(int)));
 		connect(Ui->depthModifierField, SIGNAL(valueChanged(double)), this, SLOT(OnSetDepthModifier(const double &)));
 		connect(Ui->meshScaleSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSetMeshScale(const double &)));
-		if( IsUnrealVersion )
+		if( IsUnrealVersion || IsBlenderVersion )
 		{
 			connect(Ui->pivotPositionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnSetPivotPosition(int)));
 		}
@@ -304,7 +304,7 @@ namespace psd_to_3d
 		disconnect(Ui->textureProxyComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnSetTextureProxy(int)));
 		disconnect(Ui->depthModifierField, SIGNAL(valueChanged(double)), this, SLOT(OnSetDepthModifier(const double &)));
 		disconnect(Ui->meshScaleSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSetMeshScale(const double &)));
-		if (IsUnrealVersion)
+		if( IsUnrealVersion || IsBlenderVersion )
 		{
 			disconnect(Ui->pivotPositionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnSetPivotPosition(int)));
 		}
@@ -2428,19 +2428,19 @@ namespace psd_to_3d
 		}
 		Ui->emptySettingsPanel->setVisible(algorithms.empty());
 		Ui->multipleSettingsPanel->setVisible(!algorithms.empty() && AreSelectedValuesDifferent());
-		if( IsFbxVersion || IsUnrealVersion )
+		if( IsFbxVersion || IsUnrealVersion || IsBlenderVersion )
 		{
 			// if linear mode is somehow selected in FBX version, maybe due to stale json file, don't display the settings
 			Ui->linearAlgorithmPanel->setVisible(false);
 		}
-		if( IsMayaVersion || IsUnrealVersion )
+		if( IsMayaVersion || IsUnrealVersion || IsBlenderVersion )
 		{
 			Ui->psdExportPathPanel->setVisible(false);
 //			Ui->psdExportNamePanel->setVisible(false);
 			Ui->writeModePanel->setVisible(false);
 			Ui->writeLayoutPanel->setVisible(false);
 		}
-		if( IsUnrealVersion )
+		if( IsUnrealVersion || IsBlenderVersion )
 		{
 			Ui->pivotPositionPanel->setVisible(true);
 		}
@@ -2532,7 +2532,7 @@ namespace psd_to_3d
 		}
 
 		Ui->customGroupNameLineEdit->setText(this->GetParameters().AliasPsdName);
-		if( IsUnrealVersion )
+		if( IsUnrealVersion || IsBlenderVersion )
 		{
 			Ui->pivotPositionComboBox->setCurrentIndex(GetPivotPositionUi());
 		}

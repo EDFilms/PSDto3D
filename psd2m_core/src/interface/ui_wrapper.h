@@ -46,16 +46,25 @@ const int IsVectorModeSupported = 0; // Lite version does not support Vector Mod
 const int IsFbxVersion = 1;
 const int IsMayaVersion = 0;
 const int IsUnrealVersion = 0;
+const int IsBlenderVersion = 0;
 const int IsLinearModeSupported = 0; // PSDtoFBX version does not support older Linear Mode, only newer Delaunay Mode
 #elif defined PSDTO3D_UNREAL_VERSION
 const int IsFbxVersion = 0;
 const int IsMayaVersion = 0;
 const int IsUnrealVersion = 1;
+const int IsBlenderVersion = 0;
 const int IsLinearModeSupported = 0; // PSDtoUnreal version does not support older Linear Mode, only newer Delaunay Mode
+#elif defined PSDTO3D_BLENDER_VERSION
+const int IsFbxVersion = 0;
+const int IsMayaVersion = 0;
+const int IsUnrealVersion = 0;
+const int IsBlenderVersion = 1;
+const int IsLinearModeSupported = 0; // PSDtoBlender version does not support older Linear Mode, only newer Delaunay Mode
 #elif defined PSDTO3D_MAYA_VERSION
 const int IsFbxVersion = 0;
 const int IsMayaVersion = 1;
 const int IsUnrealVersion = 0;
+const int IsBlenderVersion = 0;
 const int IsLinearModeSupported = 1;
 #endif
 

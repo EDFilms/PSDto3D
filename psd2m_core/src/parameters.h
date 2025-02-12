@@ -170,7 +170,7 @@ namespace psd_to_3d
 	//----------------------------------------------------------------------------------------------
 	struct GlobalParameters
 	{
-		GlobalParameters() = default;
+		GlobalParameters() { Reset(); }
 		~GlobalParameters() = default;
 
 		enum PivotPosition // For PSDtoFBX

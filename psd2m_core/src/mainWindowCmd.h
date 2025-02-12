@@ -32,6 +32,7 @@
 namespace psd_to_3d
 {
 	class ToolWidget; // forward declaration
+	class QEventRouter; // forward declaration
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	class PluginContext : public LicensingWidget::LicensingCallback
@@ -86,6 +87,7 @@ namespace psd_to_3d
 			this->GuiTool = nullptr;
 			this->Controller = nullptr;
 			this->Output = nullptr;
+			this->EventRouter = nullptr;
 		}
 
         bool LicenseCheck();
@@ -95,6 +97,7 @@ namespace psd_to_3d
 		ToolWidget* GuiTool;
 		IPluginController* Controller;
 		IPluginOutput* Output;
+		QEventRouter* EventRouter;
 	};
 
 }

@@ -1,11 +1,6 @@
 echo %date%  - %time%
 
-set BUILD_DATE=%date%
-set BUILD_VER=079
-set PLUGIN_VER_SHORT=165
-set PLUGIN_VER_BASE=1.6.5
-set PLUGIN_VER=%PLUGIN_VER_BASE%.%BUILD_VER%
-set PLUGIN_YEAR=2024
+call build_version.bat
 
 @echo Updating file property resources ...
 copy ..\psd2m_core\src\psd2m_core.rc ..\psd2m_core\src\psd2m_core.rc.BACKUP

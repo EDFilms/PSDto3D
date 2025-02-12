@@ -39,6 +39,7 @@ namespace mesh_generator
 		this->BoundsUV = that.BoundsUV;			// boundsUV BoundsUV
 		this->Vertices = that.Vertices;			// std::vector<Vector2F>
 		this->FaceSizes = that.FaceSizes;		// std::vector<int>
+		this->FaceMarks = that.FaceMarks;		// std::vector<int>
 		this->FaceVerts = that.FaceVerts;	// std::vector<int>
 	}
 
@@ -54,6 +55,7 @@ namespace mesh_generator
 		if (vertices.empty()) return false;
 
 		this->FaceSizes.push_back(int(vertices.size()));
+		this->FaceMarks.push_back(int(this->FaceVerts.size()));
 		this->FaceVerts.insert(this->FaceVerts.end(), vertices.begin(), vertices.end());
 		return true;
 	}
@@ -63,6 +65,7 @@ namespace mesh_generator
 	{
 
 		this->FaceSizes.push_back(size);
+		this->FaceMarks.push_back(int(this->FaceVerts.size()));
 		for (int i = 0; i < size; ++i)
 		{
 			this->FaceVerts.push_back(vertices[i]);
@@ -71,7 +74,7 @@ namespace mesh_generator
 	}
 
 	//----------------------------------------------------------------------------------------------
-	void DataMesh::SetValues(std::vector<Vector2F>& vertices, std::vector<int>& faceSizes, std::vector<int>& faceVerts)
+	void DataMesh::SetValues(std::vector<Vector2F>& vertices, std::vector<int>& faceSizes, std::vector<int>& faceMarks, std::vector<int>& faceVerts)
 	{
 		//this->Vertices = vertices;
 		//this->FacesCount = facesCount;
@@ -79,6 +82,7 @@ namespace mesh_generator
 		// TODO: diagnose why swap() is slower than assignment operator=()
 		this->Vertices.swap( vertices );
 		this->FaceSizes.swap( faceSizes );
+		this->FaceMarks.swap( faceMarks );
 		this->FaceVerts.swap( faceVerts );
 	}
 
@@ -86,6 +90,7 @@ namespace mesh_generator
 	void DataMesh::ClearFaces()
 	{
 		this->FaceSizes.clear();
+		this->FaceMarks.clear();
 		this->FaceVerts.clear();
 	}
 
@@ -94,6 +99,7 @@ namespace mesh_generator
 	{
 		this->Vertices.clear();
 		this->FaceSizes.clear();
+		this->FaceMarks.clear();
 		this->FaceVerts.clear();
 	}
 

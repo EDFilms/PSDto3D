@@ -80,6 +80,30 @@ void SetQtPluginPath( )
 namespace psd_to_3d
 {
 	//-------------------- ------------------------------------------------------------------------------------------------------------------
+	// Helper, Qt event forwarding from an application thread to the Qt message thread
+	// Needed for threadsafety; all interaction with Qt objects must happen in its message thread
+	static const QEvent::Type EVENT_MAIN_WINDOW_SHOW = (QEvent::Type)(QEvent::User + 0); // request to open the main window
+	class QEventRouter : public QObject
+	{
+	public:
+		QEventRouter( QMainWindow* mainWindow ) : mainWindow(mainWindow) { moveToThread( mainWindow->thread() ); }
+		// Post a request to show the main window; will be safely handled in the Qt message thread
+		void ShowMainWindow() {	QCoreApplication::postEvent( this, new QEvent( EVENT_MAIN_WINDOW_SHOW ) ); }
+	protected:
+		bool event( QEvent *ev )
+		{   
+			// Handle request to show the main window
+			if( ev->type() == EVENT_MAIN_WINDOW_SHOW )
+			{
+				mainWindow->show();
+				return true;
+			}
+			return false;
+		}
+		QMainWindow* mainWindow;
+	};
+
+	//-------------------- ------------------------------------------------------------------------------------------------------------------
 	void PluginContext::InitSafe()
 	{
 		ConfParams.Fetch(); // read build configuration params
@@ -99,6 +123,17 @@ namespace psd_to_3d
 		{
 			QMainWindow* mainWindow = qobject_cast<QMainWindow*>(MQtUtil::mainWindow());
 			this->GuiTool = new ToolWidget( mainWindow, this->Controller );
+			// Set initial screen position when created
+			QSize screenGeometry = QGuiApplication::primaryScreen()->size();
+			int x = (screenGeometry.width()-this->GuiTool->width()) / 2;
+			int y = (screenGeometry.height()-this->GuiTool->height()) / 2;
+			this->GuiTool->move(x, y);
+			//int primaryScreen = QApplication::desktop()->primaryScreen();
+			//QRect screenGeometry = QApplication::desktop()->screenGeometry(primaryScreen);
+		}
+		if( this->EventRouter==nullptr )
+		{
+			EventRouter = new QEventRouter( this->GuiTool );
 		}
 	}
 
@@ -120,6 +155,10 @@ namespace psd_to_3d
 		if( this->Controller!=nullptr )
 		{
 			delete this->Controller;
+		}
+		if( this->EventRouter!=nullptr )
+		{
+			delete this->EventRouter;
 		}
 		Zero();
 	}
@@ -155,13 +194,8 @@ namespace psd_to_3d
 			}
 			if( this->GuiTool!=nullptr )
 			{
-				//int primaryScreen = QApplication::desktop()->primaryScreen();
-				//QRect screenGeometry = QApplication::desktop()->screenGeometry(primaryScreen);
-				QSize screenGeometry = QGuiApplication::primaryScreen()->size();
-				int x = (screenGeometry.width()-this->GuiTool->width()) / 2;
-				int y = (screenGeometry.height()-this->GuiTool->height()) / 2;
-				this->GuiTool->move(x, y);
-				this->GuiTool->show();
+				// Show the main window; posts a request to open the window in a threadsafe manner
+				EventRouter->ShowMainWindow();
 			}
 		}
 		else if( IsLicensingHidden() ) {
@@ -350,40 +384,23 @@ void threadApp()
 	{
 		SetQtPluginPath();
 		qtApp = new QApplication(argc,argv);
-//#if defined PSDTO3D_FBX_VERSION
-//		qtApp->setQuitOnLastWindowClosed(true);
-//#elif defined PSDTO3D_UNREAL_VERSION
-//		qtApp->setQuitOnLastWindowClosed(false);
-//#endif
 	}
 
 	// Start a plugin session and block
-//	pluginContext = &(psd_to_3d::PluginContext::getInstance());
 	psd_to_3d::PluginContext& pluginContext = psd_to_3d::PluginContext::getInstance();
 	pluginContext.InitSafe();
 	pluginContext.doIt(); // opens the gui window
-//	threadApp_running = true;
 	qtApp->exec(); // run UI handler; blocking call, returns when mainWindowCmd is closed
-
-	// End the plugin session
-//	context.Free();
-//	threadApp_running = false;
-
 	// TODO: Create separate exported function closePlugin() ...
 
 	// Destroy the app (?)
 	delete qtApp;
 	qtApp = nullptr;
-	//threadApp_done = true;
 }
 
+// DLL EXPORTED FUNCTION, See linker options
 void openPlugin( int runLoop )
 {
-	//if( threadApp_running && !threadApp_done )
-	//	return;
-
-	//threadApp_running = threadApp_done = false;
-
 	// Start the thread
 	bool qtAppFirstRun = false;
 	if( qtApp==nullptr )
@@ -392,9 +409,6 @@ void openPlugin( int runLoop )
 		std::thread pthreadApp( threadApp );
 		pthreadApp.detach();
 		// Wait until thread is started (and UI is visible)
-		//while( (!threadApp_running) && (!threadApp_done) ) {
-		//	std::this_thread::sleep_for(std::chrono::milliseconds(500));
-		//}
 		while( qtApp==nullptr ) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
@@ -405,9 +419,8 @@ void openPlugin( int runLoop )
 	else qtApp->setQuitOnLastWindowClosed(false);
 
 	psd_to_3d::PluginContext& pluginContext = psd_to_3d::PluginContext::getInstance();
-	//pluginContext.InitSafe();
-	if( !qtAppFirstRun )
-		pluginContext.doIt(); // opens the gui window
+	if( !qtAppFirstRun ) // pthreadApp above already calls this on first run
+		pluginContext.doIt(); // opens the gui window, only needed on subsequent runs
 
 	// Wait until thread is finished, if applicable
 	// use this for standalone operation outside of any host app
@@ -418,8 +431,15 @@ void openPlugin( int runLoop )
 	}
 }
 
+// DLL EXPORTED FUNCTION, See linker options
 void setPluginOutput( void* output )
 {
 	psd_to_3d::PluginContext& context = psd_to_3d::PluginContext::getInstance();
 	context.SetPluginOutput( (psd_to_3d::IPluginOutput*)output );
 }
+
+// DLL EXPORTED FUNCTION, See linker options
+// Implemented in Blender module
+//
+// typedef int (*CallbackFn)( PythonDataMesh* pythonDataMesh );
+// void pythonSetCallback( CallbackFn callback );

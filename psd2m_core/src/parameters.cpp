@@ -77,8 +77,18 @@ namespace psd_to_3d
 	void GlobalParameters::Reset()
 	{
 		this->TextureProxy = 1;
-		this->Depth = 0;
-		this->Scale = 1.0f;
+		if( IsBlenderVersion )
+		{
+			this->Depth = 0.25f;
+			this->Scale = 10.0f;
+			this->PivotPosition = PivotPosition::LAYER_CENTER;
+		}
+		else
+		{
+			this->Depth = 0;
+			this->Scale = 1.0f;
+			this->PivotPosition = PivotPosition::LAYER_CORNER;
+		}
 		this->KeepGroupStructure = false;
 		this->AliasPsdName = "";
 		this->FileWriteMode = FileWriteMode::BINARY;

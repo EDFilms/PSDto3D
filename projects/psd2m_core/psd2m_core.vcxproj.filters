@@ -39,6 +39,9 @@
     <ClCompile Include="..\..\psd2m_core\src\scene_controller\meshGeneratorController.cpp" />
     <ClCompile Include="..\..\psd2m_core\src\scene_controller\sceneController.cpp" />
     <ClCompile Include="..\..\psd2m_core\src\scene_controller\sceneControllerCache.cpp" />
+    <ClCompile Include="..\..\psd2m_core\src\blender\PythonMain.cpp">
+      <Filter>Source Files\blender</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\psd2m_core\src\IControllerUpdate.h" />
@@ -93,6 +96,9 @@
     <ClInclude Include="..\..\psd2m_core\src\scene_controller\sceneController.h" />
     <ClInclude Include="..\..\psd2m_core\src\scene_controller\sceneControllerCache.h" />
     <ClInclude Include="..\..\psd2m_core\src\resource.h" />
+    <ClInclude Include="..\..\psd2m_core\src\blender\PythonMain.h">
+      <Filter>Source Files\blender</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files\texture_exporter">
@@ -134,6 +140,9 @@
     <Filter Include="Source Files\scene_controller">
       <UniqueIdentifier>{5990f403-7c0d-4fdf-9d22-120591679c3f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\blender">
+      <UniqueIdentifier>{f47e2ee6-0bf4-4471-8987-98c9268a89d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\psd2m_core\src\interface\licensingWidget.ui">
@@ -147,5 +156,10 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\psd2m_core\src\psd2m_core.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\psd2m_core\src\blender\__init__.py">
+      <Filter>Source Files\blender</Filter>
+    </None>
   </ItemGroup>
 </Project>

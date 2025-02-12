@@ -150,7 +150,7 @@ namespace maya_plugin
 			for (; !nodeItMesh.isDone(); nodeItMesh.next())
 			{
 				#if MAYA_API_VERSION >= 20190000
-				MFnTransform tmpTransform(nodeItMesh.thisNode());
+				MFnTransform tmpTransform((MObject&)nodeItMesh.thisNode());
 				existingNodes.insert(std::string(tmpTransform.name().asChar()));
 				#else
 				MFnTransform tmpTransform(nodeItMesh.item());
@@ -392,7 +392,8 @@ namespace maya_plugin
 		MStatus status = this->CurrentMesh.getUVSetNames(uvNames);
 
 		// Set position 0 -> 1
-		status = this->CurrentMesh.setUVs(this->UArray, this->VArray, &uvNames[0]);
+		MString uvName0 = uvNames[0];
+		status = this->CurrentMesh.setUVs(this->UArray, this->VArray, &uvName0);
 		if (status == MS::kFailure)
 		{
 			MGlobal::displayInfo("[Set UV]:  " + status.errorString());
@@ -403,7 +404,7 @@ namespace maya_plugin
 		}
 
 		// Assign UV to polygon
-		status = this->CurrentMesh.assignUVs(this->PolygonCounts, this->PolygonConnects, &uvNames[0]);
+		status = this->CurrentMesh.assignUVs(this->PolygonCounts, this->PolygonConnects, &uvName0);
 		if (status == MS::kFailure)
 		{
 			MGlobal::displayInfo("Assign uv: " + status.errorString());
@@ -530,11 +531,11 @@ namespace maya_plugin
 				{
 					#if MAYA_API_VERSION >= 20190000
 					if( filter==MFn::Type::kShape )
-						existingNodes.try_emplace(std::string(MFnMesh(nodeIt.thisNode()).name().asChar()), nodeIt.thisNode());
+						existingNodes.try_emplace(std::string(MFnMesh((MObject&)nodeIt.thisNode()).name().asChar()), nodeIt.thisNode());
 					else if( filter==MFn::Type::kTransform )
-						existingNodes.try_emplace(std::string(MFnTransform(nodeIt.thisNode()).name().asChar()), nodeIt.thisNode());
+						existingNodes.try_emplace(std::string(MFnTransform((MObject&)nodeIt.thisNode()).name().asChar()), nodeIt.thisNode());
 					else if( filter==MFn::Type::kLambert )
-						existingNodes.try_emplace(std::string(MFnLambertShader(nodeIt.thisNode()).name().asChar()), nodeIt.thisNode());
+						existingNodes.try_emplace(std::string(MFnLambertShader((MObject&)nodeIt.thisNode()).name().asChar()), nodeIt.thisNode());
 					#else
 					if( filter==MFn::Type::kShape )
 						existingNodes.try_emplace(std::string(MFnMesh(nodeIt.item()).name().asChar()), nodeIt.item());

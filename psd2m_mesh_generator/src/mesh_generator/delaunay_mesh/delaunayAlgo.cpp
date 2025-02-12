@@ -492,9 +492,11 @@ namespace mesh_generator
 	{
 		std::vector<Vector2F> vertices;
 		std::vector<int> facesCount;
+		std::vector<int> facesMarks;
 		std::vector<int> facesIndices;
 		vertices.reserve( this->mesh.GetVertCount() );
 		facesCount.reserve( this->mesh.GetTriCount() );
+		facesMarks.reserve( this->mesh.GetTriCount() );
 		facesIndices.reserve( this->mesh.GetTriCount()*3 );
 
 		for( int vi=0; vi<this->mesh.GetVertCount(); vi++ )
@@ -505,6 +507,7 @@ namespace mesh_generator
 		for( int ti=0; ti<this->mesh.GetTriCount(); ti++ )
 		{
 			facesCount.push_back( 3 );
+			facesMarks.push_back( 3*ti );
 			facesIndices.push_back( this->mesh.GetTri(ti).data().vi[0] );
 			facesIndices.push_back( this->mesh.GetTri(ti).data().vi[1] );
 			facesIndices.push_back( this->mesh.GetTri(ti).data().vi[2] );
@@ -514,7 +517,7 @@ namespace mesh_generator
 		mesh_out.SetWidth( (float)input.width );
 		mesh_out.SetHeight( (float)input.height );
 		mesh_out.SetBoundsUV( bounds );
-		mesh_out.SetValues( vertices, facesCount, facesIndices );
+		mesh_out.SetValues( vertices, facesCount, facesMarks, facesIndices );
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
