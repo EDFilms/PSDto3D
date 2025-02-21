@@ -516,6 +516,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ResourceCompile Include="..\..\psd2m_core\src\psd2m_core.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\psd2m_core\src\blender\blender_manifest.toml" />
     <None Include="..\..\psd2m_core\src\blender\__init__.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

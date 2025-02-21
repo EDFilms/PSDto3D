@@ -32,6 +32,7 @@ extern "C" {
 		const void* psdData; // PsdData
 		const void* layerData; // GraphLayer
 
+		const wchar_t* psdName;
 		int exportIndex; // Sequence number during export
 		int layerIndex;
 		float sceneScale;

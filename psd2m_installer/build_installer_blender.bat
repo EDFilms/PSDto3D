@@ -17,6 +17,16 @@ findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_core\src\psd2m_core.rc ..\psd
 findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ..\psd2m_core\src\blender\__init__.py ..\builds\installer\stage_full\blender\__init__.py
 findreplace PLUGIN_VER_TOKEN %PLUGIN_VER_BASE% ..\psd2m_core\src\blender\blender_manifest.toml ..\builds\installer\stage_full\blender\blender_manifest.toml
 
+@echo Building Photoshop CC extension ...
+pushd ..\psd2m_extension\PsdExporterCC\
+call build_extension_cc.bat
+popd
+
+@echo Building Photoshop CS6 extension ...
+pushd ..\psd2m_extension\PsdExporterCS6\
+call build_extension_cs6.bat
+popd
+
 @echo Build Blender plugin ...
 SET _CL_=/DPSDTO3D_STANDALONE /DPSDTO3D_FULL_VERSION /DPSDTO3D_ATLAS_VERSION /O2 /Ob2 /Ot
 
@@ -37,6 +47,20 @@ copy ..\builds\plugin\RelWithDebInfo_Blender\imageformats\qgif.dll		 ..\builds\i
 copy ..\builds\plugin\RelWithDebInfo_Blender\imageformats\qico.dll		 ..\builds\installer\stage_full\blender\imageformats\
 copy ..\builds\plugin\RelWithDebInfo_Blender\imageformats\qjpeg.dll		 ..\builds\installer\stage_full\blender\imageformats\
 copy "..\psd2m_core\icons\PSD to 3D Icons.ico"					"..\builds\installer\stage_full\blender\icons\PSD to 3D Icons.ico"
+copy "..\psd2m_core\icons\PSD to 3D Icons.ico"					".\TEMP_PSDto3D_INSTALLER.ico"
+copy "..\psd2m_core\docs\Online Documentation.url"				"..\builds\installer\stage_full\docs\Online Documentation.url"
+
+
+xcopy ..\builds\photoshop ..\Builds\installer\stage_full\photoshop\ /E /Y
+move ..\builds\photoshop ..\Builds\installer\stage_full\photoshop\ /E /Y
+
+mkdir ..\builds\installer\output
+mkdir ..\builds\installer\installers
+
+@echo Building installer, Photoshop Extension
+findreplace PLUGIN_VER_TOKEN %PLUGIN_VER% ./psd_ext.iss ./TEMP_psd_ext_%PLUGIN_VER%.iss
+.\InnoSetup602\compil32.exe /cc ./TEMP_psd_ext_%PLUGIN_VER%.iss
+move .\Output\setup.exe ..\builds\installer\installers\Build%BUILD_VER%-V%PLUGIN_VER_SHORT%_PSD_to_3D_Photoshop_setup.exe
 
 @echo Deleting temp files ...
 del ..\psd2m_core\src\psd2m_core.rc

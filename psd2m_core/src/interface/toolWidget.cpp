@@ -2359,6 +2359,16 @@ namespace psd_to_3d
 	{
 		QList<QListWidgetItem*> selectedItems = Ui->layerList->selectedItems();
 
+		// In Windows dark color scheme, layer list's alternating background color is a dark blue,
+		// instead of a grey.  Set palette colors to grey shades
+		QPalette palette = Ui->layerList->palette();
+		QColor altBase = palette.color(QPalette::Current, QPalette::Base);
+		altBase.setRedF( altBase.redF()*0.86f );
+		altBase.setGreenF( altBase.greenF()*0.86f );
+		altBase.setBlueF( altBase.blueF()*0.86f );
+		palette.setColor( QPalette::Current, QPalette::AlternateBase, altBase );
+		Ui->layerList->setPalette(palette);
+
 		QString Selected;
 #if MAYA_API_VERSION>=20220000
 		Selected.asprintf(  util::LocalizeString( IDC_MAIN, IDS_LAYER_LIST_SELECTED_STATUS_FORMAT ), // "%i of %i selected"

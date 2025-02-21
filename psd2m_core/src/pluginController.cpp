@@ -381,7 +381,7 @@ namespace psd_to_3d
 					{
 						if( (compLayerType<0) || (layerParams.CompLayerIndex[compLayerType]>=0) )
 						{
-							this->UpdateProgressExport( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_PNG_TEXTURES ), true); // "Exporting textures..."
+							this->UpdateProgressExport( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_PNG_TEXTURES ), true ); // "Exporting textures..."
 							std::string filepath;
 							TextureMap tmptexture;
 
@@ -457,7 +457,7 @@ namespace psd_to_3d
 			{
 				// atlas export task; advance progress bar
 				// update progress for each active layer WITH and atlas
-				UpdateProgressExport( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_PNG_ATLASES ), false ); // "Exporting atlases..."
+				UpdateProgressExport( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_PNG_ATLASES ) ); // "Exporting atlases..."
 				ProgressTask& progressTask = GetProgressExport().GetTask();
 				std::string baseFilepath("");
 				bool writeOK = false;
@@ -476,7 +476,7 @@ namespace psd_to_3d
 					for( const LayerAgent* const& layerAgentPtr : layerAgents )
 					{
 						int layerIndex = iter_index( layerAgentPtr, layerAgents );
-						if( filter(layerIndex) && (layerAgentPtr!=nullptr) )
+						if( layerAgentPtr!=nullptr ) // ignore filter(layerIndex); always include all layers of an exported atlas
 						{
 							const LayerAgent& layerAgent = *layerAgentPtr;
 							const LayerParameters& layerParams = layerAgent.GetLayerParameters();
@@ -493,11 +493,11 @@ namespace psd_to_3d
 					if( islandCount>0 )
 					{
 						UpdateProgressExport( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_PNG_ATLASES ), true ); // "Exporting atlases..."
+						// write the file
+						writeOK = GetScene().WriteAtlasMap( filepath, atlasTexture, progressTask ) || writeOK;
 					}
 
 					if( GetProgressExport().IsCancelled() ) break; // cancel handling
-					// write the file
-					writeOK = GetScene().WriteAtlasMap( filepath, atlasTexture, progressTask ) || writeOK;
 				}
 
 				// notify output plugin of the texture file (for FBX or Unreal)
@@ -658,14 +658,14 @@ namespace psd_to_3d
 	{
 		int taskCount = 1; // at least one task for mesh preparation (mesh controller cache coherency)
 		ActiveLayerFilter activeFilter( GetPsdData().LayerMaskData, GetScene(), exportAll );
-		int activeLayerCount = activeFilter.Count(); // one task per layer mesh exported
+		//int activeLayerCount = activeFilter.Count(); // one task per layer mesh exported
 		int compTextureCount, compAtlasCount;
 		GetScene().GetCompLayerCount( compTextureCount, compAtlasCount, activeFilter ); // one task per comp layer texture
-		//ActiveNoAtlasLayerFilter activeNoAtlasFilter( GetPsdData().LayerMaskData, GetScene(), exportAll );
-		//int activeNoAtlasCount = activeFilter.Count(); // one task per layer mesh exported
-		//int atlasCount = GetScene().GetAtlasCount(); // one task per atlas exported
-		if( exportPNG )	taskCount += (activeLayerCount) + (compTextureCount) + (compAtlasCount);
-		if( exportMesh ) taskCount += 2; // additional tasks mesh generation, and for finalizing (writing file)
+		ActiveNoAtlasLayerFilter activeNoAtlasFilter( GetPsdData().LayerMaskData, GetScene(), exportAll );
+		int activeNoAtlasCount = activeNoAtlasFilter.Count(); // one task per layer mesh exported
+		int atlasCount = GetScene().GetAtlasCount(); // one task per atlas exported
+		if( exportPNG )	taskCount += (activeNoAtlasCount) + (atlasCount) + (compTextureCount) + (compAtlasCount);
+		if( exportMesh ) taskCount += 1; // additional task for finalizing (writing file)
 		ProgressAgent& progressExport = context->GetToolWidget()->GetProgress();
 #if defined PSDTO3D_FBX_VERSION
 		progressExport.BeginProgressBar( util::LocalizeString( IDC_MAIN, IDS_EXPORTING_JOB_FBX ), taskCount, true ); // "Exporting FBX..."
@@ -691,14 +691,12 @@ namespace psd_to_3d
 
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	// Helper, progress bar handling during export
-	void PluginController::UpdateProgressExport(QString const& taskName, bool nextTask, float taskValue) const
+	void PluginController::UpdateProgressExport(QString const& taskName, bool nextTask) const
 	{
 		ProgressAgent& progressExport = context->GetToolWidget()->GetProgress();
 		progressExport.SetLabel( taskName.toUtf8().data() );
 		if( nextTask )
 			progressExport.NextTask();
-		else
-			progressExport.GetTask().SetValueAndUpdate( taskValue );
 	}
 
 

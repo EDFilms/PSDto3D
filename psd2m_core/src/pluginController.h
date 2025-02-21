@@ -74,7 +74,7 @@ namespace psd_to_3d
 		ProgressAgent& GetProgressExport() const;
 		void BeginProgressExport(ActiveLayerFilter& filter, bool exportPNG, bool exportMesh, bool exportAll);
 		void EndProgressExport();
-		void UpdateProgressExport(QString const& taskName, bool nextTask=false, float taskValue=0.0f) const;
+		void UpdateProgressExport(QString const& taskName, bool nextTask=false) const;
 		static void SetValueProgressExport( void* param, float value );
 
 		// from IPluginOutputHelper

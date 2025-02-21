@@ -176,12 +176,14 @@ void PythonPluginOutput::OutputTree( const PsdData& psdData, const IPluginOutput
 			const GraphLayer* graphLayerPtr = graphLayerGroup[graphLayerIndex];
 			if( graphLayerPtr==nullptr ) continue;
 			
+			std::wstring psdNameUTF16 = util::to_utf16( params.PsdName() );
 			std::wstring layerNameUTF16 = util::to_utf16( graphLayerPtr->LayerName );
 			std::wstring materialNameUTF16 = util::to_utf16( graphLayerPtr->MaterialName );
 			std::wstring textureFilepathUTF16 = util::to_utf16( graphLayerPtr->TextureFilepath );
 			mesh->paramData = (const void*)(&params);
 			mesh->psdData = (const void*)(&psdData);
 			mesh->layerData = (const void*)(graphLayerPtr);
+			mesh->psdName = psdNameUTF16.data();
 			mesh->exportIndex = iterIndex;
 			mesh->layerIndex = graphLayerPtr->LayerIndex;
 			mesh->sceneScale = graphLayerPtr->Scale;

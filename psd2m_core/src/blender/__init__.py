@@ -7,9 +7,12 @@ import time
 import threading
 import pdb # for debugging
 
+from bpy.types import Operator
+from bpy.types import Panel
 from bpy_extras import object_utils
 from bpy_extras.object_utils import AddObjectHelper
 from bpy.props import FloatProperty
+from ctypes.util import find_library
 
 
 def printObject(obj):
@@ -59,16 +62,15 @@ def psdToBlender_getMaterial( matName, texFilepath ):
         texImage_node.image = bpy.data.images.load( texFilepath )
 
         # connect texture color to material base color
-        mat.node_tree.links.new(texImage_node.outputs[0], principled_bsdf.inputs[0])
+        mat.node_tree.links.new( texImage_node.outputs[0], principled_bsdf.inputs[0] )
         # conenct texture alpha to material alpha
-        mat.node_tree.links.new(texImage_node.outputs[1], principled_bsdf.inputs[4])
+        mat.node_tree.links.new( texImage_node.outputs[1], principled_bsdf.inputs[4] )
         mat.blend_method = 'CLIP'
         bpy.psdToBlender_materials[texFilepath] = mat
     return mat
 
 
 def psdToBlender_applyMaterial( obj, mat ):
-    #print( f'applyMaterial() entry, obj:{obj} mat:{mat}' )
     # Assign it to object
     if obj.data.materials:
         # assign to 1st material slot`
@@ -77,6 +79,15 @@ def psdToBlender_applyMaterial( obj, mat ):
         # no slots
         obj.data.materials.append(mat)
         
+# replace mesh in scene
+def psdToBlender_replaceMesh( mesh, meshName ):
+    print(f'replacing existing mesh ...')
+    obj = bpy.data.objects[ meshName ]
+    oldMesh = obj.data
+    obj.data = mesh
+    bpy.data.meshes.remove(oldMesh)
+    obj.data.name = meshName
+    return obj
     
 def psdToBlender_callbackTask():
     markTime = time.perf_counter()
@@ -86,13 +97,6 @@ def psdToBlender_callbackTask():
 
     print( f'Creating mesh: {dataMesh.meshName}' )
     print( f'Creating material: {dataMesh.materialName}' )
-    #print( f'dataMesh.exportIndex(): {dataMesh.exportIndex}' )
-    #print( f'dataMesh.layerIndex(): {dataMesh.layerIndex}' )
-    #print( f'dataMesh.sceneScale(): {dataMesh.sceneScale}' )
-    #print( f'dataMesh.sceneAspect(): {dataMesh.sceneAspect}' )
-    #print( f'dataMesh.MeshName(): {dataMesh.meshName}' )
-    #print( f'dataMesh.MeshVertCount(): {dataMesh.MeshVertCount(dataMesh.self)}' )
-    #print( f'dataMesh.MeshFaceCount(): {dataMesh.MeshFaceCount(dataMesh.self)}' )
     
     # for each face, create a tuple listing the vert indices for the face
     faces = []
@@ -110,11 +114,13 @@ def psdToBlender_callbackTask():
         vtex = dataMesh.MeshVertUV(dataMesh.self,vi)
         verts += ((vpos.x, vpos.y, vpos.z), ) # wrap the tuple in a tuple, otherwise this is three appends
         texcoords  += ((vtex.x, vtex.y), ) # wrap the tuple in a tuple, otherwise this is three appends
-    #print( f'faces: {faces}' )
-    #print( f'verts: {verts}' )
-    #print( f'texcoords: {texcoords}' )
 
-    mesh = bpy.data.meshes.new( dataMesh.meshName )
+    meshExisted = False
+    meshName = (dataMesh.psdName + '.' + dataMesh.meshName)
+    if( meshName in bpy.data.objects ):
+        meshExisted = True
+        
+    mesh = bpy.data.meshes.new( meshName )        
     bm = bmesh.new()
 
     for v_co in verts:
@@ -144,13 +150,31 @@ def psdToBlender_callbackTask():
     elapsed = time.perf_counter() - markTime
     print(f'creating material ... {elapsed:.6f} seconds')
 
-    # add the mesh as an object into the scene with this utility module
-    obj = object_utils.object_data_add( bpy.context, mesh )
-    mpos = dataMesh.MeshPosition(dataMesh.self)
-    obj.location = (mpos.x, mpos.y, mpos.z)
+    obj = None
+    if( meshExisted ): # mesh already exists, update it ...
+        obj = psdToBlender_replaceMesh( mesh, meshName ) # fetch and replace mesh in scene
+    if( not meshExisted ): # ... else, add the mesh as a new object into the scene
+        obj = object_utils.object_data_add( bpy.context, mesh ) # use utility module to create mesh
+        # only set object position if it's a new object, user may have positioned it otherwise
+        mpos = dataMesh.MeshPosition(dataMesh.self)
+        obj.location = (mpos.x, mpos.y, mpos.z)
+    # if user deleted original mesh, meshExisted will be false,
+    # but the object still receives an incremented name, like myObject.002,
+    # so re-applying the name change here works around that    
+    obj.name = meshName
 
-    mat = psdToBlender_getMaterial(  dataMesh.materialName, dataMesh.textureFilepath )
+    elapsed = time.perf_counter() - markTime
+    print(f'creating object ... {elapsed:.6f} seconds')
+    
+    mat = psdToBlender_getMaterial( dataMesh.materialName, dataMesh.textureFilepath )
     psdToBlender_applyMaterial( obj, mat )
+    
+    # if refreshing an object, texture may be an atlas that has changed, so reload it from disk
+    print(f'textureFilepath ... {dataMesh.textureFilepath}')
+    textureFilename = dataMesh.textureFilepath.split('\\')[-1]
+    if( meshExisted and (textureFilename in bpy.data.images) ):
+        print(f'reloading existing texture ... {textureFilename}')
+        bpy.data.images[textureFilename].reload()
 
     elapsed = time.perf_counter() - markTime
     return 0
@@ -167,10 +191,10 @@ def psdToBlender_callback( dataMeshPtr ):
     return 0
 
 
-class psdToBlender_tool( bpy.types.Operator ):
-    '''PSD to Blender'''
+class psdToBlender_OT( bpy.types.Operator ):
+    '''PSD to 3D'''
     bl_idname = 'object.psd_to_blender'
-    bl_label = 'PSD to Blender'
+    bl_label = 'Open PSD to 3D Window'
     def execute(self, context):
         #printObject( context )
         
@@ -179,11 +203,11 @@ class psdToBlender_tool( bpy.types.Operator ):
         script_file = os.path.realpath(__file__)
         pluginPath = os.path.dirname(script_file) + '\\'
         pluginFilename = 'PSDto3D_Standalone_PLUGIN_VER_TOKEN.dll'
-        pluginFilepath = pluginPath + pluginFilename
+        pluginFilepath = ctypes.util.find_library( pluginPath + pluginFilename )
 
         #debugging only
-        if( pluginFilename.endswith('VER_TOKEN.dll') ): # if this isn't the installed version, use the test location
-            pluginFilepath = pluginPath + 'PSDto3D_Standalone_dev.dll'
+        if( pluginFilepath == None ): # if this isn't the installed version, use the dev version
+            pluginFilepath = ctypes.util.find_library( pluginPath + 'PSDto3D_Standalone_dev.dll' )
 
         # describe the Vector3F struct as defined in the plugin DLL
         class Vector3F( ctypes.Structure ):
@@ -205,6 +229,7 @@ class psdToBlender_tool( bpy.types.Operator ):
                 ( 'psdData', ctypes.c_void_p ), # PsdData
                 ( 'layerData', ctypes.c_void_p ), # GraphLayer
                 
+                ( 'psdName', ctypes.c_wchar_p ),
                 ( 'exportIndex', ctypes.c_int ),
                 ( 'layerIndex', ctypes.c_int ),
                 ( 'sceneScale', ctypes.c_float ),
@@ -247,19 +272,26 @@ class psdToBlender_tool( bpy.types.Operator ):
         return {'FINISHED'}
 
 
-def psdToBlender_func( self, context ):
-    self.layout.operator(psdToBlender_tool.bl_idname, text=psdToBlender_tool.bl_label)
+
+class psdToBlender_PT(bpy.types.Panel):
+    bl_label = "PSD to 3D"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "PSD to 3D"
+
+    def draw(self, context):
+        self.layout.operator( psdToBlender_OT.bl_idname )
 
 
-# Register and add to the "Object" menu
 def register():
-    bpy.utils.register_class(psdToBlender_tool)
-    bpy.types.VIEW3D_MT_object.append(psdToBlender_func)
+    bpy.utils.register_class(psdToBlender_OT)
+    bpy.utils.register_class(psdToBlender_PT)
 
 
 def unregister():
-    bpy.utils.unregister_class(psdToBlender_tool)
-    bpy.types.VIEW3D_MT_object.remove(psdToBlender_func)
+    bpy.utils.unregister_class(psdToBlender_OT)
+    bpy.utils.unregister_class(psdToBlender_PT)
+
 
 
 if __name__ == '__main__':

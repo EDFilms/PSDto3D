@@ -161,5 +161,8 @@
     <None Include="..\..\psd2m_core\src\blender\__init__.py">
       <Filter>Source Files\blender</Filter>
     </None>
+    <None Include="..\..\psd2m_core\src\blender\blender_manifest.toml">
+      <Filter>Source Files\blender</Filter>
+    </None>
   </ItemGroup>
 </Project>
